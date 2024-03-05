@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.linearGradient {
+    background: linear-gradient(180deg, #fde1ff 0%, #e1ffea22 60%);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #555;
+}
+
+@layer utilities {
+    .h1 {
+        @apply text-5xl font-bold sm:text-4xl;
+    }
+    .h2 {
+        @apply text-4xl font-bold sm:text-3xl;
+    }
+    .h3 {
+        @apply text-3xl font-bold sm:text-2xl;
+    }
+    .h4 {
+        @apply text-2xl font-bold sm:text-1xl;
+    }
+    .h5 {
+        @apply text-xl font-bold sm:text-lg;
+    }
+    .p {
+        @apply text-lg sm:text-base;
+    }
+    .small {
+        @apply text-base sm:text-xs;
+    }
+    .padding-container {
+        @apply px-6 lg:px-20 2xl:px-0;
+    }
+    .max_add_container {
+        @apply mx-auto max-w-[1440px] px-6 lg:px-20 2xl:px-0;
+    }
+    .flexCenter {
+        @apply flex items-center justify-center;
+    }
+    .flexBetween {
+        @apply flex items-center justify-between;
+    }
+    .flexAround {
+        @apply flex items-center justify-around;
+    }
+
+    .flexStart {
+        @apply flex items-center justify-start;
+    }
+
+    .flexCol {
+        @apply flex flex-col;
+    }
+    .btn_blue_hover {
+        @apply bg-blue-500 py-3 px-4 text-white font-semibold rounded-md  md:text-lg text-base hover:bg-blue-600;
+    }
+    .input_form {
+        @apply w-full border border-secondary rounded-md py-3 px-3 focus:outline-none focus:border-blue-500 text-lg sm:text-base;
+    }
+}
