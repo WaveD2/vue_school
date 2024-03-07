@@ -1,12 +1,16 @@
 <template>
   <div>
-    <RouterView />
-    <h1>Default layout</h1>
+    <navbar-component>
+      <RouterView />
+    </navbar-component>
   </div>
 </template>
 
 <script>
-export default {}
+import NavbarComponent from '@/components/NavbarComponent.vue'
+export default {
+  components: { NavbarComponent }
+}
 </script>
 
 <style lang="scss" scoped></style>

@@ -7,29 +7,28 @@ export default {
     extend: {
       colors: {
         primary: '#696CFF',
-
+        active: '#1814F3',
         secondary: '#8592A3',
-
+        purple: '#4D44B5',
         success: '#71DD37',
-
+        orange: '#FB7D5B',
+        yellow: '#FCC43E',
+        text: '#303972',
+        while: '#FFFFFF',
         info: '#03C3EC',
-
         warning: '#FFAB00',
-
-        error: '#FF3E1D',
-        background: '#F5F5F9',
-
+        error: '#FF4550',
+        background: '#F3F4FF',
         slate: '#f1f3f4',
-
-        green: {
-          50: '#30AF5B',
-          90: '#292C27'
+        green: '#4CBC9A',
+        linear: '#4D44B51A',
+        grey: {
+          1: '#F5F5F5',
+          2: '#C1BBEB',
+          3: '#A098AE'
         }
       },
-      backgroundImage: {
-        header: "url('/src/assets/bg-header.jpeg')",
-        bannerOffset: "url('/src/assets/bg_be_gai.png')"
-      },
+      backgroundImage: {},
       screens: {},
       maxWidth: {},
       borderRadius: {}

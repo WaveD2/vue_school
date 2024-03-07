@@ -19,8 +19,9 @@ import LoadingComponent from '@/components/LoadingComponent.vue'
 
 const isCurrentLoading = ref(false)
 
-const handleIsLoading = ({ isLoading }) => {
-  // isCurrentLoading.value = isLoading
+const handleIsLoading = (isLoading) => {
+  console.log(':', isLoading)
+  isCurrentLoading.value = isLoading
 }
 </script>
 

@@ -1,47 +1,51 @@
 <script setup>
+import { callApi } from '@/utils/axios'
+import { setStoreTokens } from '@/utils/axios/setupApi'
 import { VALUE_LOGIN } from '@/utils/constants'
 import { loginSchema } from '@/utils/validateYub'
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
 
-const route = useRouter()
+import store from '@/store'
 
+const route = useRouter()
 const emit = defineEmits(['setLoading'])
 const formLogin = reactive(VALUE_LOGIN)
-const isLoading = ref(false)
+
+const isRemember = ref(false)
 const typeError = reactive({
   type: null,
   message: null
 })
+const handleSubmitForm = async () => {
+  // store.commit('SET_USER', { name: 'wwaved' })
 
-const handleSubmitForm = () => {
-  // console.log('api', import.meta.env.VUE_APP_API_URL)
-  // console.log('api a', process.env.VUE_APP_API_URL)
   try {
     loginSchema.validateSync(formLogin)
     typeError.type = null
     typeError.message = null
-
-    // emit('setLoading', { isLoading })
-
+    emit('setLoading', true)
     // CALL API
+    await store.dispatch('loginUser', formLogin)
+
+    route.push('/')
   } catch (error) {
     const { path, message } = error
-
     typeError.type = path
     typeError.message = message
-
     console.log('error', { error })
   } finally {
+    emit('setLoading', false)
   }
-
-  // route.push('/')
 }
 </script>
 
 <template>
   <div class="md:p-20 sm:16 p-8 w-screen max-w-lg lg:w-1/2">
     <h1 class="h1 mb-6 text-center">Đăng nhập</h1>
+    <p v-show="!typeError.type && typeError.message" class="p text-center text-error my-2">
+      {{ typeError.message }}
+    </p>
     <form @submit.prevent="handleSubmitForm" class="flexCol gap-y-3">
       <div class="mb-4">
         <label for="username" class="text-lg block mb-2 text-gray-600">Tên đăng nhập</label>
@@ -79,7 +83,7 @@ const handleSubmitForm = () => {
           id="remember"
           name="remember"
           class="text-blue-500"
-          v-model="formLogin.remember"
+          v-model="isRemember.remember"
         />
         <label for="remember" class="text-gray-600 ml-2">Ghi nhớ </label>
       </div>
