@@ -10,7 +10,7 @@ export const VALUE_REGISTER = {
   passwordConfirmation: ''
 }
 
-export const menuSidenav = [
+export const MENU_SIDE_NAV = [
   {
     text: 'Trang chủ',
     isActive: true,
@@ -21,7 +21,7 @@ export const menuSidenav = [
     text: 'Quản lý lớp',
     isActive: false,
     icon: ' fa-solid fa-graduation-cap ',
-    link: '/'
+    link: '/my-class'
   },
   {
     text: 'Quản lý bảng điểm',
@@ -38,7 +38,8 @@ export const menuSidenav = [
   {
     text: 'Trò chuyện',
     isActive: false,
-    icon: 'fa-regular fa-comment-dots'
+    icon: 'fa-regular fa-comment-dots',
+    link: '/'
   },
 
   {
@@ -61,7 +62,7 @@ export const menuSidenav = [
   }
 ]
 
-export const menuModalUser = [
+export const MENU_MODAL_USER = [
   {
     text: 'Cài đặt',
     isActive: false,
@@ -82,4 +83,25 @@ export const NOTIFICATIONS = [
   { text: 'You can make it appear to open and close smoother by using a transition.', link: '/' },
   { text: 'You can make it appear to open and close smoother by using a transition.', link: '/' },
   { text: 'You can make it appear to open and close smoother by using a transition.', link: '/' }
+]
+
+export const FORM_SETTING = [
+  { fullName: '', label: 'Họ và tên' },
+  { email: '', label: 'Email' },
+  { birthday: '', label: 'Ngày tháng năm sinh' },
+  { dress: '', label: 'Địa chỉ' },
+  { city: '', label: 'Thành phố' },
+  { country: '', label: 'Quê quán' }
+]
+
+export const COLUMN_TABLE_MY_CLASS = [
+  'Lớp',
+  'Trạng thái',
+  'Ngày bắt đầu',
+  'Ngày kết thúc',
+  'Lịch học',
+  'Sĩ số',
+  'Số buổi đã học',
+  'Điểm danh',
+  'Tùy chọn'
 ]

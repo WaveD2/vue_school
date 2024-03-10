@@ -1,14 +1,16 @@
 <script setup>
 import { useRouter, RouterView } from 'vue-router'
 import { checkAccessToken } from './utils/axios/setupApi'
-import { Notivue } from 'notivue'
 
 const route = useRouter()
-;(async () => {
-  const res = await checkAccessToken()
-  if (!res) route.push('/login')
-  else route.push('/')
-})()
+
+document.addEventListener('DOMContentLoaded', async function () {
+  // console.log('loading page')
+  // const res = await checkAccessToken()
+  // if (!res) route.push('/login')
+  // else \
+  route.push('/')
+})
 </script>
 
 <template>

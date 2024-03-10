@@ -19,6 +19,11 @@ const router = createRouter({
           path: '/setting-profile',
           name: 'settingProfile',
           component: () => import('@/pages/settingProfile.vue')
+        },
+        {
+          path: '/my-class',
+          name: 'myClass',
+          component: () => import('@/pages/myClass.vue')
         }
       ]
     },

@@ -1,10 +1,10 @@
 <template>
-  <div class="relative text-gray-600">
+  <div class="relative text-gray-600 w-full">
     <input
       type="search"
       name="serch"
       placeholder="Tìm kiếm..."
-      class="bg-white h-10 px-5 pr-10 rounded-full text-sm focus:outline-none"
+      class="bg-white h-10 px-5 w-full pr-10 rounded-full text-sm focus:outline-none"
     />
     <button type="submit" class="absolute right-0 top-0 mt-3 mr-4">
       <svg

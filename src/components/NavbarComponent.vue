@@ -1,15 +1,31 @@
 <template>
   <main>
     <!--sidenav -->
-    <section class="fixed left-0 top-0 w-64 pl-4 h-full bg-purple py-4 z-50 transition-transform">
-      <a href="#" class="flex items-center px-4 pb-4 border-b border-b-gray-800">
+    <section
+      :class="isOpenMenuSidebar && '!block'"
+      class="fixed left-0 top-0 w-64 pl-4 h-full bg-purple py-4 z-50 transition-all max-md:pl-2 max-md:hidden"
+      ref="menu"
+      @click="toggleMenuSidebar"
+    >
+      <a
+        href="#"
+        class="flex items-center px-4 pb-4 border-b border-b-gray-200 max-md:px-2 max-md:justify-between"
+      >
         <h2 class="h2">Wave <span class="bg-[#f84525] text-white px-2 rounded-md">D</span></h2>
+
+        <div class="hidden max-md:inline-block cursor-pointer" @click="toggleMenuSidebar">
+          <i class="fa-regular fa-circle-xmark text-while text-3xl"></i>
+        </div>
       </a>
-      <ul class="mt-2" v-for="(sidebar, index) in menuSidenav" @click="handleActiveSideBar(index)">
+      <ul
+        class="mt-2"
+        v-for="(sidebar, index) in MENU_SIDE_NAV"
+        @click="handleActiveSideBar(index)"
+      >
         <li class="mb-1 group" :key="index">
           <RouterLink
-            to="/setting-profile"
-            class="flex text-lg font-semibold items-center py-3 px-4 text-grey-2 rounded-tl-md rounded-bl-md transition-all"
+            :to="sidebar.link"
+            class="flex text-lg font-semibold items-center py-3 px-4 text-grey-2 rounded-tl-md rounded-bl-md transition-all max-md:px-2 max-md:text-base"
             :class="isActiveSideBar === index && '!bg-background !text-purple'"
           >
             <i class="mr-3 text-lg" :class="sidebar.icon" />
@@ -18,40 +34,46 @@
         </li>
       </ul>
     </section>
-    <div class="fixed top-0 left-0 w-full h-full bg-black/50 z-40 md:hidden sidebar-overlay"></div>
+    <div
+      v-if="isOpenMenuSidebar"
+      @click="toggleMenuSidebar"
+      class="fixed top-0 left-0 w-full h-full bg-black/50 z-40 md:hidden sidebar-overlay"
+    ></div>
 
     <section
       class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-linear min-h-screen transition-all main"
     >
       <!-- navbar -->
+
       <div
-        class="py-2 px-6 bg-transparent flex items-center shadow-md shadow-black/5 sticky top-0 left-0 z-30"
+        class="py-2 px-6 bg-transparent flexBetween shadow-md shadow-black/5 sticky top-0 left-0 z-30 max-md:relative max-md:pb-[70px]"
       >
-        <button type="button" class="text-lg text-gray-900 font-semibold sidebar-toggle">
-          <i class="ri-menu-line"></i>
-        </button>
+        <div class="hidden max-md:inline-block" @click="toggleMenuSidebar">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </div>
 
-        <ul class="ml-auto flex items-center">
-          <li class="mr-1 dropdown">
-            <input-search />
-          </li>
+        <h3 class="font-medium text-text text-2xl max-md:text-lg">Trang chủ</h3>
 
-          <li class=" ">
-            <div
-              class="relative cursor-pointer text-gray-400 w-8 h-8 rounded flex items-center justify-center hover:text-gray-600"
-              @click="isActiveMotion = !isActiveMotion"
-            >
-              <i class="fa-regular fa-bell text-xl"></i>
+        <div
+          class="mr-1 w-2/4 max-md:absolute max-md:top-[70px] max-md:left-0 max-md:right-0 max-md:w-11/12 max-md:mx-auto"
+        >
+          <input-search />
+        </div>
 
-              <modal-info
-                byClassStyle="text-sm  top-[50px] left-[-100px] w-[250px] right-0"
-                :isActive.="isActiveMotion"
-                :listMenuRender="NOTIFICATIONS"
-              />
-            </div>
-          </li>
+        <div class="flex items-center">
+          <div
+            class="relative cursor-pointer text-gray-400 w-8 h-8 rounded flex items-center justify-center hover:text-gray-600"
+            @click="isActiveMotion = !isActiveMotion"
+          >
+            <i class="fa-regular fa-bell text-xl"></i>
 
-          <li class="ml-2">
+            <modal-info
+              byClassStyle="text-sm  top-[50px] left-[-100px] w-[250px] right-0"
+              :isActive.="isActiveMotion"
+              :listMenuRender="NOTIFICATIONS"
+            />
+          </div>
+          <div class="ml-2">
             <div class="flex items-center">
               <div class="flex-shrink-0 w-10 h-10 relative">
                 <div class="p-1 bg-white rounded-full focus:outline-none focus:ring">
@@ -75,14 +97,14 @@
                 <h2 class="text-sm font-semibold text-gray-800">Đăng Tùng</h2>
                 <p class="text-xs text-gray-500">Admin</p>
                 <!-- <modal-info
-                  byClassStyle="top-[60px] left-[-45px] w-[150px]   right-0"
-                  :isActive="isActiveModalUser"
-                  :listMenuRender="menuModalUser"
-                /> -->
+                    byClassStyle="top-[60px] left-[-45px] w-[150px]   right-0"
+                    :isActive="isActiveModalUser"
+                    :listMenuRender="MENU_MODAL_USER"
+                  /> -->
               </div>
             </div>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
 
       <!-- content -->
@@ -93,22 +115,55 @@
 </template>
 
 <script setup>
-import { menuSidenav, menuModalUser, NOTIFICATIONS } from '@/utils/constants'
-import { computed, ref } from 'vue'
+import { MENU_SIDE_NAV, MENU_MODAL_USER, NOTIFICATIONS } from '@/utils/constants'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import InputSearch from './InputSearch.vue'
 import ModalInfo from './ModalInfo.vue'
 import store from '@/store'
 
 const isActiveModalUser = ref(false)
 const isActiveMotion = ref(false)
+const isActiveSideBar = ref(0)
+const isOpenMenuSidebar = ref(false)
+const menuRef = ref(null)
 
 const handleActiveSideBar = (index) => {
-  console.log('index', index)
-  store.commit('SET_ACTIVE_SIDE_BAR', +index)
+  isActiveSideBar.value = index
 }
 
-const isActiveSideBar = computed(() => store.state.isActiveSideBar)
-console.log('isActiveSideBar', isActiveSideBar)
+const userCurrent = store.state.user
+
+console.log('userCurrent', userCurrent)
+
+const toggleMenuSidebar = () => {
+  console.log('is', isOpenMenuSidebar)
+  isOpenMenuSidebar.value = !isOpenMenuSidebar.value
+  if (isOpenMenuSidebar.value) {
+    document.addEventListener('click', closeMenuOutside)
+  } else {
+    document.removeEventListener('click', closeMenuOutside)
+  }
+}
+
+const closeMenu = () => {
+  isOpenMenuSidebar.value = false
+}
+
+const closeMenuOutside = (event) => {
+  if (menuRef.value && !menuRef.value.contains(event.target)) {
+    closeMenu()
+  }
+}
+
+onMounted(() => {
+  menuRef.value = document.getElementById('menu')
+})
 </script>
 
-<style scoped></style>
+<style scoped>
+.sidenav_mobile {
+  display: none;
+  padding: 8px8px 0;
+  font-size: 16px;
+}
+</style>

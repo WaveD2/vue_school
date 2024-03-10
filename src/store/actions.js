@@ -6,16 +6,13 @@ export const loginUser = async ({ commit }, formLogin) => {
   const res = await callApi('v2/auth/login', 'POST', formLogin)
   if (res.data.tokens) {
     const { access, refresh } = res.data.tokens
-    setStoreTokens(access.token, refresh.token)
+    setStoreTokens({ accessToken: access, refreshToken: refresh })
   }
 
   commit('SET_USER', res.data.user)
-
-  return 'con chim non'
 }
 
-// export const createAccessTokenNew = ({ commit }, productId) => {
-//   Product.show(productId).then((response) => {
-//     commit('SET_PRODUCT', response.data)
-//   })
-// }
+export const getInfoUser = async ({ commit }) => {
+  const res = await callApi('v2/auth/user-info', 'GET')
+  commit('SET_USER', res.data)
+}
