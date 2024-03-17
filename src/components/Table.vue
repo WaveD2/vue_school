@@ -1,78 +1,120 @@
 <script setup>
-import { COLUMN_TABLE_MY_CLASS } from '@/utils/constants'
+import Button from './Button.vue'
+import { getByGender, getTimeYear, toastInfo } from '@/utils/function'
+import store from '@/store'
+
+import { ref, onMounted, reactive, watch, computed, render, toRefs } from 'vue'
+
+const props = defineProps(['listDataTable', 'columnTable'])
+console.log('props', props)
+
+const keyColTable = Object.keys(props.columnTable)
+
+const emit = defineEmits(['setModal'])
+
+let isActiveAction = ref(null)
+
+const renderRowTable = computed(() => props.listDataTable)
+const renderColTable = computed(() => props.columnTable)
+
+const handleActiveAction = (indexRow) => {
+  if (indexRow === isActiveAction.value) isActiveAction.value = null
+  else isActiveAction.value = indexRow
+}
+
+const handleOpenModal = async ({ type, rowMyClass }) => {
+  console.log('row', rowMyClass)
+  if (type === 'detail') {
+    if (rowMyClass.role) {
+      await store.dispatch('setDetailParent', { id: rowMyClass.id })
+    } else {
+      await store.dispatch('setDetailStudent', { id: rowMyClass.id })
+    }
+  }
+  emit('setModal', { rowMyClass, type })
+  isActiveAction.value = null
+}
 </script>
 
 <template>
-  <div class="flex flex-wrap -mx-3 mb-5">
-    <div class="w-full max-w-full px-3 mb-6 mx-auto">
+  <div class="flex flex-wrap mx-3">
+    <div class="w-full max-w-full mx-auto">
       <div
-        class="relative flex-[1_auto] flex flex-col break-words min-w-0 bg-clip-border rounded-[.95rem] bg-white m-5"
+        class="relative flex-auto flex flex-col break-words min-w-0 bg-clip-border rounded-xl bg-white m-2"
       >
         <div
           class="relative flex flex-col min-w-0 break-words border border-dashed bg-clip-border rounded-2xl border-stone-200 bg-light/30"
         >
-          <!-- card header -->
-          <div
-            class="px-9 pt-5 flex justify-between items-stretch flex-wrap min-h-[70px] pb-0 bg-transparent"
-          >
-            <h3
-              class="flex flex-col items-start justify-center m-2 ml-0 font-medium text-xl/tight text-dark"
-            >
-              <span class="mr-3 font-semibold text-dark">Projects Deliveries</span>
-              <span class="mt-1 font-medium text-secondary-dark text-lg/normal"
-                >All projects from the Loopple team</span
-              >
-            </h3>
-            <div class="relative flex flex-wrap items-center my-2">
-              <a
-                href="javascript:void(0)"
-                class="inline-block text-[.925rem] font-medium leading-normal text-center align-middle cursor-pointer rounded-2xl transition-colors duration-150 ease-in-out text-light-inverse bg-light-dark border-light shadow-none border-0 py-2 px-5 hover:bg-secondary active:bg-light focus:bg-light"
-              >
-                See other projects
-              </a>
-            </div>
-          </div>
-          <!-- end card header -->
-          <!-- card body  -->
-          <div class="flex-auto block py-8 pt-6 px-9">
-            <div class="overflow-x-auto">
-              <table class="w-full my-0 align-middle text-dark border-neutral-200">
-                <thead class="align-bottom">
-                  <tr class="font-semibold text-[0.95rem] text-secondary-dark">
-                    <th
-                      class="pb-3 text-start min-w-[175px]"
-                      v-for="(col, index) in COLUMN_TABLE_MY_CLASS"
-                      :key="index"
+          <div class="w-full p-4 pt-3 px-2 overflow-scroll max-h-[70vh]">
+            <table class="w-full my-0 align-middle text-text border-neutral-200">
+              <thead class="align-bottom" v-if="keyColTable.length > 0">
+                <tr class="font-semibold text-lg text-secondary-dark bg-grey-2">
+                  <th
+                    class="py-3 text-center min-w-[175px]"
+                    v-for="(col, index) of renderColTable"
+                    :key="index"
+                  >
+                    {{ col }}
+                  </th>
+
+                  <th class="py-3 text-center min-w-[175px]">Tùy chọn</th>
+                </tr>
+              </thead>
+              <tbody class="w-full" v-if="renderRowTable?.length > 0">
+                <tr
+                  class="border-b border-dashed bg-slate rounded-lg hover:bg-blue-200"
+                  v-for="(rowMyClass, i) in renderRowTable"
+                  :key="i"
+                >
+                  <td
+                    class="p-3 pl-2"
+                    v-for="key of keyColTable"
+                    @click="handleOpenModal({ type: 'detail', rowMyClass })"
+                  >
+                    <div class="flexCenter">
+                      <p
+                        class="mb-1 font-semibold transition-colors duration-200 ease-in-out text-base text-secondary-inverse hover:text-primary"
+                      >
+                        {{ rowMyClass[key] }}
+                      </p>
+                    </div>
+                  </td>
+
+                  <td class="p-3 pl-0 text-center relative">
+                    <Button
+                      left-icon="fa-solid fa-ellipsis text-xl align-center"
+                      @click="handleActiveAction(i)"
+                      :class="isActiveAction === i && '!bg-primary !text-while'"
+                    />
+                    <div
+                      v-if="isActiveAction === i"
+                      class="flexCol absolute border border-grey-2 rounded-md z-[99] left-[20%] right-[20%] bg-linear p-2"
                     >
-                      {{ col }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="border-b border-dashed last:border-b-0">
-                    <td class="p-3 pl-0">
-                      <div class="flex items-center">
-                        <div class="relative inline-block shrink-0 rounded-2xl me-3">
-                          <img
-                            src="https://raw.githubusercontent.com/Loopple/loopple-public-assets/main/riva-dashboard-tailwind/img/img-49-new.jpg"
-                            class="w-[50px] h-[50px] inline-block shrink-0 rounded-2xl"
-                            alt=""
-                          />
-                        </div>
-                        <div class="flex flex-col justify-start">
-                          <a
-                            href="javascript:void(0)"
-                            class="mb-1 font-semibold transition-colors duration-200 ease-in-out text-lg/normal text-secondary-inverse hover:text-primary"
-                          >
-                            Social Media API
-                          </a>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                      <Button
+                        byStyleClass="!w-full !bg-slate py-1"
+                        @click="handleOpenModal({ type: 'detail', rowMyClass })"
+                        >Xem chi tiết</Button
+                      >
+
+                      <Button
+                        byStyleClass="!w-full !bg-slate py-1"
+                        @click="handleOpenModal({ type: 'update', rowMyClass })"
+                        >Sửa</Button
+                      >
+                      <Button
+                        byStyleClass="!w-full !bg-slate py-1"
+                        @click="handleOpenModal({ type: 'delete', rowMyClass })"
+                        >Xóa</Button
+                      >
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div
+              v-if="listDataTable?.length <= 0 || !listDataTable"
+              class="block h-80 bg-gray-200 dark:bg-gray-700 w-full"
+            ></div>
           </div>
         </div>
       </div>
@@ -81,3 +123,6 @@ import { COLUMN_TABLE_MY_CLASS } from '@/utils/constants'
 </template>
 
 <style lang="scss" scoped></style>
+<!-- 
+  emit('setModal', { type: 'delete' })
+ -->

@@ -33,7 +33,7 @@ provide(
 </script>
 
 <template>
-  <div class="mb-4 min-w-64 max-md:w-full">
+  <div class="mb-4 min-w-56 max-md:w-full">
     <Label v-if="props.label" :for="props.id" :required="props.required">{{ props.label }}</Label>
 
     <slot v-bind="props" />

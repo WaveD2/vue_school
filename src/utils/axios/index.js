@@ -1,7 +1,17 @@
 import axios from 'axios'
+import { toastInfo } from '../function'
+import { checkAccessToken } from './setupApi'
 
-export async function callApi(endpoint, method = 'GET', data = null) {
+export async function callApi(endpoint, method = 'GET', data = null, params) {
+  //Check time token
+  // if (endpoint !== 'v2/auth/login') {
+  //   const isTimeToken = await checkAccessToken()
+  //   console.log('isTimeToken', isTimeToken)
+  //   if (!isTimeToken) return
+  // }
+
   const accessTokenHeaders = JSON.parse(localStorage.getItem('access_token'))?.token
+
   try {
     const config = {
       method,
@@ -10,20 +20,17 @@ export async function callApi(endpoint, method = 'GET', data = null) {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + accessTokenHeaders || ' '
       },
-      data: data ? data : null
+      data: data ? data : {},
+      params: params
     }
 
     const response = await axios(config)
 
-    if (response.status !== 200) {
-      throw new Error(`API request failed with status ${response.status}`)
-    }
-
-    const responseData = response.data
-
-    return responseData
+    return response.data
   } catch (error) {
-    console.error('Error calling API:', error.message)
-    throw error
+    if (error.response.data) {
+      return toastInfo({ type: 'error', mes: error.response.data.message })
+    }
+    return toastInfo({ type: 'error', mes: error.message })
   }
 }

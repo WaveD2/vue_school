@@ -5,16 +5,15 @@ import { checkAccessToken } from './utils/axios/setupApi'
 const route = useRouter()
 
 document.addEventListener('DOMContentLoaded', async function () {
-  // console.log('loading page')
-  // const res = await checkAccessToken()
-  // if (!res) route.push('/login')
-  // else \
-  route.push('/')
+  const res = await checkAccessToken()
+  if (!res) route.push('/login')
+  else route.push('/my-parent')
 })
 </script>
 
 <template>
   <VApp>
     <RouterView />
+    <notifications group="foo" />
   </VApp>
 </template>

@@ -4,7 +4,7 @@
 
     <div class="w-1/2 h-screen hidden lg:block">
       <img
-        src="../assets/images/logo_school.jpg"
+        src="../assets/images/bg-product.jpg"
         alt="Placeholder Image"
         class="object-contain w-full h-full"
       />

@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import store from '@/store'
 
 import Input from '../components/Input.vue'
@@ -7,127 +7,92 @@ import Field from '../components/Field.vue'
 import Select from '@/components/Select.vue'
 import FiledImage from '@/components/FiledImage.vue'
 import Tabs from '@/components/Tabs.vue'
+// import { validateFormParent } from '@/utils/validateYub'
+import { GENDER } from '@/utils/constants'
+import { validateUser } from '@/utils/validateYub'
+import { arrayToObject } from '@/utils/function'
 
-const user = {
-  name: 'Phạm Văn A',
-  username: 'parent1',
-  password: '34f83b4b453db075f374fa73365b8283',
-  gender: 'male',
-  contactInfo: {
-    email: 'parent1@example.com',
-    phones: ['0987654321'],
-    address: ['123 Đường ABC, Quận XYZ, Thành phố HCM']
-  },
-  roles: ['parent'],
-  avatar: {
-    key: 'parent1_avatar_key',
-    bucket: 'parent1_avatar_bucket',
-    url: 'https://example.com/parent1_avatar.jpg'
-  },
-  createdAt: '2024-03-05T10:40:29.256Z',
-  updatedAt: '2024-03-05T10:40:29.256Z',
-  id: '65e1b565ae8c0d692731a1dd'
-}
-const formProfile = reactive(user)
+const formProfile = reactive(Object.assign({}, store.state.user.record))
 
+console.log('formProfile', formProfile)
 const errors = ref({})
 
-function submit() {
-  // errors.value = {
-  //   name: 'Name is invalid because...',
-  //   email: 'Email is invalid because...',
-  //   password: 'Password is invalid because...'
-  // }
+onMounted(async () => {
+  if (Object.keys(formProfile).length === 0) await store.dispatch('getInfoUser')
+})
 
-  console.log('value', formProfile)
+async function submit() {
+  errors.value = {}
+  console.log('new ', formProfile)
+  try {
+    const { username } = formProfile
+    const { email } = formProfile.parent
+
+    validateUser.validateSync({ name: username, email: email }, { abortEarly: false })
+
+    // await store.dispatch('updateUserCurrent', {
+    //   formProfile
+    // })
+  } catch (error) {
+    console.log('ero', error)
+    const errorMess = error.inner.map((e) => ({
+      [e.path]: e.message
+    }))
+
+    errors.value = arrayToObject(errorMess)
+  }
 }
 </script>
 
 <template>
-  <div class="p-3 bg-background rounded-md">
-    <!-- <div class="flexStart overflow-x-auto overflow-y-hidden 00 whitespace-nowrap">
-      <button
-        type="button"
-        v-for="(menu, index) in listMenu"
-        :key="index"
-        class="h-10 px-4 p text-center text-text bg-transparent dark:border-blue-400 dark:text-blue-300 whitespace-nowrap focus:outline-none transition-colors"
-        :class="isActive === index && '!text-active !border-b-active !border-b-2'"
-        @click="isActive = index"
-      >
-        <p>{{ menu }}</p>
-      </button>
-    </div> -->
-
-    <!--  -->
-    <Tabs>
-      <div class="mt-6 flex gap-2 max-md:flex-col">
-        <div class="flex w-1/4 max-md:justify-center max-md:w-full">
-          <div class="relative boxImg max-h-64 max-w-64 w-full">
-            <img
-              :src="'https://i.pinimg.com/236x/02/e6/62/02e662a386b396efe809a4bdcd2446cb.jpg'"
-              alt="avatar"
-              class="w-full max-h-64 max-w-64 object-cover rounded-full border-2 border-grey-3"
-            />
-          </div>
-        </div>
-
-        <div class="flex-1">
-          <div class="px-4 flex flex-wrap gap-3 max-md:flexCol max-md:gap-2 flex-1">
-            <Field label="Họ và tên" required :error="errors.name">
-              <Input v-model="formProfile.name" type="text" />
-            </Field>
-            <Field label="Tên đăng nhập" required :error="errors.name">
-              <Input v-model="formProfile.username" type="text" />
-            </Field>
-
-            <Field label="Email" required :error="errors.email">
-              <Input v-model="formProfile.contactInfo.email" type="email" />
-            </Field>
-            <Field label="Số điện thoại" required :error="errors.email">
-              <Input v-model="formProfile.contactInfo.phones" type="text" />
-            </Field>
-            <Field label="Giới tính" required :error="errors.email">
-              <Select v-model="formProfile.contactInfo.gender" />
-            </Field>
-            <Field label="Địa chỉ" required :error="errors.name" :class="'md:!w-[524px]'">
-              <Input v-model="formProfile.contactInfo.address[0]" type="text" />
-            </Field>
-            <!-- <Field
-            label="Password"
-            required
-            :error="errors.password"
-            help="Sould be at least 8 characters long."
-          >
-            <Input v-model="form.password" type="password" />
-          </Field> -->
-          </div>
-          <div class="w-full flexEnd">
-            <button type="button" @click="submit" class="btn_blue_hover w-1/5 max-md:w-2/5">
-              Lưu
-            </button>
-          </div>
-        </div>
+  <div class="p-3 w-full bg-background rounded-md">
+    <div
+      class="mt-6 w-full flex gap-2 max-md:flex-col"
+      v-if="Object.keys(formProfile).length !== 0"
+    >
+      <div class="flex max-md:justify-center">
+        <filed-image
+          v-model="formProfile.parent.avatar"
+          type="file"
+          styleByClass="w-40 h-40 rounded-full max-md:!w-50 max-md:!h-50"
+        />
       </div>
-    </Tabs>
+      <div class="flex-1 px-4 flex flex-wrap gap-3 max-md:flexCol max-md:gap-2">
+        <Field label="Họ và tên" required :error="errors.name">
+          <Input v-model="formProfile.username" type="text" />
+        </Field>
+        <Field label="Tên đăng nhập" required>
+          <Input v-model="formProfile.parent.name" :disabled="true" type="text" />
+        </Field>
+        <Field label="ID" required>
+          <Input v-model="formProfile.parentId" :disabled="true" type="text" />
+        </Field>
+
+        <Field label="Email" required :error="errors.email" v-if="formProfile.parent.email">
+          <Input v-model="formProfile.parent.email" type="email" />
+        </Field>
+        <Field label="Số điện thoại" required v-if="formProfile.parent">
+          <Input v-model="formProfile.parent.phone" type="text" />
+        </Field>
+        <Field
+          label="Quốc tịch"
+          required
+          :error="errors.nationality"
+          v-if="formProfile.parent.nationality"
+        >
+          <Input v-model="formProfile.parent.nationality" type="text" />
+        </Field>
+
+        <Field label="Giới tính" required v-if="formProfile.parent.gender">
+          <Select v-model="formProfile.parent.gender" :options="GENDER" />
+        </Field>
+        <Field label="Địa chỉ" required :class="'md:!w-[460px]'" v-if="formProfile.parent.address">
+          <Input v-model="formProfile.parent.address" type="text" />
+        </Field>
+      </div>
+    </div>
+    <div class="w-full flexEnd">
+      <button type="button" @click="submit" class="btn_blue_hover w-1/5 max-md:w-2/5">Lưu</button>
+    </div>
   </div>
 </template>
-
-<style scoped>
-.boxImg:hover::before {
-  content: 'Chỉnh sửa';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #9793937e;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: white;
-  border-radius: 100%;
-  cursor: pointer;
-  transition: all ease-in-out 1s;
-}
-</style>

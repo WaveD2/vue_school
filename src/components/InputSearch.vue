@@ -1,10 +1,22 @@
+<script setup>
+const props = defineProps({
+  byStyleClass: String,
+  modelValue: String
+})
+
+const emit = defineEmits(['update:modelValue'])
+</script>
+
 <template>
   <div class="relative text-gray-600 w-full">
     <input
       type="search"
       name="serch"
+      :value="props.modelValue"
       placeholder="Tìm kiếm..."
       class="bg-white h-10 px-5 w-full pr-10 rounded-full text-sm focus:outline-none"
+      @change="($event) => emit('update:modelValue', $event.target.value)"
+      :class="props.byStyleClass"
     />
     <button type="submit" class="absolute right-0 top-0 mt-3 mr-4">
       <svg
@@ -28,13 +40,5 @@
     </button>
   </div>
 </template>
-
-<script>
-export default {
-  setup() {
-    return {}
-  }
-}
-</script>
 
 <style lang="scss" scoped></style>

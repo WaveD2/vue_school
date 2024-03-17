@@ -1,7 +1,6 @@
 <script setup>
 const props = defineProps(['isLoading'])
-
-console.log('props loading', props.isLoading)
+console.log('loading ', props.isLoading)
 </script>
 
 <template>
