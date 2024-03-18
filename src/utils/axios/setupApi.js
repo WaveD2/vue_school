@@ -6,7 +6,6 @@ export async function checkAccessToken() {
   const { accessToken, refreshToken } = getStoreTokens()
 
   //Không có token
-
   if (!accessToken && !refreshToken) return false
 
   // accessToken và refreshToken còn hiệu lực
@@ -16,11 +15,12 @@ export async function checkAccessToken() {
   }
   // accessToken hết hạn và refreshToken còn hiệu lực
   else if (!isExpired(accessToken?.expires) && isExpired(refreshToken?.expires)) {
-    return await fetchToken({ tokenCheck: refreshToken })
+    const res = await fetchToken({ tokenCheck: refreshToken })
+    return res
   }
   // Trường hợp khác
   else {
-    toastInfo({ type: 'info', mes: 'Lỗi! Vui lòng đăng nhập lại' })
+    toastInfo({ type: 'info', mes: 'Có lỗi xảy ra' })
     return false
   }
 }
@@ -40,6 +40,8 @@ export function setStoreTokens({ accessToken, refreshToken }) {
 export function removeTokenStore() {
   localStorage.removeItem('access_token')
   localStorage.removeItem('refresh_token')
+  localStorage.removeItem('sort_current')
+  localStorage.removeItem('current_page')
 }
 
 export function isExpired(expires) {
@@ -56,6 +58,8 @@ export async function fetchToken({ tokenCheck }) {
     const responseData = await callApi(`v2/auth/refresh-token`, 'POST', {
       refreshToken: token
     })
+    if (!responseData.data) return false
+
     const { access, refresh } = responseData.data.tokens
 
     if (access || refresh) {

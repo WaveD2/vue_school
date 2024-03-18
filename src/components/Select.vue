@@ -5,9 +5,11 @@ const props = defineProps({
   required: Boolean,
   invalid: Boolean,
   styleClass: String,
-  options: [Array]
+  options: [Array],
+  valueOption: [Array]
 })
 const emit = defineEmits(['update:modelValue'])
+console.log('props', props)
 </script>
 
 <template>

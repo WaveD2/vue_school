@@ -14,38 +14,19 @@ export const VALUE_REGISTER = {
 
 export const MENU_SIDE_NAV = [
   {
-    text: 'Quản lý người dùng',
+    text: 'Quản lý giáo viên',
     isActive: false,
     icon: ' fa-solid fa-graduation-cap ',
-    link: '/my-parent',
+    link: '/teacher',
     func: function () {
       return
     }
   },
-  {
-    text: 'Quản lý học sinh',
-    isActive: false,
-    icon: ' fa-solid fa-graduation-cap ',
-    link: '/my-student',
-    func: function () {
-      return
-    }
-  },
-
   {
     text: 'Cài đặt',
     isActive: false,
     icon: 'fa-solid fa-gear',
     link: '/setting-profile',
-    func: function () {
-      return
-    }
-  },
-  {
-    text: 'Cài đặt',
-    isActive: false,
-    icon: 'fa-solid fa-gear',
-    link: '/teacher',
     func: function () {
       return
     }
@@ -78,13 +59,6 @@ export const FORM_SETTING = [
   { country: '', label: 'Quê quán' }
 ]
 
-export const COLUMN_TABLE_STUDENTS = {
-  name: 'Tên',
-  gender: 'Giới tính',
-  currentAddress: 'Quê quán',
-  status: 'Trạng thái'
-}
-
 export const COLUMN_TABLE_USERS = {
   username: 'Tên',
   role: 'Quyền',
@@ -102,28 +76,35 @@ export const TYPE_STUDENT = [
   { value: 'reserve', text: 'Cấp 3' },
   { value: 'graduated', text: 'Đã tốt nghiệp' }
 ]
-export const TYPE_PARENT = [
-  { value: 'father', text: 'Bố' },
-  { value: 'mother', text: 'Mẹ' },
-  { value: 'other', text: 'Khác' }
-]
-export const TYPE_ROLE = [
-  { value: 'admin', text: 'admin' },
-  { value: 'teacher', text: 'Gíao viên' },
-  { value: 'parent', text: 'Người dùng' }
-]
 
 export const TYPE_STATUS = [
   { value: 'active', text: 'Hoạt động' },
   { value: 'disabled', text: 'Tạm dừng' }
 ]
+export const LABEL_TABLE_TEACHER = {
+  avatar: 'Ảnh',
+  name: 'Tên',
+  gender: 'Giới tính',
+  phone: 'Số điện thoại',
+  email: 'Gmail',
+  status: 'Trạng thái',
+  currentAddress: 'Địa chỉ'
+}
 
-export const VALUE_STUDENT = {
-  name: '',
-  dateOfBirth: '',
-  gender: '',
-  parent: {
-    as: '',
-    userId: ''
-  }
+export const LABEL_MODAL_DETAIL_TEACHER = {
+  avatar: 'Ảnh',
+  name: 'Tên',
+  gender: 'Giới tính',
+  phone: 'Số điện thoại',
+  email: 'Gmail',
+  pastClassIds: 'Lớp học',
+  currentAddress: 'Địa chỉ',
+  nationality: 'Quốc tịch',
+  permanentResidence: 'Hộ khẩu thường trú',
+  healthInsuranceNumber: 'Số bảo hiểm',
+  status: 'Trạng thái',
+  type: 'Loại',
+  identityNumber: 'Số định danh',
+  note: 'Ghi trú ',
+  dateOfBirth: 'Ngày sinh'
 }

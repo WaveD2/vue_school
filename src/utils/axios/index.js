@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { toastInfo } from '../function'
-import { checkAccessToken } from './setupApi'
+import router from '@/router'
 
 export async function callApi(endpoint, method = 'GET', data = null, params) {
   //Check time token
@@ -28,6 +28,10 @@ export async function callApi(endpoint, method = 'GET', data = null, params) {
 
     return response.data
   } catch (error) {
+    if (error.response.data.code === 'NotAuthen') {
+      router.push('/login')
+      return toastInfo({ type: 'error', mes: error.response.data.message })
+    }
     if (error.response.data) {
       return toastInfo({ type: 'error', mes: error.response.data.message })
     }

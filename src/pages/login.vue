@@ -30,7 +30,7 @@ const handleSubmitForm = async () => {
     // CALL API
     await store.dispatch('loginUser', formLogin)
 
-    route.push('/my-student')
+    route.push('/teacher')
   } catch (error) {
     const { path, message } = error
     typeError.type = path

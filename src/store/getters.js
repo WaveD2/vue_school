@@ -1,19 +1,10 @@
-export const getListStudent = (state) => {
-  return state.listStudent
-}
-export const getListParent = (state) => {
-  return state.listParent
-}
+import { LABEL_MODAL_DETAIL_TEACHER } from '@/utils/constants'
 
-export const getNameParent = (state) => {
-  const listNameParent = []
-  //parent.roles[0] || parent.name
-  state.listParent.forEach((parent) =>
-    listNameParent.push({
-      value: parent.id,
-      as: parent.role,
-      text: parent.username
-    })
-  )
-  return listNameParent
+export const getLabelModalDetail = (state) => {
+  const checkTypeUserDetail = state.detailParent
+  console.log('checkTypeUserDetail', checkTypeUserDetail)
+  return {
+    label: LABEL_MODAL_DETAIL_TEACHER,
+    value: checkTypeUserDetail
+  }
 }

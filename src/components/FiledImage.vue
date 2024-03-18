@@ -18,7 +18,7 @@ const props = defineProps({
 })
 
 const fileRef = ref()
-
+console.log('img' ,props.modelValue);
 let imageUrl = reactive(props.modelValue)
 let imageInner = imageUrl.url
 
@@ -63,6 +63,7 @@ const { bucket , key}  = res.data.formData
    
    <div @click="fileRef.click()"  class="relative cursor-pointer overflow-hidden beforeImg" :class="props.styleByClass">
       <img
+        
         v-if="modelValue"
         :src="imageInner"
         alt="Uploaded Image"

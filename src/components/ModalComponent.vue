@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, onUpdated, ref } from 'vue'
 
-const props = defineProps(['isInnerModal'])
+const props = defineProps(['isInnerModal', 'styleModalContainer'])
 const emit = defineEmits(['closeModal'])
 const isModal = ref()
 
@@ -24,11 +24,13 @@ console.log(' ád', isModal.value)
     id="crud-modal"
     tabindex="-1"
     aria-hidden="true"
-    class="overflow-y-auto overflow-x-hidden justify-center items-center ww-full md:inset-0 max-h-full fixed top-0 right-0 left-0 z-50 bg-[#3f373787]"
+    class="overflow-y-auto overflow-x-hidden justify-center items-center w-full md:inset-0 max-h-full fixed top-0 right-0 left-0 z-50 bg-[#3f373787]"
     :class="!isModal && 'hidden'"
   >
-    <div class="relativeCenter z-50 p-4 w-full max-w-xl max-h-full">
-      <!-- Modal content -->
+    <div
+      class="relativeCenter z-50 p-4 w-full max-w-xl max-h-full"
+      :class="props.styleModalContainer"
+    >
       <div class="relative w-full bg-white rounded-lg shadow dark:bg-gray-700">
         <!-- Modal header -->
         <div
@@ -59,9 +61,10 @@ console.log(' ád', isModal.value)
             <span class="sr-only">Đóng</span>
           </button>
         </div>
-        
-          <slot name="content" />
-         
+
+        <!-- content -->
+        <slot name="content" />
+
         <slot name="footer" />
       </div>
     </div>

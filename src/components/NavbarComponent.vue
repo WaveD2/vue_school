@@ -4,6 +4,9 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import InputSearch from './InputSearch.vue'
 import ModalInfo from './ModalInfo.vue'
 import store from '@/store'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 const isActiveModalUser = ref(false)
 const isActiveMotion = ref(false)
@@ -69,7 +72,7 @@ onMounted(() => {
             @click="sidebar?.func()"
             :to="sidebar.link"
             class="flex text-lg font-semibold items-center py-3 px-4 text-grey-2 rounded-tl-md rounded-bl-md transition-all max-md:px-2 max-md:text-base"
-            :class="isActiveSideBar === index && '!bg-background !text-purple'"
+            :class="route.path === sidebar.link && '!bg-background !text-purple'"
           >
             <i class="mr-3 text-lg" :class="sidebar.icon" />
             <span class="text-sm">{{ sidebar.text }}</span>
@@ -143,7 +146,7 @@ onMounted(() => {
 
       <!-- content -->
 
-      <section class="p-4"><slot /></section>
+      <section class="p-3"><slot /></section>
     </section>
   </main>
 </template>

@@ -1,10 +1,9 @@
 export default {
   user: {},
   isActiveSideBar: 0,
-  listStudent: [],
-  listParent: [],
+  listTeacher: [],
   pagination: {},
   searchCurrent: '',
   isLoadingGlobal: false,
-  detailParent: {}
+  detailTeacher: {}
 }

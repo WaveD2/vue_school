@@ -13,16 +13,17 @@ const router = createRouter({
       meta: { requiresAuth: true },
       children: [
         {
-          path: '/my-parent',
-          name: 'myParent',
-          component: () => import('@/pages/myParent.vue')
+          path: '/',
+          name: 'teacher',
+          component: TableLayoutVue,
+          children: [
+            {
+              path: '/teacher',
+              name: 'teacher',
+              component: () => import('@/pages/myTeacher.vue')
+            }
+          ]
         },
-        {
-          path: '/my-student',
-          name: 'myStudent',
-          component: () => import('@/pages/myStudent.vue')
-        },
-
         {
           path: '/setting-profile',
           name: 'settingProfile',
@@ -42,17 +43,6 @@ const router = createRouter({
         {
           path: 'register',
           component: () => import('../pages/register.vue')
-        }
-      ]
-    },
-    {
-      path: '/',
-      name: 'teacher',
-      component: TableLayoutVue,
-      children: [
-        {
-          path: '/teacher',
-          component: () => import('@/pages/myTeacher.vue')
         }
       ]
     }

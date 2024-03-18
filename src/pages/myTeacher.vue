@@ -1,19 +1,20 @@
 <script setup>
 import store from '@/store'
 import { ref, onMounted, computed } from 'vue'
-import { COLUMN_TABLE_STUDENTS } from '@/utils/constants'
+import { LABEL_TABLE_TEACHER } from '@/utils/constants'
 
 const emit = defineEmits(['getDataTable'])
+const dataRowTable = ref(null)
 
 onMounted(async () => {
   // if (store.state.listStudent.length !== 0) return
-  await store.dispatch('getStudent')
+  await store.dispatch('getTeachers')
 
-  const dataRowTable = store.state.listStudent
-  console.log('adad', dataRowTable)
+  dataRowTable.value = store.state.listTeacher
+  console.log('adad', dataRowTable.value)
   emit('getDataTable', {
-    rowTable: dataRowTable,
-    colTable: COLUMN_TABLE_STUDENTS
+    rowTable: dataRowTable.value,
+    colTable: LABEL_TABLE_TEACHER
   })
 })
 // const dataSdtStore = computed(() => {
@@ -26,3 +27,4 @@ onMounted(async () => {
 </script>
 
 <template></template>
+, LABEL_MODAL_DETAIL_TEACHER, LABEL_TABLE_TEACHER
