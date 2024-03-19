@@ -7,14 +7,12 @@ import Field from '../components/Field.vue'
 import Select from '@/components/Select.vue'
 import FiledImage from '@/components/FiledImage.vue'
 import Tabs from '@/components/Tabs.vue'
-// import { validateFormParent } from '@/utils/validateYub'
 import { GENDER } from '@/utils/constants'
 import { validateUser } from '@/utils/validateYub'
 import { arrayToObject } from '@/utils/function'
 
 const formProfile = reactive(Object.assign({}, store.state.user.record))
 
-console.log('formProfile', formProfile)
 const errors = ref({})
 
 onMounted(async () => {
@@ -23,16 +21,15 @@ onMounted(async () => {
 
 async function submit() {
   errors.value = {}
-  console.log('new ', formProfile)
   try {
     const { username } = formProfile
     const { email } = formProfile.parent
 
     validateUser.validateSync({ name: username, email: email }, { abortEarly: false })
 
-    // await store.dispatch('updateUserCurrent', {
-    //   formProfile
-    // })
+    await store.dispatch('updateUserCurrent', {
+      formProfile
+    })
   } catch (error) {
     console.log('ero', error)
     const errorMess = error.inner.map((e) => ({

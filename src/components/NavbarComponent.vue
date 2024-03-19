@@ -20,6 +20,7 @@ const handleActiveSideBar = (index) => {
 
 const userCurrent = computed(() => store.state.user)
 
+console.log('userCurrent', userCurrent)
 const toggleMenuSidebar = () => {
   isOpenMenuSidebar.value = !isOpenMenuSidebar.value
   if (isOpenMenuSidebar.value) {
@@ -100,44 +101,31 @@ onMounted(() => {
           </div>
 
           <h3 class="font-medium text-text text-2xl max-md:text-lg">Trang chủ</h3>
-
-          <div class="flex items-center">
-            <div
-              class="relative cursor-pointer text-gray-400 w-8 h-8 rounded flex items-center justify-center hover:text-gray-600"
-              @click="isActiveMotion = !isActiveMotion"
-            >
-              <i class="fa-regular fa-bell text-xl"></i>
-
-              <modal-info
-                byClassStyle="text-sm  top-[50px] left-[-100px] w-[250px] right-0"
-                :isActive.="isActiveMotion"
-                :listMenuRender="NOTIFICATIONS"
-              />
-            </div>
-            <div class="ml-2" v-if="Object.keys(userCurrent).length !== 0">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 w-10 h-10 relative">
-                  <div class="p-1 bg-white rounded-full focus:outline-none focus:ring">
-                    <img
-                      class="w-8 h-8 rounded-full"
-                      src="https://laravelui.spruko.com/tailwind/ynex/build/assets/images/faces/9.jpg"
-                      alt=""
-                    />
-                    <div
-                      class="top-0 left-7 absolute w-3 h-3 bg-lime-400 border-2 border-white rounded-full animate-ping"
-                    ></div>
-                    <div
-                      class="top-0 left-7 absolute w-3 h-3 bg-lime-500 border-2 border-white rounded-full"
-                    ></div>
-                  </div>
+          <div class="ml-2" v-if="Object.keys(userCurrent).length !== 0">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 w-10 h-10 relative">
+                <div class="p-1 bg-white rounded-full focus:outline-none focus:ring">
+                  <img
+                    class="w-8 h-8 rounded-full"
+                    src="https://laravelui.spruko.com/tailwind/ynex/build/assets/images/faces/9.jpg"
+                    alt=""
+                  />
+                  <div
+                    class="top-0 left-7 absolute w-3 h-3 bg-lime-400 border-2 border-white rounded-full animate-ping"
+                  ></div>
+                  <div
+                    class="top-0 left-7 absolute w-3 h-3 bg-lime-500 border-2 border-white rounded-full"
+                  ></div>
                 </div>
-                <div
-                  class="p-2 md:block text-left relative cursor-pointer"
-                  @click="isActiveModalUser = !isActiveModalUser"
-                >
-                  <h2 class="text-sm font-semibold text-gray-800">{{ userCurrent.username }}</h2>
-                  <p class="text-xs text-gray-500">{{ userCurrent.role }}</p>
-                </div>
+              </div>
+              <div
+                class="p-2 md:block text-left relative cursor-pointer"
+                @click="isActiveModalUser = !isActiveModalUser"
+              >
+                <h2 class="text-sm font-semibold text-gray-800">
+                  {{ userCurrent.record.username }}
+                </h2>
+                <p class="text-xs text-gray-500">{{ userCurrent.record.role }}</p>
               </div>
             </div>
           </div>

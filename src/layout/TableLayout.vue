@@ -11,11 +11,21 @@ import Input from '@/components/Input.vue'
 import Button from '@/components/Button.vue'
 import store from '@/store'
 import FiledImage from '@/components/FiledImage.vue'
-import { GENDER, LABEL_MODAL_DETAIL_TEACHER } from '@/utils/constants'
+import { validateTeacher } from '@/utils/validateYub'
+import { arrayToObject } from '@/utils/function'
+import useTransition from '../utils/axios'
+
+import {
+  GENDER,
+  LABEL_MODAL_DETAIL_TEACHER,
+  VALUE_MODAL_DETAIL_TEACHER,
+  LIST_OPTIONS
+} from '@/utils/constants'
 import Pagination from '@/components/Pagination.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
+const { error } = useTransition()
 
 const sort = localStorage.getItem('sort_current')
   ? JSON.parse(localStorage.getItem('sort_current'))
@@ -32,13 +42,13 @@ const typeModal = reactive({
 })
 const innerModal = ref(true)
 const isLoading = ref(false)
+const errors = ref({})
 const isActiveUpdate = ref(null)
 
 const valueForm = ref({})
 const rowTableRender = ref([])
 const colTableRender = ref({})
 
-const sortCurrent = reactive(sort)
 const paramSortTable = reactive(sort)
 
 const pag = computed(() => store.state.pagination)
@@ -52,7 +62,7 @@ onMounted(() => {
 watch(routeCurrent, (newValue, oldValue) => {
   localStorage.setItem('current_page', JSON.stringify(newValue))
 })
-
+const errorServer = computed(() => error)
 const renderColTableRender = computed(() => colTableRender.value)
 const renderRowTableRender = computed(() => store.state.listTeacher)
 
@@ -101,14 +111,11 @@ const handleUpdate = () => {
   // innerModal.value = false
 }
 
-const handleSearch = () => {
-  console.log('se', sortCurrent)
-}
-
 const handleCreate = () => {
-  console.log('renderRowTableRender.value', renderRowTableRender.value)
-  typeModal.type === 'add'
-  typeModal.value = typeModal.label = LABEL_MODAL_DETAIL_TEACHER
+  typeModal.type = 'add'
+  typeModal.label = LABEL_MODAL_DETAIL_TEACHER
+  valueForm.value = VALUE_MODAL_DETAIL_TEACHER
+
   innerModal.value = true
 }
 
@@ -124,11 +131,37 @@ watch(paramSortTable, async () => {
   await store.dispatch('getTeachers', paramSortTable)
   isLoading.value = false
 })
+
+const handleClickForm = async () => {
+  try {
+    errors.value = {}
+    console.log('form', valueForm.value)
+    console.log('1', 2)
+    validateTeacher.validateSync(valueForm.value, { abortEarly: false })
+    console.log('1', 3)
+
+    await store.dispatch('createTeacher', valueForm.value)
+  } catch (error) {
+    console.log('error', error)
+    if (Array.isArray(error.inner)) {
+      const errorMess = error.inner.map((e) => ({
+        [e.path]: e.message
+      }))
+      return (errors.value = arrayToObject(errorMess))
+    }
+  }
+}
+
+console.log('error table', errorServer)
 </script>
 
 <template>
   <router-view @getDataTable="handleSetDataRender" />
+
   <LoadingComponent :isLoading="isLoading" />
+
+  <!-- Table -->
+
   <div class="p-3 bg-background rounded-md max-md:p-0">
     <div
       class="px-8 pt-2 flexBetween min-h-[70px] pb-0 bg-transparent max-md:flex-wrap max-md:gap-y-2"
@@ -150,6 +183,7 @@ watch(paramSortTable, async () => {
     </div>
 
     <Table
+      :key-search="paramSortTable.search"
       @set-modal="handlerSetModal"
       :list-data-table="renderRowTableRender"
       :column-table="renderColTableRender"
@@ -162,30 +196,40 @@ watch(paramSortTable, async () => {
   <!-- Modal Add -->
   <ModalComponent
     v-if="typeModal.type === 'add'"
-    isInnerModal="innerModal"
+    :isInnerModal="innerModal"
     @close-modal="handleClose"
   >
-    <template #title> <p class="h4">Thêm học sinh</p> </template>
+    <template #title> <p class="h4">Thêm giáo viên</p> </template>
     <template #content>
-      <div class="flex items-center gap-2 flex-wrap p-3 w-auto overflow-hidden">
-        <Field label="Họ và tên">
-          <Input v-model="valueForm.name" type="text" />
-        </Field>
-        <Field label="Giới tính" required>
-          <Select v-model="valueForm.gender" :options="GENDER" />
-        </Field>
-        <Field label="Người thân" required>
-          <Select v-model="valueForm.parent" :options="listParenStd" />
-        </Field>
-        <Field label="Sinh nhật">
-          <Input v-model="valueForm.dateOfBirth" type="date" />
+      <div class="flex justify-center gap-2 flex-wrap p-3 w-auto overflow-hidden">
+        <Field
+          class="w-[30%]"
+          v-for="(label, key) of typeModal.label"
+          :label="label.text"
+          :error="errors[key]"
+          :required="label.required"
+        >
+          <filed-image
+            v-if="valueForm[key] instanceof Object"
+            v-model="valueForm[key]"
+            type="file"
+            styleByClass="w-40 h-40 rounded-full max-md:!w-50 max-md:!h-50"
+          />
+          <Select
+            v-else-if="key === 'status' || key === 'gender' || key === 'type'"
+            v-model="valueForm[key]"
+            :options="LIST_OPTIONS[key]"
+            type="text"
+          />
+          <Input v-else-if="key === 'dateOfBirth'" v-model="valueForm[key]" type="date" />
+          <Input v-else v-model="valueForm[key]" type="text" />
         </Field>
       </div>
     </template>
     <template #footer>
       <div class="w-full flexAround gap-3 pb-4">
         <Button by-style-class=" py-1 px-5" @click="handleClose">Hủy</Button>
-        <Button by-style-class=" py-1 px-5 bg-blue-300" @click="handleSubmit">Thêm</Button>
+        <Button by-style-class=" py-1 px-5 bg-blue-300" @click="handleClickForm">Thêm</Button>
       </div>
     </template>
   </ModalComponent>
@@ -193,7 +237,7 @@ watch(paramSortTable, async () => {
   <!-- Xóa user -->
   <ModalComponent
     v-if="typeModal.type === 'delete'"
-    isInnerModal="innerModal"
+    :isInnerModal="innerModal"
     @close-modal="handleClose"
   >
     <template #title> <p class="h4">Xóa học sinh</p> </template>
@@ -246,4 +290,4 @@ watch(paramSortTable, async () => {
     </template>
   </ModalComponent>
 </template>
-<!-- v-for="keyFrom in valueForm" -->
+<!-- v-for="keyFrom in valueForm" -->useTransitionState,

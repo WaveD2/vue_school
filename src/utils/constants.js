@@ -77,10 +77,22 @@ export const TYPE_STUDENT = [
   { value: 'graduated', text: 'Đã tốt nghiệp' }
 ]
 
-export const TYPE_STATUS = [
-  { value: 'active', text: 'Hoạt động' },
-  { value: 'disabled', text: 'Tạm dừng' }
-]
+export const LIST_OPTIONS = {
+  status: [
+    { value: 'active', text: 'Hoạt động' },
+    { value: 'disabled', text: 'Tạm dừng' }
+  ],
+  gender: [
+    { value: 'male', text: 'Nam' },
+    { value: 'female', text: 'Nữ' },
+    { value: 'other', text: 'Khác' }
+  ],
+  type: [
+    { value: 'official', text: 'Chính thức' },
+    { value: 'contract', text: 'Hợp đồng' },
+    { value: 'parttime', text: 'Thời vụ' }
+  ]
+}
 export const LABEL_TABLE_TEACHER = {
   avatar: 'Ảnh',
   name: 'Tên',
@@ -92,19 +104,84 @@ export const LABEL_TABLE_TEACHER = {
 }
 
 export const LABEL_MODAL_DETAIL_TEACHER = {
-  avatar: 'Ảnh',
-  name: 'Tên',
-  gender: 'Giới tính',
-  phone: 'Số điện thoại',
-  email: 'Gmail',
-  pastClassIds: 'Lớp học',
-  currentAddress: 'Địa chỉ',
-  nationality: 'Quốc tịch',
-  permanentResidence: 'Hộ khẩu thường trú',
-  healthInsuranceNumber: 'Số bảo hiểm',
-  status: 'Trạng thái',
-  type: 'Loại',
-  identityNumber: 'Số định danh',
-  note: 'Ghi trú ',
-  dateOfBirth: 'Ngày sinh'
+  avatar: {
+    text: 'Ảnh',
+    required: false
+  },
+  name: {
+    text: 'Tên',
+    required: true
+  },
+  gender: {
+    text: 'Giới tính',
+    required: true
+  },
+  phone: {
+    text: 'Số điện thoại',
+    required: true
+  },
+  email: {
+    text: 'Gmail',
+    required: true
+  },
+  pastClassIds: {
+    text: 'Lớp học',
+    required: false
+  },
+  currentAddress: {
+    text: 'Địa chỉ',
+    required: true
+  },
+  nationality: {
+    text: 'Quốc tịch',
+    required: true
+  },
+  permanentResidence: {
+    text: 'Hộ khẩu thường trú',
+    required: true
+  },
+  healthInsuranceNumber: {
+    text: 'Số bảo hiểm',
+    required: true
+  },
+  status: {
+    text: 'Trạng thái',
+    required: true
+  },
+  type: {
+    text: 'Hợp đồng',
+    required: true
+  },
+  passport: {
+    text: 'Chứng minh nhân dân',
+    required: true
+  },
+  note: {
+    text: 'Ghi chú ',
+    required: false
+  },
+  dateOfBirth: {
+    text: 'Ngày sinh',
+    required: true
+  }
+}
+export const VALUE_MODAL_DETAIL_TEACHER = {
+  avatar: {
+    bucket: '',
+    key: '',
+    url: ''
+  },
+  name: '',
+  gender: '',
+  phone: '',
+  email: '',
+  pastClassIds: '',
+  currentAddress: '',
+  nationality: '',
+  permanentResidence: '',
+  healthInsuranceNumber: '',
+  status: '',
+  type: '',
+  passport: '',
+  dateOfBirth: ''
 }

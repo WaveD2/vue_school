@@ -1,5 +1,8 @@
-import { callApi } from '@/utils/axios'
+import useTransition from '../utils/axios'
+
 import { removeTokenStore, setStoreTokens } from '@/utils/axios/setupApi'
+
+const { callApi, error } = useTransition()
 
 export const loginUser = async ({ commit }, formLogin) => {
   const res = await callApi('v2/auth/login', 'POST', formLogin)
@@ -21,12 +24,7 @@ export const getInfoUser = async ({ commit }) => {
   commit('SET_USER', res.data)
 }
 
-export const getTeachers = async ({ commit }, params) => {
-  console.log(params)
-  // const params = {
-  //   search: 'nguyen',
-  //   'filter[gender]': 'female'
-  // }
+export const getTeachers = async (ctx, params) => {
   let res = null
   if (params) {
     res = await callApi('teachers', 'GET', null, params)
@@ -36,9 +34,9 @@ export const getTeachers = async ({ commit }, params) => {
 
   const { items, hasNextPage, hasPrevPage, limit, page, total, totalPages } = res.data
 
-  commit('SET_TEACHERS', items)
+  ctx.commit('SET_TEACHERS', items)
 
-  commit('SET_PAGINATION', {
+  ctx.commit('SET_PAGINATION', {
     hasNextPage,
     hasPrevPage,
     limit,
@@ -47,7 +45,14 @@ export const getTeachers = async ({ commit }, params) => {
     totalPages
   })
 }
-export const updateTeacher = async ({ commit }, formValue) => {
-  await callApi(`teachers${formValue.id}`, 'PATCH', formValue)
+export const updateTeacher = async (ctx, formValue) => {
+  await callApi(`teachers${formValue.id}`, 'PATCH', { record: formValue })
   await getTeachers()
+  console.log('error updateTeacher', error)
+}
+export const createTeacher = async (ctx, formValue) => {
+  console.log('formValue', formValue)
+  await callApi('teachers', 'POST', { record: formValue })
+  await getTeachers()
+  console.log('error updateTeacher', 123)
 }

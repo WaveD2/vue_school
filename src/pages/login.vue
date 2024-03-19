@@ -1,5 +1,5 @@
 <script setup>
-import { callApi } from '@/utils/axios'
+import useTransition from '@/utils/axios'
 import { setStoreTokens } from '@/utils/axios/setupApi'
 import { VALUE_LOGIN } from '@/utils/constants'
 import { loginSchema } from '@/utils/validateYub'
@@ -7,6 +7,8 @@ import { computed, reactive, ref, defineEmits, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 import store from '@/store'
+
+const { callApi, error } = useTransition()
 
 const route = useRouter()
 const emit = defineEmits(['setLoading'])
@@ -101,3 +103,4 @@ const handleSubmitForm = async () => {
     </form>
   </div>
 </template>
+, useTransitionState

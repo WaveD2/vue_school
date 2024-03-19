@@ -6,18 +6,28 @@ import Note from './Note.vue'
 
 import { ref, onMounted, reactive, watch, computed, render, toRefs } from 'vue'
 
-const props = defineProps(['listDataTable', 'columnTable'])
+const props = defineProps(['listDataTable', 'columnTable', 'keySearch'])
 const emit = defineEmits(['setModal'])
 console.log('props', props)
 
 let isActiveAction = ref(null)
+const dataRedundancy = ref([])
 
-const renderRowTable = computed(() => props.listDataTable)
+function updateBInitialValue(newValue) {
+ 
+  if (dataRedundancy.value.length === 0) {
+    dataRedundancy.value = newValue
+  }
+  return newValue.length > 0 ? newValue : dataRedundancy.value
+}
+
+const renderRowTable = computed(() => {
+  return updateBInitialValue(props.listDataTable)
+})
 const renderColTable = computed(() => props.columnTable)
 
 const keyColTable = computed(() => Object.keys(renderColTable.value))
 
-console.log(renderRowTable, renderColTable, keyColTable)
 const handleActiveAction = (indexRow) => {
   if (indexRow === isActiveAction.value) isActiveAction.value = null
   else isActiveAction.value = indexRow
@@ -34,11 +44,26 @@ const handleOpenModal = async ({ type, rowTable }) => {
   emit('setModal', { rowTable, type })
   isActiveAction.value = null
 }
+
+const shouldHighlight = (value) => {
+  if (!props.keySearch || !value) {
+    return false
+  }
+  return value.toString().toLowerCase().includes(props.keySearch.toLowerCase())
+}
+
+const highlightKeyword = (value) => {
+  if (!props.keySearch || !value) {
+    return value
+  }
+  const regex = new RegExp(`(${props.keySearch})`, 'ig')
+  return value.toString().replace(regex, '<span class="bg-[#5bdbc3]  rounded text-gray-200">$1</span>')
+}
 </script>
 
 <template>
-  <div class="flex flex-wrap mx-3">
-    <div class="mx-auto">
+  <div class="flex flex-wrap mx-3 ">
+    <div class="mx-auto w-full">
       <div
         class="relative flex-auto flex flex-col break-words min-w-0 bg-clip-border rounded-xl bg-white m-2"
       >
@@ -71,7 +96,7 @@ const handleOpenModal = async ({ type, rowTable }) => {
                     v-for="key of keyColTable"
                     @click="handleOpenModal({ type: 'detail', rowTable })"
                   >
-                    <div class="flexCenter">
+                    <div class="flex justify-center">
                       <p
                         class="mb-1 font-semibold transition-colors duration-200 ease-in-out text-sm text-secondary-inverse hover:text-primary"
                       >
@@ -96,6 +121,9 @@ const handleOpenModal = async ({ type, rowTable }) => {
                           </span>
                         </Note>
 
+                        <span v-else-if="shouldHighlight(rowTable[key])">
+                          <strong v-html="highlightKeyword(rowTable[key])"</strong>
+                        </span>
                         <span v-else>{{ rowTable[key] }}</span>
                       </p>
                     </div>
@@ -109,21 +137,21 @@ const handleOpenModal = async ({ type, rowTable }) => {
                     />
                     <div
                       v-if="isActiveAction === i"
-                      class="flexCol w-full absolute border border-grey-2 rounded-md z-[99] left-0 bg-linear p-2"
+                      class="flexCol max-w-32 w-full  absolute border border-grey-2 rounded-md z-[99] left-0  bg-[#6a60db82] p-1"
                     >
                       <Button
-                        byStyleClass="!w-full !bg-slate py-1  hover:!bg-blue-200"
+                        byStyleClass="!w-full !bg-slate py-1  hover:!bg-[#64c0e6] hover:!text-while"
                         @click="handleOpenModal({ type: 'detail', rowTable })"
                         >Chi tiết</Button
                       >
 
                       <Button
-                        byStyleClass="!w-full !bg-slate py-1 hover:!bg-blue-200"
+                        byStyleClass="!w-full !bg-slate py-1 hover:!bg-[#64c0e6] hover:!text-while"
                         @click="handleOpenModal({ type: 'update', rowTable })"
                         >Sửa</Button
                       >
                       <Button
-                        byStyleClass="!w-full !bg-slate py-1 hover:!bg-blue-200"
+                        byStyleClass="!w-full !bg-slate py-1 hover:!bg-[#64c0e6] hover:!text-while"
                         @click="handleOpenModal({ type: 'delete', rowTable })"
                         >Xóa</Button
                       >
@@ -133,9 +161,11 @@ const handleOpenModal = async ({ type, rowTable }) => {
               </tbody>
             </table>
             <div
-              v-if="!renderRowTable"
-              class="block h-80 bg-gray-200 dark:bg-gray-700 w-full"
-            ></div>
+              v-if="renderRowTable?.length === 0"
+              class="flexCenter h-80 bg-gray-200 dark:bg-gray-700 w-full"
+            >
+              <p class="h3 text-blue-400">Loading...</p>
+            </div>
           </div>
         </div>
       </div>

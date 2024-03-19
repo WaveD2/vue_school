@@ -1,6 +1,8 @@
 import store from '@/store'
-import { callApi } from '.'
+import useTransition from './'
 import { toastInfo } from '../function'
+
+const { callApi } = useTransition()
 
 export async function checkAccessToken() {
   const { accessToken, refreshToken } = getStoreTokens()
