@@ -15,7 +15,7 @@ const app = createApp(App)
 app.use(router)
 app.use(store)
 app.use(Vue3Toastify, {
-  autoClose: 2000
+  autoClose: 2500
 })
 app.use(vuetify)
 app.mount('#app')

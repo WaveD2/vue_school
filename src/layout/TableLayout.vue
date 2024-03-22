@@ -3,7 +3,6 @@ import Table from '@/components/Table.vue'
 import Select from '@/components/Select.vue'
 import Label from '@/components/Label.vue'
 import InputSearch from '@/components/InputSearch.vue'
-import LoadingComponent from '@/components/LoadingComponent.vue'
 import ModalComponent from '@/components/ModalComponent.vue'
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import Field from '@/components/Field.vue'
@@ -13,7 +12,7 @@ import store from '@/store'
 import FiledImage from '@/components/FiledImage.vue'
 import { validateTeacher } from '@/utils/validateYub'
 import { arrayToObject } from '@/utils/function'
-import useTransition from '../utils/axios'
+import TextareaVue from '@/components/Textarea.vue'
 
 import {
   GENDER,
@@ -23,9 +22,12 @@ import {
 } from '@/utils/constants'
 import Pagination from '@/components/Pagination.vue'
 import { useRoute } from 'vue-router'
+import useTransition from '@/utils/axios/'
+
+const { error } = useTransition()
 
 const route = useRoute()
-const { error } = useTransition()
+const errorSer = computed(() => store.state.mesErrorServer)
 
 const sort = localStorage.getItem('sort_current')
   ? JSON.parse(localStorage.getItem('sort_current'))
@@ -40,10 +42,18 @@ const typeModal = reactive({
   label: null,
   optionSelect: null
 })
-const innerModal = ref(true)
+const typeButtonModal = reactive({
+  type: null,
+  label: null,
+  handleActive: null
+})
+
+const innerModal = ref(false)
 const isLoading = ref(false)
+const isDisabledModal = ref(false)
 const errors = ref({})
-const isActiveUpdate = ref(null)
+
+const titleModal = ref('')
 
 const valueForm = ref({})
 const rowTableRender = ref([])
@@ -54,15 +64,11 @@ const paramSortTable = reactive(sort)
 const pag = computed(() => store.state.pagination)
 const routeCurrent = computed(() => route.path)
 
-onMounted(() => {
-  isLoading.value = true
-})
-
 // Table
 watch(routeCurrent, (newValue, oldValue) => {
   localStorage.setItem('current_page', JSON.stringify(newValue))
 })
-const errorServer = computed(() => error)
+
 const renderColTableRender = computed(() => colTableRender.value)
 const renderRowTableRender = computed(() => store.state.listTeacher)
 
@@ -70,98 +76,112 @@ const handleSetDataRender = (data) => {
   const { colTable, rowTable } = data
   colTableRender.value = colTable
   rowTableRender.value = rowTable
-  isLoading.value = false
 }
 
-const handlerSetModal = async (data) => {
-  const { rowStd, type } = data
+const handlerSetModal = ({ type }) => {
+  const currentUserDetail = store.state.detailTeacher
 
   if (type === 'detail' || type === 'update') {
-    await store.commit('SET_DETAIL_TEACHER', rowStd)
-    if (type === 'update') isActiveUpdate.value = true
-    else isActiveUpdate.value = false
-    const currentUserDetail = store.getters.getLabelModalDetail
-    console.log('a', currentUserDetail)
-    typeModal.type = type
-    typeModal.label = currentUserDetail.label
-    valueForm.value = currentUserDetail.value
+    if (type === 'detail') {
+      titleModal.value = 'Thông tin chi tiết'
+      isDisabledModal.value = true
+      typeButtonModal.type = 'update'
+      typeButtonModal.label = 'Chỉnh sửa thông tin'
+      typeButtonModal.handleActive = handlerSetModal
+    } else {
+      titleModal.value = 'Chỉnh sửa thông tin'
+      isDisabledModal.value = false
+      typeButtonModal.type = type
+      typeButtonModal.label = 'Lưu thông tin'
+      typeButtonModal.handleActive = handleClickForm
+    }
+
+    typeModal.label = LABEL_MODAL_DETAIL_TEACHER
+    valueForm.value = currentUserDetail
+  } else if (type === 'add') {
+    titleModal.value = 'Tạo thêm người dùng'
+    typeModal.label = LABEL_MODAL_DETAIL_TEACHER
+    valueForm.value = Object.assign({}, VALUE_MODAL_DETAIL_TEACHER)
+    isDisabledModal.value = false
+    typeButtonModal.type = type
+    typeButtonModal.label = 'Tạo người dùng'
+    typeButtonModal.handleActive = handleClickForm
   } else if (type === 'delete') {
-    typeModal.type = type
-    valueForm.value = { ...rowStd }
+    titleModal.value = `Bạn chắc chắn muốn xóa !`
+    typeModal.value = null
+    typeButtonModal.type = type
+    valueForm.value = currentUserDetail
+    typeButtonModal.label = 'Xóa người dùng'
+    typeButtonModal.handleActive = handleClickForm
   }
-
-  console.log('typeModal', typeModal, valueForm.value)
-  innerModal.value = true
-}
-
-const handleClose = () => {
-  console.log('close')
-  typeModal.type = null
-  innerModal.value = null
-}
-
-const handleUpdate = () => {
-  if (!isActiveUpdate.value) {
-    isActiveUpdate.value = true
-  } else {
-    console.log('update')
-    console.log('valueForm.value', valueForm.value)
-  }
-  // typeModal.type = null
-  // innerModal.value = false
-}
-
-const handleCreate = () => {
-  typeModal.type = 'add'
-  typeModal.label = LABEL_MODAL_DETAIL_TEACHER
-  valueForm.value = VALUE_MODAL_DETAIL_TEACHER
 
   innerModal.value = true
 }
 
 // Search
 function handleSortTable(newPage) {
+  isLoading.value = true
   paramSortTable.page = newPage
 }
 
 watch(paramSortTable, async () => {
-  isLoading.value = true
-
   localStorage.setItem('sort_current', JSON.stringify(paramSortTable))
   await store.dispatch('getTeachers', paramSortTable)
   isLoading.value = false
 })
 
-const handleClickForm = async () => {
-  try {
-    errors.value = {}
-    console.log('form', valueForm.value)
-    console.log('1', 2)
-    validateTeacher.validateSync(valueForm.value, { abortEarly: false })
-    console.log('1', 3)
+const handleClose = () => {
+  innerModal.value = false
+  typeModal.label = null
+  errors.value = {}
+  valueForm.value = {}
+}
 
-    await store.dispatch('createTeacher', valueForm.value)
+const handleClickForm = async ({ type }) => {
+  try {
+    if (type === 'delete') {
+      await store.dispatch('apiTeacher', {
+        method: 'DELETE',
+        data: valueForm.value
+      })
+      return
+    }
+
+    errors.value = {}
+
+    validateTeacher.validateSync(valueForm.value, { abortEarly: false })
+
+    const API_METHOD = type === 'add' ? 'POST' : 'PATCH'
+
+    await store.dispatch('apiTeacher', {
+      method: API_METHOD,
+      data: valueForm.value
+    })
   } catch (error) {
-    console.log('error', error)
     if (Array.isArray(error.inner)) {
       const errorMess = error.inner.map((e) => ({
         [e.path]: e.message
       }))
       return (errors.value = arrayToObject(errorMess))
     }
+  } finally {
+    if (store.state.mesErrorServer.length !== 0) {
+      return (errors.value = arrayToObject(store.state.mesErrorServer))
+    } else if (Object.keys(errors.value).length !== 0) return
+
+    handleClose()
   }
 }
 
-console.log('error table', errorServer)
+onUnmounted(() => {
+  localStorage.removeItem('sort_current')
+})
 </script>
 
 <template>
   <router-view @getDataTable="handleSetDataRender" />
 
-  <LoadingComponent :isLoading="isLoading" />
-
   <!-- Table -->
-
   <div class="p-3 bg-background rounded-md max-md:p-0">
     <div
       class="px-8 pt-2 flexBetween min-h-[70px] pb-0 bg-transparent max-md:flex-wrap max-md:gap-y-2"
@@ -174,15 +194,15 @@ console.log('error table', errorServer)
         />
         <InputSearch by-style-class="!bg-grey-1 !rounded-md" v-model="paramSortTable.search" />
       </div>
-      <div>
+      <div @click="handlerSetModal({ type: 'add' })">
         <i
-          @click="handleCreate"
           class="fa-solid fa-user-plus text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-xl hover:bg-slate"
         />
       </div>
     </div>
 
     <Table
+      :isLoading="isLoading"
       :key-search="paramSortTable.search"
       @set-modal="handlerSetModal"
       :list-data-table="renderRowTableRender"
@@ -191,17 +211,16 @@ console.log('error table', errorServer)
     <Pagination :pag="pag" @onPageChanged="handleSortTable" />
   </div>
 
-  <!-- Modal -->
+  <ModalComponent :is-inner-modal="innerModal" @close-modal="handleClose">
+    <template #title>
+      <p class="h4">{{ titleModal }}</p>
+    </template>
+    <template #content v-if="typeModal.label">
+      <h3 class="text-red-400 font-bold text-center my-2" v-if="errors['error']">
+        {{ errors['error'] }}
+      </h3>
 
-  <!-- Modal Add -->
-  <ModalComponent
-    v-if="typeModal.type === 'add'"
-    :isInnerModal="innerModal"
-    @close-modal="handleClose"
-  >
-    <template #title> <p class="h4">Thêm giáo viên</p> </template>
-    <template #content>
-      <div class="flex justify-center gap-2 flex-wrap p-3 w-auto overflow-hidden">
+      <div class="flex justify-center gap-1 flex-wrap w-auto overflow-hidden">
         <Field
           class="w-[30%]"
           v-for="(label, key) of typeModal.label"
@@ -209,85 +228,47 @@ console.log('error table', errorServer)
           :error="errors[key]"
           :required="label.required"
         >
+          <Select
+            :disabled="isDisabledModal"
+            v-if="key === 'status' || key === 'gender' || key === 'type'"
+            v-model="valueForm[key]"
+            :options="LIST_OPTIONS[key]"
+          />
+          <Input
+            v-else-if="key === 'dateOfBirth'"
+            :disabled="isDisabledModal"
+            v-model="valueForm[key]"
+            type="date"
+          />
+          <TextareaVue
+            v-else-if="key === 'note'"
+            :disabled="isDisabledModal"
+            v-model="valueForm[key]"
+            type="date"
+          />
+          <Input v-else v-model="valueForm[key]" :disabled="isDisabledModal" type="text" />
+        </Field>
+      </div>
+    </template>
+    <template #footer>
+      <div class="w-full flexAround pb-3">
+        <Button by-style-class="w-2/5 py-2 px-5" @click="handleClose">Đóng</Button>
+        <Button
+          by-style-class="w-2/5 py-2 px-5"
+          @click="typeButtonModal.handleActive({ type: typeButtonModal.type })"
+        >
+          {{ typeButtonModal.label }}
+        </Button>
+      </div>
+    </template>
+  </ModalComponent>
+</template>
+<!-- 
+
           <filed-image
             v-if="valueForm[key] instanceof Object"
             v-model="valueForm[key]"
             type="file"
             styleByClass="w-40 h-40 rounded-full max-md:!w-50 max-md:!h-50"
           />
-          <Select
-            v-else-if="key === 'status' || key === 'gender' || key === 'type'"
-            v-model="valueForm[key]"
-            :options="LIST_OPTIONS[key]"
-            type="text"
-          />
-          <Input v-else-if="key === 'dateOfBirth'" v-model="valueForm[key]" type="date" />
-          <Input v-else v-model="valueForm[key]" type="text" />
-        </Field>
-      </div>
-    </template>
-    <template #footer>
-      <div class="w-full flexAround gap-3 pb-4">
-        <Button by-style-class=" py-1 px-5" @click="handleClose">Hủy</Button>
-        <Button by-style-class=" py-1 px-5 bg-blue-300" @click="handleClickForm">Thêm</Button>
-      </div>
-    </template>
-  </ModalComponent>
-
-  <!-- Xóa user -->
-  <ModalComponent
-    v-if="typeModal.type === 'delete'"
-    :isInnerModal="innerModal"
-    @close-modal="handleClose"
-  >
-    <template #title> <p class="h4">Xóa học sinh</p> </template>
-    <template #content>
-      <div class="w-full flexAround gap-3 pb-4">
-        <Button by-style-class=" py-1 px-5" @click="handleClose">Hủy</Button>
-        <Button by-style-class=" py-1 px-5 bg-blue-300">Xóa</Button>
-      </div>
-    </template>
-  </ModalComponent>
-
-  <ModalComponent
-    v-if="typeModal.type === 'detail' || typeModal.type === 'update'"
-    is-inner-modal="innerModal"
-    @close-modal="handleClose"
-    styleModalContainer="!max-w-4xl"
-  >
-    <template #title> <p class="h4">Thông tin chi tiết</p> </template>
-    <template #content>
-      <div class="flex items-center gap-x-[4%] flex-wrap px-5 py-3 w-auto overflow-hidden">
-        <Field :label="label" v-for="(label, key) of typeModal.label" class="w-[30%]">
-          <Input
-            v-if="typeof valueForm[key] !== 'object' && !Array.isArray(valueForm[key])"
-            :modelValue="valueForm[key]"
-            :disabled="!isActiveUpdate"
-            type="text"
-          />
-          <Select
-            v-if="Array.isArray(valueForm[key])"
-            v-model="valueForm[key][0]"
-            :disabled="!isActiveUpdate"
-            :options="typeModal.optionSelect"
-            type="text"
-          />
-          <FiledImage
-            v-if="valueForm[key] instanceof Object && !Array.isArray(valueForm[key])"
-            :modelValue="valueForm[key]"
-            :disabled="!isActiveUpdate"
-            styleByClass="!w-40 !h-40"
-          />
-        </Field>
-      </div>
-
-      <div class="w-full flex justify-end gap-3 pb-4 pr-9">
-        <Button by-style-class=" py-1 px-5" @click="handleClose">Đóng</Button>
-        <Button by-style-class=" py-1 px-5 bg-blue-300" @click="handleUpdate">
-          {{ !isActiveUpdate ? ' Chỉnh sửa' : 'Lưu' }}
-        </Button>
-      </div>
-    </template>
-  </ModalComponent>
-</template>
-<!-- v-for="keyFrom in valueForm" -->useTransitionState,
+ -->

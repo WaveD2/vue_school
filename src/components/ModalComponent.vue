@@ -1,21 +1,15 @@
 <script setup>
-import { onMounted, onUpdated, ref } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 
 const props = defineProps(['isInnerModal', 'styleModalContainer'])
 const emit = defineEmits(['closeModal'])
-const isModal = ref()
 
-onMounted(() => {
-  isModal.value = props.isInnerModal
-})
+const isInner = computed(() => props.isInnerModal)
 
 const handleClose = () => {
-  console.log('!23 close')
-  isModal.value = false
-  emit('closeModal', false)
+  isInner.value = false
+  emit('closeModal')
 }
-
-console.log(' ád', isModal.value)
 </script>
 
 <template>
@@ -25,10 +19,10 @@ console.log(' ád', isModal.value)
     tabindex="-1"
     aria-hidden="true"
     class="overflow-y-auto overflow-x-hidden gap-3 items-center w-full md:inset-0 max-h-full fixed top-0 right-0 left-0 z-50 bg-[#3f373787]"
-    :class="!isModal && 'hidden'"
+    :class="!isInner && 'hidden'"
   >
     <div
-      class="relativeCenter z-50 p-4 w-full max-w-3xl max-h-full"
+      class="relativeCenter z-50 p-4 w-full max-w-5xl max-h-full"
       :class="props.styleModalContainer"
     >
       <div class="relative w-full bg-white rounded-lg shadow dark:bg-gray-700">
@@ -79,3 +73,4 @@ console.log(' ád', isModal.value)
   transform: translate(-50%, -50%);
 }
 </style>
+computed,

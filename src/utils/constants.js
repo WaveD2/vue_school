@@ -94,7 +94,7 @@ export const LIST_OPTIONS = {
   ]
 }
 export const LABEL_TABLE_TEACHER = {
-  avatar: 'Ảnh',
+  // avatar: 'Ảnh',
   name: 'Tên',
   gender: 'Giới tính',
   phone: 'Số điện thoại',
@@ -104,10 +104,10 @@ export const LABEL_TABLE_TEACHER = {
 }
 
 export const LABEL_MODAL_DETAIL_TEACHER = {
-  avatar: {
-    text: 'Ảnh',
-    required: false
-  },
+  // avatar: {
+  //   text: 'Ảnh',
+  //   required: false
+  // },
   name: {
     text: 'Tên',
     required: true
@@ -126,6 +126,10 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
   },
   pastClassIds: {
     text: 'Lớp học',
+    required: false
+  },
+  teacherCode: {
+    text: 'Mã giáo viên',
     required: false
   },
   currentAddress: {
@@ -156,25 +160,25 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
     text: 'Chứng minh nhân dân',
     required: true
   },
-  note: {
-    text: 'Ghi chú ',
-    required: false
-  },
   dateOfBirth: {
     text: 'Ngày sinh',
     required: true
+  },
+  slug: {
+    text: 'Slug',
+    required: false
+  },
+  note: {
+    text: 'Ghi chú ',
+    required: false
   }
 }
 export const VALUE_MODAL_DETAIL_TEACHER = {
-  avatar: {
-    bucket: '',
-    key: '',
-    url: ''
-  },
   name: '',
   gender: '',
   phone: '',
   email: '',
+  teacherCode: '',
   pastClassIds: '',
   currentAddress: '',
   nationality: '',
@@ -183,5 +187,6 @@ export const VALUE_MODAL_DETAIL_TEACHER = {
   status: '',
   type: '',
   passport: '',
-  dateOfBirth: ''
+  dateOfBirth: '',
+  note: ''
 }

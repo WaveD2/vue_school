@@ -6,5 +6,6 @@ export default {
   pagination: {},
   searchCurrent: '',
   isLoadingGlobal: false,
-  detailTeacher: {}
+  detailTeacher: {},
+  mesErrorServer: []
 }

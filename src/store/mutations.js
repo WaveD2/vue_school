@@ -17,5 +17,9 @@ export const SET_TEACHERS = (state, payload) => {
 }
 
 export const SET_DETAIL_TEACHER = (state, payload) => {
-  state.detailParent = payload
+  state.detailTeacher = payload
+}
+export const SET_MES_API_ERROR = (state, payload) => {
+  console.log('payload', payload)
+  state.mesErrorServer = payload
 }

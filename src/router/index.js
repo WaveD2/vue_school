@@ -8,7 +8,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'default',
+      name: 'trang chủ',
       component: Default,
       meta: { requiresAuth: true },
       children: [
@@ -19,14 +19,14 @@ const router = createRouter({
           children: [
             {
               path: '/teacher',
-              name: 'teacher',
+              name: 'Quản lý giáo viên',
               component: () => import('@/pages/myTeacher.vue')
             }
           ]
         },
         {
           path: '/setting-profile',
-          name: 'settingProfile',
+          name: 'Cài đặt thông tin',
           component: () => import('@/pages/settingProfile.vue')
         }
       ]

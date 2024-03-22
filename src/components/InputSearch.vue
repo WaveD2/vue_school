@@ -17,7 +17,6 @@ const emit = defineEmits(['update:modelValue'])
       class="bg-white h-10 px-5 w-full pr-10 rounded-full text-sm focus:outline-none"
       @keyup="
         ($event) => {
-          console.log($event.target.value)
           return emit('update:modelValue', $event.target.value)
         }
       "

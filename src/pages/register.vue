@@ -18,21 +18,17 @@ const typeError = reactive({
 
 const handleSubmitForm = async () => {
   try {
-    console.log('1231232', formRegister)
     registerSchema.validateSync(formRegister)
     typeError.type = null
     typeError.message = null
     emit('setLoading', true)
 
     const res = await callApi('user', 'POST', formRegister)
-    console.log('res register', res)
   } catch (error) {
     const { path, message } = error
 
     typeError.type = path
     typeError.message = message
-
-    console.log('error', { error })
   } finally {
     emit('setLoading', false)
   }

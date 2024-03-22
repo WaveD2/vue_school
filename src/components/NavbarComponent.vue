@@ -20,7 +20,6 @@ const handleActiveSideBar = (index) => {
 
 const userCurrent = computed(() => store.state.user)
 
-console.log('userCurrent', userCurrent)
 const toggleMenuSidebar = () => {
   isOpenMenuSidebar.value = !isOpenMenuSidebar.value
   if (isOpenMenuSidebar.value) {
@@ -100,8 +99,8 @@ onMounted(() => {
             <i class="fa-solid fa-bars text-lg"></i>
           </div>
 
-          <h3 class="font-medium text-text text-2xl max-md:text-lg">Trang chủ</h3>
-          <div class="ml-2" v-if="Object.keys(userCurrent).length !== 0">
+          <h3 class="font-medium text-text text-2xl max-md:text-lg">{{ route.name }}</h3>
+          <div class="ml-2" v-if="userCurrent">
             <div class="flex items-center">
               <div class="flex-shrink-0 w-10 h-10 relative">
                 <div class="p-1 bg-white rounded-full focus:outline-none focus:ring">
@@ -123,9 +122,9 @@ onMounted(() => {
                 @click="isActiveModalUser = !isActiveModalUser"
               >
                 <h2 class="text-sm font-semibold text-gray-800">
-                  {{ userCurrent.record.username }}
+                  {{ userCurrent.username }}
                 </h2>
-                <p class="text-xs text-gray-500">{{ userCurrent.record.role }}</p>
+                <p class="text-xs text-gray-500">{{ userCurrent.role }}</p>
               </div>
             </div>
           </div>

@@ -1,30 +1,23 @@
 import store from '@/store'
-import useTransition from './'
 import { toastInfo } from '../function'
-
-const { callApi } = useTransition()
+import axiosInstance from './api'
 
 export async function checkAccessToken() {
   const { accessToken, refreshToken } = getStoreTokens()
 
   //Không có token
-  if (!accessToken && !refreshToken) return false
-
+  if (!accessToken || !refreshToken) return false
   // accessToken và refreshToken còn hiệu lực
   if (isExpired(accessToken?.expires) && isExpired(refreshToken?.expires)) {
-    await store.dispatch('getInfoUser')
+    // await store.dispatch('getInfoUser')
     return true
   }
   // accessToken hết hạn và refreshToken còn hiệu lực
-  else if (!isExpired(accessToken?.expires) && isExpired(refreshToken?.expires)) {
-    const res = await fetchToken({ tokenCheck: refreshToken })
-    return res
+  else if (!isExpired(accessToken?.expires) || !isExpired(refreshToken?.expires)) {
+    const isToken = await fetchToken()
+    return isToken
   }
-  // Trường hợp khác
-  else {
-    toastInfo({ type: 'info', mes: 'Có lỗi xảy ra' })
-    return false
-  }
+  return true
 }
 
 export function getStoreTokens() {
@@ -53,25 +46,28 @@ export function isExpired(expires) {
   return currentDate < expirationDate ? true : false
 }
 
-export async function fetchToken({ tokenCheck }) {
+export async function fetchToken() {
+  const { refreshToken } = getStoreTokens()
+
   try {
-    const { token } = tokenCheck
-
-    const responseData = await callApi(`v2/auth/refresh-token`, 'POST', {
-      refreshToken: token
+    const response = await axiosInstance.post('/v2/auth/refresh-token', {
+      refreshToken: refreshToken.token
     })
-    if (!responseData.data) return false
 
-    const { access, refresh } = responseData.data.tokens
+    if (!response.data) return false
 
-    if (access || refresh) {
-      setStoreTokens({ accessToken: access, refreshToken: refresh })
-    }
+    const { access, refresh } = response.data.data.tokens
 
-    store.commit('SET_USER', responseData.data.user)
+    setStoreTokens({ accessToken: access, refreshToken: refresh })
+    axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${access.token}`
+
+    store.commit('SET_USER', response.data.data.user)
 
     return true
   } catch (error) {
-    return false
+    if (error.response.data.code === 'NotAuthen') {
+      toastInfo({ type: 'error', mes: error.response.data.message })
+      return false
+    }
   }
 }

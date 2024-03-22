@@ -6,7 +6,7 @@ const route = useRouter()
 
 document.addEventListener('DOMContentLoaded', async function () {
   const res = await checkAccessToken()
-  localStorage.removeItem('sort_current')
+
   if (res) {
     const routeCurrent = JSON.parse(localStorage.getItem('current_page'))
     const page = routeCurrent ? routeCurrent : '/teacher'

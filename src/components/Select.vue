@@ -1,22 +1,20 @@
 <script setup>
 const props = defineProps({
-  id: String,
   modelValue: [String, Number, Array, Object],
   required: Boolean,
   invalid: Boolean,
   styleClass: String,
   options: [Array],
-  valueOption: [Array]
+  disabled: Boolean
 })
 const emit = defineEmits(['update:modelValue'])
-console.log('props', props)
 </script>
 
 <template>
   <select
     @change="($event) => emit('update:modelValue', $event.target.value)"
     v-model="props.modelValue"
-    id="countries"
+    :disabled="props.disabled"
     class="bg-gray-200 focus:bg-while input_form"
     :class="[props.styleClass, props.invalid ? 'border-error' : 'border-slate']"
   >

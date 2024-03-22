@@ -21,7 +21,7 @@ const fileRef = ref()
  
 let imageUrl = reactive(props.modelValue)
 
-let imageInner = imageUrl.url
+let imageInner = imageUrl.url ? imageUrl.url : ""
 
 const handleFileChange = (event) => {
  
@@ -48,12 +48,12 @@ const readAndDisplayImage = async (file) => {
     imageInner = event.target.result
   }
  
-    console.log('imageInner',imageInner);
+ 
     const res = await callApi('attachments/signature', 'POST', {filename : file.name} ) 
     const { bucket , key}  = res.data.formData
     imageUrl = {
     bucket,
-      key,
+    key,
     url : res.data.postURL
    }
   emit('update:modelValue', imageUrl)
