@@ -7,6 +7,7 @@ const props = defineProps({
   options: [Array],
   disabled: Boolean
 })
+
 const emit = defineEmits(['update:modelValue'])
 </script>
 

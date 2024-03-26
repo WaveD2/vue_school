@@ -15,7 +15,6 @@ const props = defineProps({
     @click="handleClick"
   >
     <i :is="props.leftIcon" :class="props.leftIcon" />
-
     <slot />
   </button>
 </template>

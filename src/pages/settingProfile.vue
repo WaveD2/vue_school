@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, watch, ref, computed, onMounted } from 'vue'
 import store from '@/store'
 
 import Input from '../components/Input.vue'
@@ -7,28 +7,34 @@ import Field from '../components/Field.vue'
 import Select from '@/components/Select.vue'
 import FiledImage from '@/components/FiledImage.vue'
 import Tabs from '@/components/Tabs.vue'
-import { GENDER } from '@/utils/constants'
+
 import { validateUser } from '@/utils/validateYub'
 import { arrayToObject } from '@/utils/function'
 
-const formProfile = reactive(Object.assign({}, store.state.user))
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
+
+const formProfile = computed(() => store.state.user)
+
+console.log('form', formProfile)
 const errors = ref({})
 
 onMounted(async () => {
-  if (Object.keys(formProfile).length === 0) await store.dispatch('getInfoUser')
+  localStorage.setItem('current_page', route.path)
+  if (Object.keys(formProfile.value).length === 0) await store.dispatch('getInfoUser')
 })
 
 async function submit() {
   errors.value = {}
   try {
-    const { username } = formProfile
+    const { username } = formProfile.value
 
     validateUser.validateSync({ name: username }, { abortEarly: false })
 
-    await store.dispatch('updateUserCurrent', {
-      formProfile
-    })
+    // await store.dispatch('updateUserCurrent', {
+    //   formProfile
+    // })
   } catch (error) {
     const errorMess = error.inner.map((e) => ({
       [e.path]: e.message
@@ -41,10 +47,7 @@ async function submit() {
 
 <template>
   <div class="p-3 w-full bg-background rounded-md">
-    <div
-      class="mt-6 w-full flex gap-2 max-md:flex-col"
-      v-if="Object.keys(formProfile).length !== 0"
-    >
+    <div class="mt-6 w-full flex gap-2 max-md:flex-col">
       <div class="flex max-md:justify-center"></div>
       <div class="flex-1 px-4 flex flex-wrap gap-3 max-md:flexCol max-md:gap-2">
         <Field label="Tên đăng nhập" required :error="errors.username">
@@ -65,8 +68,8 @@ async function submit() {
         </Field>
       </div>
     </div>
-    <div class="w-full flexEnd">
+    <!-- <div class="w-full flexEnd">
       <button type="button" @click="submit" class="btn_blue_hover w-1/5 max-md:w-2/5">Lưu</button>
-    </div>
+    </div> -->
   </div>
 </template>

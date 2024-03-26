@@ -4,6 +4,7 @@
 
     <div class="w-1/2 h-screen hidden lg:block">
       <img
+        loading="lazy"
         src="../assets/images/bg-product.jpg"
         alt="Placeholder Image"
         class="object-contain w-full h-full"

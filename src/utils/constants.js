@@ -23,6 +23,15 @@ export const MENU_SIDE_NAV = [
     }
   },
   {
+    text: 'Quản lý người dùng',
+    isActive: false,
+    icon: ' fa-solid fa-graduation-cap ',
+    link: '/users',
+    func: function () {
+      return
+    }
+  },
+  {
     text: 'Cài đặt',
     isActive: false,
     icon: 'fa-solid fa-gear',
@@ -42,39 +51,10 @@ export const MENU_SIDE_NAV = [
   }
 ]
 
-export const NOTIFICATIONS = [
-  { text: 'You can make it appear to open and close smoother by using a transition.', link: '/' },
-  { text: 'You can make it appear to open and close smoother by using a transition.', link: '/' },
-  { text: 'You can make it appear to open and close smoother by using a transition.', link: '/' },
-  { text: 'You can make it appear to open and close smoother by using a transition.', link: '/' },
-  { text: 'You can make it appear to open and close smoother by using a transition.', link: '/' }
-]
-
-export const FORM_SETTING = [
-  { fullName: '', label: 'Họ và tên' },
-  { email: '', label: 'Email' },
-  { birthday: '', label: 'Ngày tháng năm sinh' },
-  { dress: '', label: 'Địa chỉ' },
-  { city: '', label: 'Thành phố' },
-  { country: '', label: 'Quê quán' }
-]
-
-export const COLUMN_TABLE_USERS = {
-  username: 'Tên',
-  role: 'Quyền',
-  status: 'Trạng thái'
-}
-
 export const GENDER = [
   { value: 'male', text: 'Nam' },
   { value: 'female', text: 'Nữ' },
   { value: 'other', text: 'Khác' }
-]
-export const TYPE_STUDENT = [
-  { value: 'wait', text: 'Tiểu học' },
-  { value: 'studying', text: 'Cấp 2' },
-  { value: 'reserve', text: 'Cấp 3' },
-  { value: 'graduated', text: 'Đã tốt nghiệp' }
 ]
 
 export const LIST_OPTIONS = {
@@ -91,8 +71,14 @@ export const LIST_OPTIONS = {
     { value: 'official', text: 'Chính thức' },
     { value: 'contract', text: 'Hợp đồng' },
     { value: 'parttime', text: 'Thời vụ' }
+  ],
+  role: [
+    { value: 'parent', text: 'parent' },
+    { value: 'teacher', text: 'teacher' },
+    { value: 'admin', text: 'admin' }
   ]
 }
+
 export const LABEL_TABLE_TEACHER = {
   // avatar: 'Ảnh',
   name: 'Tên',
@@ -110,69 +96,86 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
   // },
   name: {
     text: 'Tên',
-    required: true
+    required: true,
+    disabled: false
   },
   gender: {
     text: 'Giới tính',
-    required: true
+    required: true,
+    disabled: false
   },
   phone: {
     text: 'Số điện thoại',
-    required: true
+    required: true,
+    disabled: false
   },
   email: {
     text: 'Gmail',
-    required: true
+    required: true,
+    disabled: false
   },
   pastClassIds: {
     text: 'Lớp học',
-    required: false
+    required: false,
+    disabled: false
   },
   teacherCode: {
     text: 'Mã giáo viên',
-    required: false
+    required: false,
+    disabled: true
   },
   currentAddress: {
     text: 'Địa chỉ',
-    required: true
+    required: true,
+    disabled: false
   },
   nationality: {
     text: 'Quốc tịch',
-    required: true
+    required: true,
+    disabled: false
   },
   permanentResidence: {
     text: 'Hộ khẩu thường trú',
-    required: true
+    required: true,
+    disabled: false
   },
   healthInsuranceNumber: {
     text: 'Số bảo hiểm',
-    required: true
+    required: true,
+    disabled: false
   },
   status: {
     text: 'Trạng thái',
-    required: true
+    required: true,
+    disabled: false
   },
   type: {
     text: 'Hợp đồng',
-    required: true
+    required: true,
+    disabled: false
   },
   passport: {
     text: 'Chứng minh nhân dân',
-    required: true
+    required: true,
+    disabled: false
   },
   dateOfBirth: {
     text: 'Ngày sinh',
-    required: true
+    required: true,
+    disabled: false
   },
   slug: {
     text: 'Slug',
-    required: false
+    required: false,
+    disabled: true
   },
   note: {
     text: 'Ghi chú ',
-    required: false
+    required: false,
+    disabled: false
   }
 }
+
 export const VALUE_MODAL_DETAIL_TEACHER = {
   name: '',
   gender: '',
@@ -189,4 +192,52 @@ export const VALUE_MODAL_DETAIL_TEACHER = {
   passport: '',
   dateOfBirth: '',
   note: ''
+}
+
+export const LABEL_TABLE_USER = {
+  username: 'Tên đăng nhập',
+  id: 'ID',
+  parentId: 'Parent ID',
+  role: 'Quyền',
+  status: 'Trạng thái'
+}
+
+export const LABEL_MODAL_DETAIL_USER = {
+  // avatar: {
+  //   text: 'Ảnh',
+  //   required: false
+  // },
+  username: {
+    text: 'Tên đăng nhập',
+    required: true,
+    disabled: false
+  },
+  role: {
+    text: 'Quyền',
+    required: true,
+    disabled: false
+  },
+  id: {
+    text: 'ID',
+    required: true,
+    disabled: true
+  },
+  parentId: {
+    text: 'Parent ID',
+    required: true,
+    disabled: true
+  },
+  status: {
+    text: 'Trạng thái',
+    required: true,
+    disabled: false
+  }
+}
+
+export const VALUE_MODAL_DETAIL_USER = {
+  username: '',
+  id: '',
+  parentId: '',
+  role: '',
+  status: ''
 }

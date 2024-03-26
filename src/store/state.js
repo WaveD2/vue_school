@@ -1,11 +1,12 @@
 export default {
   user: {},
+  listUser: [],
+  infoDetailModal: {},
   isActiveSideBar: 0,
-  listTeacher: [],
-
-  pagination: {},
+  // listTeacher: [],
+  // detailTeacher: {},
   searchCurrent: '',
   isLoadingGlobal: false,
-  detailTeacher: {},
+  pagination: {},
   mesErrorServer: []
 }

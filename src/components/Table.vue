@@ -1,47 +1,49 @@
 <script setup>
 import Button from './Button.vue'
-import { getByGender, getTimeYear, toastInfo } from '@/utils/function'
 import store from '@/store'
 import Note from './Note.vue'
 import LoadingComponentVue from './LoadingComponent.vue'
 
-import { ref, onMounted, reactive, watch, computed } from 'vue'
+import { ref, computed , onMounted} from 'vue'
 
-const props = defineProps(['listDataTable', 'columnTable', 'keySearch' , 'isLoading'])
+const props = defineProps(['listDataTable', 'columnTable', 'keySearch' , 'isLoading' , 'typeTable'])
 const emit = defineEmits(['setModal'])
 
 const isLoading = computed(()=> (props.isLoading))
- 
-
 let isActiveAction = ref(null)
 const dataRedundancy = ref([])
+const typeDefaultTable = ref('')
+
 
 
 function updateBInitialValue(newValue) {
- 
-  if (dataRedundancy.value.length === 0) {
-    dataRedundancy.value = newValue
+  if (dataRedundancy.value.length === 0 || typeDefaultTable.value !==props.typeTable) {
+     dataRedundancy.value = newValue
+     typeDefaultTable.value= props.typeTable
   }
   return newValue.length > 0 ? newValue : dataRedundancy.value
 }
 
 const renderRowTable = computed(() => updateBInitialValue(props.listDataTable))
+
 const renderColTable = computed(() => props.columnTable)
 
 const keyColTable = computed(() => Object.keys(renderColTable.value))
  
+
 const handleActiveAction = (indexRow) => {
   if (indexRow === isActiveAction.value) isActiveAction.value = null
   else isActiveAction.value = indexRow
 }
 
 const handleOpenModal = async ({ type, rowTable }) => {
-   await store.dispatch('apiTeacher', { method : 'GET' , data : rowTable })
-   
-  emit('setModal', {   type })
+   await store.dispatch('apiDetail', { method : 'GET' , url : props.typeTable , data : rowTable })
+  emit('setModal', { type })
   isActiveAction.value = null
 }
 
+
+//  Hight light key words search
 const shouldHighlight = (value) => {
   if (!props.keySearch || !value) {
     return false
@@ -69,13 +71,16 @@ const highlightKeyword = (value) => {
 
     <div class="mx-auto w-full" >
       <div
-        class="relative flex-auto flex flex-col break-words min-w-0 bg-clip-border rounded-xl bg-white m-2"
+        class="relative flex-auto flex flex-col break-words min-w-0 bg-clip-border rounded-xl bg-white m-1"
       >
         <div
           class="relative flex flex-col min-w-0 break-words border border-dashed bg-clip-border rounded-2xl border-stone-200 bg-light/30"
         >
-          <div class="min-h-96 w-full p-4 pt-3 overflow-y-scroll px-2 max-h-[70vh]" >
-            <table class="w-full my-0 align-middle text-text border-neutral-200" v-if="Object.keys(renderColTable).length > 0"> 
+          <div class="min-h-[calc(100vh-14rem)] w-full p-2  overflow-y-scroll max-h-[calc(100vh-14rem)]" >
+            <table class="w-full my-0 align-middle text-text border-neutral-200" 
+            v-if="Object.keys(renderColTable).length > 0"> 
+
+            <!-- Col -->
               <thead class="align-bottom" >
                 <tr class="font-semibold text-base text-secondary-dark bg-grey-2">
                   <th
@@ -89,6 +94,8 @@ const highlightKeyword = (value) => {
                   <th class="py-3 text-center min-w-[120px]">Tùy chọn</th>
                 </tr>
               </thead>
+
+              <!-- Row -->
               <tbody class="w-full" v-if="renderRowTable.length > 0">
                 <tr
                   class="border-b border-dashed bg-slate rounded-lg cursor-pointer hover:bg-blue-200"
@@ -123,12 +130,15 @@ const highlightKeyword = (value) => {
                         <span v-else-if="shouldHighlight(rowTable[key])">
                           <strong v-html="highlightKeyword(rowTable[key])"</strong>
                         </span>
+                        
                         <span v-else>{{ rowTable[key] }}</span>
                       </p>
                     </div>
                   </td>
 
-                  <td class="p-3 pl-0 text-center relative"  >
+
+                  <!-- Button Action -->
+                  <td class="p-2 pl-0 text-center relative"  >
                     <Button
                       left-icon="fa-solid fa-ellipsis text-xl align-center"
                       @click="handleActiveAction(i)"
@@ -156,6 +166,7 @@ const highlightKeyword = (value) => {
                       >
                     </div>
                   </td>
+
                 </tr>
               </tbody>
             </table>
@@ -172,4 +183,4 @@ const highlightKeyword = (value) => {
 
 <style lang="scss" scoped></style>
  
-
+, onMounted

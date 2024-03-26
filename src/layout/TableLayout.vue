@@ -13,18 +13,20 @@ import { validateTeacher } from '@/utils/validateYub'
 import { arrayToObject } from '@/utils/function'
 import TextareaVue from '@/components/Textarea.vue'
 
-import {
-  GENDER,
-  LABEL_MODAL_DETAIL_TEACHER,
-  VALUE_MODAL_DETAIL_TEACHER,
-  LIST_OPTIONS
-} from '@/utils/constants'
+import { GENDER, VALUE_MODAL_DETAIL_TEACHER, LIST_OPTIONS } from '@/utils/constants'
 import Pagination from '@/components/Pagination.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 
-onMounted(() => localStorage.setItem('current_page', route.path))
+const routeCurrent = computed(() => route.path)
+
+// Table
+watch(routeCurrent, (newValue, oldValue) => {
+  isLoading.value = true
+  localStorage.setItem('current_page', newValue)
+  localStorage.removeItem('sort_current')
+})
 
 const sort = localStorage.getItem('sort_current')
   ? JSON.parse(localStorage.getItem('sort_current'))
@@ -53,25 +55,33 @@ const errors = ref({})
 const titleModal = ref('')
 
 const valueForm = ref({})
-const rowTableRender = ref([])
-const colTableRender = ref({})
+const renderColTableRender = ref([])
+const labelModal = ref({})
+const valueModal = ref({})
+
+const detailTypeTable = ref('')
 
 const paramSortTable = reactive(sort)
 
 const pag = computed(() => store.state.pagination)
-
-const renderColTableRender = computed(() => colTableRender.value)
-const renderRowTableRender = computed(() => store.state.listTeacher)
+const renderRowTable = computed(() => store.state.listUser)
 
 const handleSetDataRender = (data) => {
-  const { colTable, rowTable } = data
-  colTableRender.value = colTable
-  rowTableRender.value = rowTable
+  const { colTable, labelModalDetail, valueModalDetail, typeTable } = data
+
+  valueModal.value = valueModalDetail
+  labelModal.value = labelModalDetail
+  renderColTableRender.value = colTable
+  detailTypeTable.value = typeTable
+
+  isLoading.value = false
 }
 
 // Modal
 const handlerSetModal = ({ type }) => {
-  const currentUserDetail = store.state.detailTeacher
+  // const currentUserDetail = store.state[detailTypeModal.value]
+
+  const currentUserDetail = store.state.infoDetailModal
 
   if (type === 'detail' || type === 'update') {
     if (type === 'detail') {
@@ -88,12 +98,12 @@ const handlerSetModal = ({ type }) => {
       typeButtonModal.handleActive = handleClickForm
     }
 
-    typeModal.label = LABEL_MODAL_DETAIL_TEACHER
+    typeModal.label = labelModal.value
     valueForm.value = currentUserDetail
   } else if (type === 'add') {
     titleModal.value = 'Tạo thêm người dùng'
-    typeModal.label = LABEL_MODAL_DETAIL_TEACHER
-    valueForm.value = Object.assign({}, VALUE_MODAL_DETAIL_TEACHER)
+    typeModal.label = labelModal.value
+    valueForm.value = Object.assign({}, valueModal.value)
     isDisabledModal.value = false
     typeButtonModal.type = type
     typeButtonModal.label = 'Tạo người dùng'
@@ -106,12 +116,13 @@ const handlerSetModal = ({ type }) => {
     typeButtonModal.label = 'Xóa người dùng'
     typeButtonModal.handleActive = handleClickForm
   }
-
   innerModal.value = true
 }
 
 const handleClose = () => {
   innerModal.value = false
+
+  isLoading.value = false
   typeModal.label = null
   errors.value = {}
   valueForm.value = {}
@@ -124,21 +135,30 @@ function handleSortTable(newPage) {
 }
 
 watch(paramSortTable, async () => {
+  const listParams = {
+    url: detailTypeTable.value,
+    params: paramSortTable,
+    typeCommitStore: 'SET_LIST_USER_TABLE'
+  }
+
   localStorage.setItem('sort_current', JSON.stringify(paramSortTable))
-  await store.dispatch('getTeachers', paramSortTable)
+  await store.dispatch('getInfo', listParams)
   isLoading.value = false
 })
 
 //  XỬ LÝ SỰ KIỆN CỦA BUTTON ACTION
 const handleClickForm = async ({ type }) => {
   errors.value = {}
+  isLoading.value = true
 
   try {
     if (type === 'delete') {
-      await store.dispatch('apiTeacher', {
+      await store.dispatch('apiDetail', {
+        url: detailTypeTable.value,
         method: 'DELETE',
         data: valueForm.value
       })
+
       return
     }
 
@@ -146,9 +166,10 @@ const handleClickForm = async ({ type }) => {
 
     const API_METHOD = type === 'add' ? 'POST' : 'PATCH'
 
-    await store.dispatch('apiTeacher', {
+    await store.dispatch('apiDetail', {
       method: API_METHOD,
-      data: valueForm.value
+      data: valueForm.value,
+      url: detailTypeTable.value
     })
   } catch (error) {
     if (Array.isArray(error.inner)) {
@@ -161,8 +182,8 @@ const handleClickForm = async ({ type }) => {
     if (store.state.mesErrorServer.length !== 0) {
       return (errors.value = arrayToObject(store.state.mesErrorServer))
     } else if (Object.keys(errors.value).length !== 0) return
-
     handleClose()
+    innerModal.value = false
   }
 }
 
@@ -198,8 +219,9 @@ onUnmounted(() => {
       :isLoading="isLoading"
       :key-search="paramSortTable.search"
       @set-modal="handlerSetModal"
-      :list-data-table="renderRowTableRender"
+      :list-data-table="renderRowTable"
       :column-table="renderColTableRender"
+      :type-table="detailTypeTable"
     />
     <Pagination :pag="pag" @onPageChanged="handleSortTable" />
   </div>
@@ -222,24 +244,29 @@ onUnmounted(() => {
           :required="label.required"
         >
           <Select
-            :disabled="isDisabledModal"
-            v-if="key === 'status' || key === 'gender' || key === 'type'"
+            :disabled="isDisabledModal || label.disabled"
+            v-if="LIST_OPTIONS.hasOwnProperty(key)"
             v-model="valueForm[key]"
             :options="LIST_OPTIONS[key]"
           />
           <Input
             v-else-if="key === 'dateOfBirth'"
-            :disabled="isDisabledModal"
+            :disabled="isDisabledModal || label.disabled"
             v-model="valueForm[key]"
             type="date"
           />
           <TextareaVue
             v-else-if="key === 'note'"
-            :disabled="isDisabledModal"
+            :disabled="isDisabledModal || label.disabled"
             v-model="valueForm[key]"
             type="date"
           />
-          <Input v-else v-model="valueForm[key]" :disabled="isDisabledModal" type="text" />
+          <Input
+            v-else
+            v-model="valueForm[key]"
+            :disabled="isDisabledModal || label.disabled"
+            type="text"
+          />
         </Field>
       </div>
     </template>

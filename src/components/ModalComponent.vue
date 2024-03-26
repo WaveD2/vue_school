@@ -7,7 +7,6 @@ const emit = defineEmits(['closeModal'])
 const isInner = computed(() => props.isInnerModal)
 
 const handleClose = () => {
-  isInner.value = false
   emit('closeModal')
 }
 </script>

@@ -1,4 +1,5 @@
 <script setup>
+
 import useTransitionState from "../utils/axios";
 import { toastInfo } from '@/utils/function';
 import { defineEmits, defineProps, reactive, ref } from 'vue'
@@ -47,8 +48,6 @@ const readAndDisplayImage = async (file) => {
   reader.onload = (event) => {
     imageInner = event.target.result
   }
- 
- 
     const res = await callApi('attachments/signature', 'POST', {filename : file.name} ) 
     const { bucket , key}  = res.data.formData
     imageUrl = {
@@ -104,4 +103,4 @@ const readAndDisplayImage = async (file) => {
   cursor: pointer;
   transition: all ease-in-out 1s;
 }
-</style>, useTransitionState
+</style>

@@ -9,9 +9,9 @@ export default function useTransition() {
   const error = ref(null)
 
   async function callApi(endpoint, method = 'GET', data = null, params) {
-    const accessTokenHeaders = JSON.parse(localStorage.getItem('access_token'))
+    const accessTokenHeaders = await JSON.parse(localStorage.getItem('access_token'))
 
-    if (!checkAccessToken()) return router.push('/login')
+    if (!checkAccessToken() || !accessTokenHeaders) return router.push('/login')
 
     try {
       const config = {
@@ -26,11 +26,18 @@ export default function useTransition() {
       }
 
       const response = await axios(config)
+
       store.commit('SET_MES_API_ERROR', [])
+
       return response.data
     } catch (err) {
+      console.log('err', err)
       if (err.response && err.response.data) {
-        if (err.response.data.error) {
+        if (err.response.data.code === 'NotAuthen') {
+          toastInfo({ type: 'error', mes: err.response.data.message })
+          router.push('/login')
+          return false
+        } else if (err.response.data.error) {
           error.value = err.response.data.error.issues.map((issue) => ({
             [issue.path[0]]: issue.message
           }))

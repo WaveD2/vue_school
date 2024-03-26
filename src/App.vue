@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   const res = await checkAccessToken()
 
   if (res) {
-    const routeCurrent = JSON.parse(localStorage.getItem('current_page'))
+    const routeCurrent = localStorage.getItem('current_page')
     const page = routeCurrent ? routeCurrent : '/teacher'
     return route.push(page)
   }

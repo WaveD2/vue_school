@@ -1,24 +1,22 @@
 <script setup>
-import { MENU_SIDE_NAV, NOTIFICATIONS } from '@/utils/constants'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
-import InputSearch from './InputSearch.vue'
-import ModalInfo from './ModalInfo.vue'
-import store from '@/store'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+
+import { MENU_SIDE_NAV } from '@/utils/constants'
+import store from '@/store'
 
 const route = useRoute()
 
 const isActiveModalUser = ref(false)
-const isActiveMotion = ref(false)
-const isActiveSideBar = ref(0)
 const isOpenMenuSidebar = ref(false)
+const isActiveSideBar = ref(0)
 const menuRef = ref(null)
+
+const userCurrent = computed(() => store.state.user)
 
 const handleActiveSideBar = (index) => {
   isActiveSideBar.value = index
 }
-
-const userCurrent = computed(() => store.state.user)
 
 const toggleMenuSidebar = () => {
   isOpenMenuSidebar.value = !isOpenMenuSidebar.value

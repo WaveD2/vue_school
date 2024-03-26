@@ -1,14 +1,10 @@
 <script setup>
 import useTransition from '@/utils/axios'
-import { setStoreTokens } from '@/utils/axios/setupApi'
-import { VALUE_LOGIN } from '@/utils/constants'
 import { loginSchema } from '@/utils/validateYub'
-import { computed, reactive, ref, defineEmits, onUnmounted } from 'vue'
+import { reactive, ref, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
 
 import store from '@/store'
-
-const { callApi, error } = useTransition()
 
 const route = useRouter()
 const emit = defineEmits(['setLoading'])
@@ -17,7 +13,6 @@ let formLogin = reactive({
   password: ''
 })
 
-const isRemember = ref(false)
 const typeError = reactive({
   type: null,
   message: null
@@ -83,13 +78,7 @@ const handleSubmitForm = async () => {
       </div>
 
       <div class="mb-4 flex items-center">
-        <input
-          type="checkbox"
-          id="remember"
-          name="remember"
-          class="text-blue-500"
-          v-model="isRemember.remember"
-        />
+        <input type="checkbox" id="remember" name="remember" class="text-blue-500" />
         <label for="remember" class="text-gray-600 ml-2">Ghi nhớ </label>
       </div>
 
@@ -103,4 +92,3 @@ const handleSubmitForm = async () => {
     </form>
   </div>
 </template>
-, useTransitionState

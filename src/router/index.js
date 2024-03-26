@@ -21,6 +21,11 @@ const router = createRouter({
               path: '/teacher',
               name: 'Quản lý giáo viên',
               component: () => import('@/pages/myTeacher.vue')
+            },
+            {
+              path: '/users',
+              name: 'Quản lý người dùng',
+              component: () => import('@/pages/myUser.vue')
             }
           ]
         },

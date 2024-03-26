@@ -1,11 +1,6 @@
 <script setup>
-import { callApi } from '@/utils/axios'
 import { VALUE_REGISTER } from '@/utils/constants'
-import { loginSchema, registerSchema } from '@/utils/validateYub'
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
-
-const route = useRouter()
 
 const emit = defineEmits(['setLoading'])
 
@@ -17,22 +12,7 @@ const typeError = reactive({
 })
 
 const handleSubmitForm = async () => {
-  try {
-    registerSchema.validateSync(formRegister)
-    typeError.type = null
-    typeError.message = null
-    emit('setLoading', true)
-
-    const res = await callApi('user', 'POST', formRegister)
-  } catch (error) {
-    const { path, message } = error
-
-    typeError.type = path
-    typeError.message = message
-  } finally {
-    emit('setLoading', false)
-  }
-  // route.push('/')
+  console.log('formRegister', formRegister)
 }
 </script>
 

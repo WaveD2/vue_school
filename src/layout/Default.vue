@@ -1,16 +1,11 @@
-<template>
-  <div>
-    <navbar-component>
-      <RouterView />
-    </navbar-component>
-  </div>
-</template>
-
-<script>
+<script setup>
 import NavbarComponent from '@/components/NavbarComponent.vue'
-export default {
-  components: { NavbarComponent }
-}
 </script>
+
+<template>
+  <NavbarComponent>
+    <RouterView />
+  </NavbarComponent>
+</template>
 
 <style lang="scss" scoped></style>

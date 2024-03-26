@@ -2,16 +2,24 @@ import axiosInstance from '@/utils/axios/api'
 import useTransition from '../utils/axios'
 
 import { removeTokenStore, setStoreTokens, getStoreTokens } from '@/utils/axios/setupApi'
+import { toastInfo } from '@/utils/function'
 
 const { callApi } = useTransition()
 
 export const loginUser = async ({ commit }, formLogin) => {
-  const res = await axiosInstance.post('v2/auth/login', formLogin)
+  try {
+    const res = await axiosInstance.post('v2/auth/login', formLogin)
 
-  if (res.data.data.tokens) {
-    const { access, refresh } = res.data.data.tokens
-    setStoreTokens({ accessToken: access, refreshToken: refresh })
-    commit('SET_USER', res.data.data.user)
+    if (res.data.data.tokens) {
+      const { access, refresh } = res.data.data.tokens
+      setStoreTokens({ accessToken: access, refreshToken: refresh })
+      commit('SET_USER', res.data.data.user)
+    }
+  } catch (err) {
+    if (err.response.data.code === 'NotAuthen') {
+      toastInfo({ type: 'error', mes: err.response.data.message })
+      return false
+    }
   }
 }
 
@@ -22,21 +30,25 @@ export const logoutUser = async ({ commit }) => {
   removeTokenStore()
   commit('SET_USER', {})
 }
+
 export const getInfoUser = async ({ commit }) => {
   const res = await callApi('v2/auth/user-info', 'GET')
   commit('SET_USER', res.data.record)
 }
 
-export const getTeachers = async (ctx, params) => {
+export const getInfo = async (ctx, listParams) => {
+  const { params, url, typeCommitStore } = listParams
   let res = null
   if (params) {
-    res = await callApi('teachers', 'GET', null, params)
+    res = await callApi(url, 'GET', null, params)
   } else {
-    res = await callApi('teachers', 'GET')
+    res = await callApi(url, 'GET')
   }
 
+  if (!res) return
   const { items, hasNextPage, hasPrevPage, limit, page, total, totalPages } = res.data
-  ctx.commit('SET_TEACHERS', items)
+
+  ctx.commit(typeCommitStore, items)
 
   ctx.commit('SET_PAGINATION', {
     hasNextPage,
@@ -47,24 +59,28 @@ export const getTeachers = async (ctx, params) => {
     totalPages
   })
 }
-export const apiTeacher = async (ctx, formValue) => {
-  const { method, data } = formValue
-  const url = method === 'POST' ? '' : data.id
+export const apiDetail = async (ctx, listParams) => {
+  const { method, data, url } = listParams
+  const fullUrl = method === 'POST' ? `${url}` : `${url}/${data.id}`
 
   if (method === 'GET') {
-    const res = await callApi(`teachers/${url}`, method)
-    ctx.commit('SET_DETAIL_TEACHER', res.data.record)
+    const res = await callApi(`${fullUrl}`, method)
+    ctx.commit('SET_INFO_DETAIL_MODAL', res.data.record)
   } else if (method === 'DELETE') {
-    const res = await callApi(`teachers/${url}`, method)
+    const res = await callApi(`${fullUrl}`, method)
     if (res.status !== 200) return
 
-    await getTeachers(ctx)
+    const listParams = { url, typeCommitStore: 'SET_LIST_USER_TABLE' }
+
+    await getInfo(ctx, listParams)
     return
   } else {
-    const res = await callApi(`teachers/${url}`, method, { record: data })
+    const res = await callApi(`${fullUrl}`, method, { record: data })
 
     if (res.status !== 200) return
 
-    await getTeachers(ctx)
+    const listParams = { url, typeCommitStore: 'SET_LIST_USER_TABLE' }
+
+    await getInfo(ctx, listParams)
   }
 }

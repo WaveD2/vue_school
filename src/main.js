@@ -3,7 +3,6 @@ import './assets/styles/index.css'
 import store from './store'
 import { createApp } from 'vue'
 
-import vuetify from './plugins/vuetify'
 import Vue3Toastify from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
@@ -17,5 +16,5 @@ app.use(store)
 app.use(Vue3Toastify, {
   autoClose: 2500
 })
-app.use(vuetify)
+
 app.mount('#app')

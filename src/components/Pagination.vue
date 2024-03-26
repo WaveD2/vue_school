@@ -1,6 +1,5 @@
 <script setup>
-import store from '@/store'
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps(['pag'])
 const emit = defineEmits(['onPageChanged'])
