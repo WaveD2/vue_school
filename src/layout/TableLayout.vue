@@ -1,7 +1,6 @@
 <script setup>
 import Table from '@/components/Table.vue'
 import Select from '@/components/Select.vue'
-import Label from '@/components/Label.vue'
 import InputSearch from '@/components/InputSearch.vue'
 import ModalComponent from '@/components/ModalComponent.vue'
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
@@ -22,18 +21,16 @@ import {
 } from '@/utils/constants'
 import Pagination from '@/components/Pagination.vue'
 import { useRoute } from 'vue-router'
-import useTransition from '@/utils/axios/'
-
-const { error } = useTransition()
 
 const route = useRoute()
-const errorSer = computed(() => store.state.mesErrorServer)
+
+onMounted(() => localStorage.setItem('current_page', route.path))
 
 const sort = localStorage.getItem('sort_current')
   ? JSON.parse(localStorage.getItem('sort_current'))
   : {
       search: '',
-      select: '',
+      gender: '',
       pagination: 0
     }
 
@@ -62,12 +59,6 @@ const colTableRender = ref({})
 const paramSortTable = reactive(sort)
 
 const pag = computed(() => store.state.pagination)
-const routeCurrent = computed(() => route.path)
-
-// Table
-watch(routeCurrent, (newValue, oldValue) => {
-  localStorage.setItem('current_page', JSON.stringify(newValue))
-})
 
 const renderColTableRender = computed(() => colTableRender.value)
 const renderRowTableRender = computed(() => store.state.listTeacher)
@@ -78,6 +69,7 @@ const handleSetDataRender = (data) => {
   rowTableRender.value = rowTable
 }
 
+// Modal
 const handlerSetModal = ({ type }) => {
   const currentUserDetail = store.state.detailTeacher
 
@@ -118,6 +110,13 @@ const handlerSetModal = ({ type }) => {
   innerModal.value = true
 }
 
+const handleClose = () => {
+  innerModal.value = false
+  typeModal.label = null
+  errors.value = {}
+  valueForm.value = {}
+}
+
 // Search
 function handleSortTable(newPage) {
   isLoading.value = true
@@ -130,14 +129,10 @@ watch(paramSortTable, async () => {
   isLoading.value = false
 })
 
-const handleClose = () => {
-  innerModal.value = false
-  typeModal.label = null
-  errors.value = {}
-  valueForm.value = {}
-}
-
+//  XỬ LÝ SỰ KIỆN CỦA BUTTON ACTION
 const handleClickForm = async ({ type }) => {
+  errors.value = {}
+
   try {
     if (type === 'delete') {
       await store.dispatch('apiTeacher', {
@@ -146,8 +141,6 @@ const handleClickForm = async ({ type }) => {
       })
       return
     }
-
-    errors.value = {}
 
     validateTeacher.validateSync(valueForm.value, { abortEarly: false })
 
@@ -182,7 +175,7 @@ onUnmounted(() => {
   <router-view @getDataTable="handleSetDataRender" />
 
   <!-- Table -->
-  <div class="p-3 bg-background rounded-md max-md:p-0">
+  <div class="px-3 bg-background rounded-md max-md:p-0">
     <div
       class="px-8 pt-2 flexBetween min-h-[70px] pb-0 bg-transparent max-md:flex-wrap max-md:gap-y-2"
     >
@@ -250,6 +243,7 @@ onUnmounted(() => {
         </Field>
       </div>
     </template>
+
     <template #footer>
       <div class="w-full flexAround pb-3">
         <Button by-style-class="w-2/5 py-2 px-5" @click="handleClose">Đóng</Button>
@@ -263,8 +257,8 @@ onUnmounted(() => {
     </template>
   </ModalComponent>
 </template>
-<!-- 
 
+<!-- 
           <filed-image
             v-if="valueForm[key] instanceof Object"
             v-model="valueForm[key]"
