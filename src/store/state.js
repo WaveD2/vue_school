@@ -3,10 +3,8 @@ export default {
   listUser: [],
   infoDetailModal: {},
   isActiveSideBar: 0,
-  // listTeacher: [],
-  // detailTeacher: {},
   searchCurrent: '',
-  isLoadingGlobal: false,
   pagination: {},
-  mesErrorServer: []
+  mesErrorServer: [],
+  isLoadingGlobal: false
 }

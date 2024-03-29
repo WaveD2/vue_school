@@ -9,12 +9,16 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+const handleChange = (event) => {
+  emit('update:modelValue', event.target.value)
+}
 </script>
 
 <template>
   <select
-    @change="($event) => emit('update:modelValue', $event.target.value)"
-    v-model="props.modelValue"
+    @change="handleChange"
+    :value="props.modelValue"
     :disabled="props.disabled"
     class="bg-gray-200 focus:bg-while input_form"
     :class="[props.styleClass, props.invalid ? 'border-error' : 'border-slate']"

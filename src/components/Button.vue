@@ -1,5 +1,6 @@
 <script setup>
 const props = defineProps({
+  id: String,
   leftIcon: String,
   textBtn: String,
   isLoading: Boolean,
@@ -10,9 +11,10 @@ const props = defineProps({
 
 <template>
   <button
-    class="border bg-slate w-max rounded-md border-primary px-2 mb-1 font-semibold transition-colors duration-200 ease-in-out text-base text-secondary-inverse hover:text-black hover:bg-primary"
-    :class="props?.byStyleClass"
+    class="p-2 border border-transparent font-medium rounded-md text-while bg-indigo-500 hover:bg-indigo-800"
+    :class="props.byStyleClass"
     @click="handleClick"
+    :id="props.id"
   >
     <i :is="props.leftIcon" :class="props.leftIcon" />
     <slot />

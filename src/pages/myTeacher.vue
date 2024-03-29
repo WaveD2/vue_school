@@ -1,6 +1,6 @@
 <script setup>
 import store from '@/store'
-import { ref, onMounted, computed, reactive } from 'vue'
+import { onMounted } from 'vue'
 import {
   LABEL_MODAL_DETAIL_TEACHER,
   LABEL_TABLE_TEACHER,
@@ -9,18 +9,16 @@ import {
 
 const emit = defineEmits(['getDataTable'])
 
-const dataRowTable = ref()
-
 onMounted(async () => {
-  // const sort = JSON.parse(localStorage.getItem('sort_current')) || ''
+  const sort = JSON.parse(localStorage.getItem('sort_current')) || ''
   const listParams = {
     url: 'teachers',
-    typeCommitStore: 'SET_LIST_USER_TABLE'
+    typeCommitStore: 'SET_LIST_USER_TABLE',
+    params: sort
   }
   await store.dispatch('getInfo', listParams)
 
   emit('getDataTable', {
-    // rowTable: store.state.listUser,
     colTable: LABEL_TABLE_TEACHER,
     labelModalDetail: LABEL_MODAL_DETAIL_TEACHER,
     valueModalDetail: VALUE_MODAL_DETAIL_TEACHER,
@@ -30,4 +28,3 @@ onMounted(async () => {
 </script>
 
 <template></template>
-`

@@ -1,10 +1,20 @@
 <script setup>
+import debounce from 'lodash.debounce'
+
 const props = defineProps({
   byStyleClass: String,
   modelValue: String
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+// const handleSearchInput = debounce((event) => {
+//   return emit('update:modelValue', event.target.value)
+// }, 1000)
+
+const handleSearchInput = (event) => {
+  return emit('update:modelValue', event.target.value)
+}
 </script>
 
 <template>
@@ -14,12 +24,8 @@ const emit = defineEmits(['update:modelValue'])
       name="search"
       :value="props.modelValue"
       placeholder="Tìm kiếm..."
-      class="bg-white h-10 px-5 w-full pr-10 rounded-full text-sm focus:outline-none"
-      @keyup="
-        ($event) => {
-          return emit('update:modelValue', $event.target.value)
-        }
-      "
+      class="bg-white h-10 px-5 w-full pr-10 rounded-full text-sm focus:outline-none focus:border focus:border-[#6366f1]"
+      @keyup="handleSearchInput"
       :class="props.byStyleClass"
     />
     <button type="submit" class="absolute right-0 top-0 mt-3 mr-4">
@@ -44,5 +50,3 @@ const emit = defineEmits(['update:modelValue'])
     </button>
   </div>
 </template>
-
-<style lang="scss" scoped></style>

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, computed, ref } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps(['isInnerModal', 'styleModalContainer'])
 const emit = defineEmits(['closeModal'])
@@ -15,19 +15,15 @@ const handleClose = () => {
   <div
     @click.self="handleClose"
     id="crud-modal"
-    tabindex="-1"
     aria-hidden="true"
-    class="overflow-y-auto overflow-x-hidden gap-3 items-center w-full md:inset-0 max-h-full fixed top-0 right-0 left-0 z-50 bg-[#3f373787]"
+    class="overflow-hidden overflow-x-hidden gap-3 items-center w-full md:inset-0 max-h-full fixed top-0 right-0 left-0 z-50 bg-[#3f373787]"
     :class="!isInner && 'hidden'"
   >
-    <div
-      class="relativeCenter z-50 p-4 w-full max-w-5xl max-h-full"
-      :class="props.styleModalContainer"
-    >
+    <div class="relativeCenter z-50 w-full max-w-5xl max-h-full" :class="props.styleModalContainer">
       <div class="relative w-full bg-white rounded-lg shadow dark:bg-gray-700">
         <!-- Modal header -->
         <div
-          class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
+          class="flex items-center justify-between md:px-10 md:py-5 border-b rounded-t dark:border-gray-600"
         >
           <slot name="title"></slot>
           <button
@@ -58,6 +54,7 @@ const handleClose = () => {
         <!-- content -->
         <slot name="content" />
 
+        <!-- footer -->
         <slot name="footer" />
       </div>
     </div>

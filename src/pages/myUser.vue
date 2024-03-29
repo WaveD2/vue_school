@@ -1,6 +1,6 @@
 <script setup>
 import store from '@/store'
-import { onMounted, computed, ref } from 'vue'
+import { onMounted } from 'vue'
 import {
   LABEL_MODAL_DETAIL_USER,
   LABEL_TABLE_USER,
@@ -17,7 +17,6 @@ onMounted(async () => {
   await store.dispatch('getInfo', listParams)
 
   emit('getDataTable', {
-    // rowTable: store.state.listUser,
     colTable: LABEL_TABLE_USER,
     labelModalDetail: LABEL_MODAL_DETAIL_USER,
     valueModalDetail: VALUE_MODAL_DETAIL_USER,
@@ -25,3 +24,4 @@ onMounted(async () => {
   })
 })
 </script>
+<template></template>

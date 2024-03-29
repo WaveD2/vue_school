@@ -4,7 +4,7 @@ import store from '@/store'
 import Note from './Note.vue'
 import LoadingComponentVue from './LoadingComponent.vue'
 
-import { ref, computed , onMounted} from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps(['listDataTable', 'columnTable', 'keySearch' , 'isLoading' , 'typeTable'])
 const emit = defineEmits(['setModal'])
@@ -13,7 +13,6 @@ const isLoading = computed(()=> (props.isLoading))
 let isActiveAction = ref(null)
 const dataRedundancy = ref([])
 const typeDefaultTable = ref('')
-
 
 
 function updateBInitialValue(newValue) {
@@ -25,9 +24,7 @@ function updateBInitialValue(newValue) {
 }
 
 const renderRowTable = computed(() => updateBInitialValue(props.listDataTable))
-
 const renderColTable = computed(() => props.columnTable)
-
 const keyColTable = computed(() => Object.keys(renderColTable.value))
  
 
@@ -58,8 +55,6 @@ const highlightKeyword = (value) => {
   const regex = new RegExp(`(${props.keySearch})`, 'ig')
   return value.toString().replace(regex, '<span class="bg-[#5bdbc3]  rounded text-gray-200">$1</span>')
 }
-
- 
 </script>
 
 <template>
@@ -98,7 +93,7 @@ const highlightKeyword = (value) => {
               <!-- Row -->
               <tbody class="w-full" v-if="renderRowTable.length > 0">
                 <tr
-                  class="border-b border-dashed bg-slate rounded-lg cursor-pointer hover:bg-blue-200"
+                  class="border-b py-2 border-dashed bg-slate rounded-lg cursor-pointer hover:bg-blue-200"
                   v-for="(rowTable, i) in renderRowTable"
                   :key="i"
                 >
@@ -109,7 +104,7 @@ const highlightKeyword = (value) => {
                   >
                     <div class="flex justify-center">
                       <p
-                        class="mb-1 font-semibold transition-colors duration-200 ease-in-out text-sm text-secondary-inverse hover:text-primary"
+                        class="mb-1 font-semibold transition-colors duration-200 ease-in-out text-base text-secondary-inverse hover:text-primary"
                       >
                        
                         <Note v-if="key === 'status' || key === 'gender'">
@@ -132,35 +127,37 @@ const highlightKeyword = (value) => {
                         </span>
                         
                         <span v-else>{{ rowTable[key] }}</span>
+
+
                       </p>
                     </div>
                   </td>
 
 
                   <!-- Button Action -->
-                  <td class="p-2 pl-0 text-center relative"  >
+                  <td class="p-2 pl-0 text-center relative  "  >
                     <Button
-                      left-icon="fa-solid fa-ellipsis text-xl align-center"
+                      left-icon="fa-solid fa-ellipsis text-sm align-center"
                       @click="handleActiveAction(i)"
-                      :class="isActiveAction === i && '!bg-primary !text-#fff'"
+                      :class="isActiveAction === i && '!bg-primary !max-h-10  !text-#'"
                     />
                     <div
                       v-if="isActiveAction === i"
-                      class="flexCol max-w-32 w-full  absolute border border-grey-2 rounded-md z-[99] left-0  bg-[#6a60db82] p-1"
+                      class="flexCol max-w-32 w-full  absolute border bg-while border-grey-2 rounded-md z-[99] left-0  p-1"
                     >
                       <Button
-                        byStyleClass="!w-full !bg-slate py-1  hover:!bg-[#64c0e6] hover:!text-while"
+                        byStyleClass="!text-black !text-sm !w-full !bg-slate py-2 my-1 hover:!bg-[#74a5fc] "
                         @click="handleOpenModal({ type: 'detail', rowTable })"
                         >Chi tiết</Button
                       >
 
                       <Button
-                        byStyleClass="!w-full !bg-slate py-1 hover:!bg-[#64c0e6] hover:!text-while"
+                        byStyleClass="!text-black !text-sm !w-full !bg-slate py-2 my-1   hover:!bg-[#74a5fc] "
                         @click="handleOpenModal({ type: 'update', rowTable })"
                         >Sửa</Button
                       >
                       <Button
-                        byStyleClass="!w-full !bg-slate py-1 hover:!bg-[#64c0e6] hover:!text-while"
+                        byStyleClass="!text-black !text-sm !w-full !bg-slate py-2 my-1 hover:!bg-[#74a5fc] "
                         @click="handleOpenModal({ type: 'delete', rowTable })"
                         >Xóa</Button
                       >
@@ -169,6 +166,7 @@ const highlightKeyword = (value) => {
 
                 </tr>
               </tbody>
+              
             </table>
         
           </div>
@@ -180,7 +178,4 @@ const highlightKeyword = (value) => {
   </div>
 
 </template>
-
-<style lang="scss" scoped></style>
  
-, onMounted

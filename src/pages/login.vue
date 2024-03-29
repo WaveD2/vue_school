@@ -34,10 +34,10 @@ const handleSubmitForm = async () => {
     typeError.message = message
   } finally {
     emit('setLoading', false)
-    formLogin = {
-      password: '',
-      username: ''
-    }
+    // formLogin = {
+    //   password: '',
+    //   username: ''
+    // }
   }
 }
 </script>

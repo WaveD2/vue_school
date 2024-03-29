@@ -12,6 +12,7 @@ export const loginUser = async ({ commit }, formLogin) => {
 
     if (res.data.data.tokens) {
       const { access, refresh } = res.data.data.tokens
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${access.token}`
       setStoreTokens({ accessToken: access, refreshToken: refresh })
       commit('SET_USER', res.data.data.user)
     }
@@ -33,11 +34,14 @@ export const logoutUser = async ({ commit }) => {
 
 export const getInfoUser = async ({ commit }) => {
   const res = await callApi('v2/auth/user-info', 'GET')
+  if (!res) return
   commit('SET_USER', res.data.record)
 }
 
+//  GET ALL OR GET Filter
 export const getInfo = async (ctx, listParams) => {
   const { params, url, typeCommitStore } = listParams
+  console.log('params', params)
   let res = null
   if (params) {
     res = await callApi(url, 'GET', null, params)
@@ -59,16 +63,18 @@ export const getInfo = async (ctx, listParams) => {
     totalPages
   })
 }
+
 export const apiDetail = async (ctx, listParams) => {
   const { method, data, url } = listParams
   const fullUrl = method === 'POST' ? `${url}` : `${url}/${data.id}`
 
   if (method === 'GET') {
     const res = await callApi(`${fullUrl}`, method)
+    if (!res) return
     ctx.commit('SET_INFO_DETAIL_MODAL', res.data.record)
   } else if (method === 'DELETE') {
     const res = await callApi(`${fullUrl}`, method)
-    if (res.status !== 200) return
+    if (!res) return
 
     const listParams = { url, typeCommitStore: 'SET_LIST_USER_TABLE' }
 
@@ -77,7 +83,7 @@ export const apiDetail = async (ctx, listParams) => {
   } else {
     const res = await callApi(`${fullUrl}`, method, { record: data })
 
-    if (res.status !== 200) return
+    if (!res) return
 
     const listParams = { url, typeCommitStore: 'SET_LIST_USER_TABLE' }
 

@@ -3,7 +3,7 @@ import Table from '@/components/Table.vue'
 import Select from '@/components/Select.vue'
 import InputSearch from '@/components/InputSearch.vue'
 import ModalComponent from '@/components/ModalComponent.vue'
-import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { computed, watchEffect, onUnmounted, reactive, ref, watch } from 'vue'
 import Field from '@/components/Field.vue'
 import Input from '@/components/Input.vue'
 import Button from '@/components/Button.vue'
@@ -12,7 +12,7 @@ import FiledImage from '@/components/FiledImage.vue'
 import { validateTeacher } from '@/utils/validateYub'
 import { arrayToObject } from '@/utils/function'
 import TextareaVue from '@/components/Textarea.vue'
-
+import debounce from 'lodash.debounce'
 import { GENDER, VALUE_MODAL_DETAIL_TEACHER, LIST_OPTIONS } from '@/utils/constants'
 import Pagination from '@/components/Pagination.vue'
 import { useRoute } from 'vue-router'
@@ -21,20 +21,25 @@ const route = useRoute()
 
 const routeCurrent = computed(() => route.path)
 
+const defaultSort = {
+  search: '',
+  gender: '',
+  pagination: 0
+}
+
+const sort = localStorage.getItem('sort_current')
+  ? JSON.parse(localStorage.getItem('sort_current'))
+  : defaultSort
+
+const paramSortTable = reactive(sort)
+
 // Table
 watch(routeCurrent, (newValue, oldValue) => {
   isLoading.value = true
   localStorage.setItem('current_page', newValue)
   localStorage.removeItem('sort_current')
+  Object.assign(sort, defaultSort)
 })
-
-const sort = localStorage.getItem('sort_current')
-  ? JSON.parse(localStorage.getItem('sort_current'))
-  : {
-      search: '',
-      gender: '',
-      pagination: 0
-    }
 
 const typeModal = reactive({
   type: null,
@@ -54,14 +59,12 @@ const errors = ref({})
 
 const titleModal = ref('')
 
-const valueForm = ref({})
+const valueForm = ref(null)
 const renderColTableRender = ref([])
 const labelModal = ref({})
 const valueModal = ref({})
 
 const detailTypeTable = ref('')
-
-const paramSortTable = reactive(sort)
 
 const pag = computed(() => store.state.pagination)
 const renderRowTable = computed(() => store.state.listUser)
@@ -77,10 +80,21 @@ const handleSetDataRender = (data) => {
   isLoading.value = false
 }
 
+watchEffect(() => {
+  const valueFormChanged = valueForm.value
+  if (valueFormChanged) {
+    // Kích hoạt sự kiện "click"
+    const buttonElement = document.getElementById('btnSubmit')
+
+    // if (buttonElement) {
+    //   buttonElement.click();
+    // }
+  }
+})
+
 // Modal
 const handlerSetModal = ({ type }) => {
   // const currentUserDetail = store.state[detailTypeModal.value]
-
   const currentUserDetail = store.state.infoDetailModal
 
   if (type === 'detail' || type === 'update') {
@@ -121,11 +135,10 @@ const handlerSetModal = ({ type }) => {
 
 const handleClose = () => {
   innerModal.value = false
-
   isLoading.value = false
   typeModal.label = null
   errors.value = {}
-  valueForm.value = {}
+  valueForm.value = null
 }
 
 // Search
@@ -134,7 +147,7 @@ function handleSortTable(newPage) {
   paramSortTable.page = newPage
 }
 
-watch(paramSortTable, async () => {
+const handleFilter = debounce(async () => {
   const listParams = {
     url: detailTypeTable.value,
     params: paramSortTable,
@@ -144,10 +157,12 @@ watch(paramSortTable, async () => {
   localStorage.setItem('sort_current', JSON.stringify(paramSortTable))
   await store.dispatch('getInfo', listParams)
   isLoading.value = false
-})
+}, 1000)
+
+watch(paramSortTable, handleFilter)
 
 //  XỬ LÝ SỰ KIỆN CỦA BUTTON ACTION
-const handleClickForm = async ({ type }) => {
+const handleClickForm = debounce(async ({ type }) => {
   errors.value = {}
   isLoading.value = true
 
@@ -185,7 +200,7 @@ const handleClickForm = async ({ type }) => {
     handleClose()
     innerModal.value = false
   }
-}
+}, 500)
 
 onUnmounted(() => {
   localStorage.removeItem('sort_current')
@@ -196,10 +211,8 @@ onUnmounted(() => {
   <router-view @getDataTable="handleSetDataRender" />
 
   <!-- Table -->
-  <div class="px-3 bg-background rounded-md max-md:p-0">
-    <div
-      class="px-8 pt-2 flexBetween min-h-[70px] pb-0 bg-transparent max-md:flex-wrap max-md:gap-y-2"
-    >
+  <div class="bg-background rounded-md max-md:p-0">
+    <div class="px-8 flexBetween min-h-[60px] pb-0 bg-transparent max-md:flex-wrap max-md:gap-y-2">
       <div class="flex items-center gap-x-2">
         <Select
           style-class="!w-auto !py-1 !h-9"
@@ -223,7 +236,7 @@ onUnmounted(() => {
       :column-table="renderColTableRender"
       :type-table="detailTypeTable"
     />
-    <Pagination :pag="pag" @onPageChanged="handleSortTable" />
+    <Pagination :pag="pag" @on-page-changed="handleSortTable" />
   </div>
 
   <ModalComponent :is-inner-modal="innerModal" @close-modal="handleClose">
@@ -235,10 +248,10 @@ onUnmounted(() => {
         {{ errors['error'] }}
       </h3>
 
-      <div class="flex justify-center gap-1 flex-wrap w-auto overflow-hidden">
+      <div class="px-10 flex gap-x-10 flex-wrap w-auto overflow-hidden">
         <Field
-          class="w-[30%]"
           v-for="(label, key) of typeModal.label"
+          :class="`${key === 'note' ? 'w-full' : 'w-[30%]'}`"
           :label="label.text"
           :error="errors[key]"
           :required="label.required"
@@ -272,10 +285,11 @@ onUnmounted(() => {
     </template>
 
     <template #footer>
-      <div class="w-full flexAround pb-3">
-        <Button by-style-class="w-2/5 py-2 px-5" @click="handleClose">Đóng</Button>
+      <div class="w-full flexAround py-3">
+        <Button by-style-class="w-2/5 py-2 text-lg " @click="handleClose">Đóng</Button>
         <Button
-          by-style-class="w-2/5 py-2 px-5"
+          by-style-class="w-2/5 py-2 text-lg "
+          id="btnSubmit"
           @click="typeButtonModal.handleActive({ type: typeButtonModal.type })"
         >
           {{ typeButtonModal.label }}
