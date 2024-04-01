@@ -18,13 +18,15 @@ let formLogin = reactive({
   password: ''
 })
 
-const typeError = reactive({
-  type: null,
-  message: null
-})
+const trimInput = () => {
+  for (let key in formLogin) {
+    formLogin[key] = formLogin[key].trim()
+  }
+}
 
 const handleSubmitForm = async () => {
   try {
+    trimInput()
     loginSchema.validateSync(formLogin, { abortEarly: false })
     errors.value = null
 
