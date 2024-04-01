@@ -33,11 +33,6 @@ onMounted(async () => {
     typeTable: 'teachers'
   })
 })
-
-onUnmounted(() => {
-  localStorage.removeItem('previousRoute')
-})
 </script>
 
 <template></template>
-, onUpdated

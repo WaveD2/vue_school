@@ -38,8 +38,11 @@ const handleFileUpload = async (event) => {
     !allowedTypes.includes(file.type) &&
     !['pdf', 'doc', 'docx', 'ppt', 'pptx', 'jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)
   ) {
-    error.value =
-      'Chỉ chấp nhận các tệp fdf, word, powerpoint và hình ảnh (PDF, DOC, DOCX, PPT, PPTX, JPEG, PNG, GIF)'
+    toastInfo({
+      type: 'error',
+      mes: 'Vui lòng chọn ảnh file (pdf, doc, docx, ppt, pptx, jpg, jpeg, png, gif)'
+    })
+
     return
   }
 
@@ -73,15 +76,6 @@ const handleFileUpload = async (event) => {
 
 const removeDocument = (index) => {
   documents.value.splice(index, 1)
-}
-
-const getFileType = (fileName) => {
-  const extension = fileName.split('.').pop().toLowerCase()
-  if (['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(extension)) {
-    return 'Document'
-  } else {
-    return 'img'
-  }
 }
 </script>
 
@@ -153,3 +147,4 @@ const getFileType = (fileName) => {
     </div>
   </div>
 </template>
+, toastInfo, toastInfo

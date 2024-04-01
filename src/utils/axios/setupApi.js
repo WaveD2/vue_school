@@ -73,7 +73,7 @@ export function setStoreTokens({ accessToken, refreshToken }) {
 export function removeTokenStore() {
   localStorage.removeItem('access_token')
   localStorage.removeItem('refresh_token')
-  localStorage.removeItem('sort_current')
+  localStorage.removeItem('previousRoute')
   localStorage.removeItem('current_page')
 }
 

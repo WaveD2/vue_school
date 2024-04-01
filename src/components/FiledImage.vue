@@ -23,7 +23,7 @@ let imageInner = ref(props.modelValue.url)
 
 const handleFileChange = async (event) => {
   const file = event.target.files[0]
-  console.log('file', file)
+
   if (file && isImageFile(file)) {
     await readAndDisplayImage(file)
   } else {

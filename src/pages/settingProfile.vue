@@ -21,7 +21,8 @@ const formProfile = computed(() => store.state.user)
 const errors = ref({})
 
 onMounted(async () => {
-  localStorage.setItem('current_page', route.path)
+  localStorage.setItem('previousRoute', route.path)
+
   if (Object.keys(formProfile.value).length === 0) await store.dispatch('getInfoUser')
 })
 

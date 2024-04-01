@@ -3,7 +3,7 @@ import Table from '@/components/Table.vue'
 import Select from '@/components/Select.vue'
 import InputSearch from '@/components/InputSearch.vue'
 import ModalComponent from '@/components/ModalComponent.vue'
-import { computed, watchEffect, onUnmounted, reactive, ref, watch } from 'vue'
+import { computed, watchEffect, onMounted, reactive, ref, watch } from 'vue'
 import Field from '@/components/Field.vue'
 import Input from '@/components/Input.vue'
 import Button from '@/components/Button.vue'
@@ -29,6 +29,12 @@ const filtersAndSort = reactive({
   status: queryParams.value.status || '',
   search: queryParams.value.search || '',
   page: queryParams.value.page || 0
+})
+
+onMounted(() => {
+  if (!Object.keys(route.query).length > 0) {
+    localStorage.setItem('previousRoute', route.path)
+  }
 })
 
 watchEffect(() => {
@@ -176,7 +182,6 @@ watch(
 //  XỬ LÝ SỰ KIỆN CỦA BUTTON ACTION
 const handleClickForm = debounce(async ({ type }) => {
   errors.value = {}
-  isLoadingModal.value = true
 
   try {
     if (type === 'delete') {
@@ -211,9 +216,12 @@ const handleClickForm = debounce(async ({ type }) => {
     } else if (Object.keys(errors.value).length !== 0) return
     handleClose()
     innerModal.value = false
-    isLoadingModal.value = false
   }
 }, 500)
+
+// onUnmounted(() => {
+//   localStorage.removeItem('previousRoute')
+// })
 </script>
 
 <template>
@@ -354,4 +362,4 @@ const handleClickForm = debounce(async ({ type }) => {
 <!-- 
 
      style-class="!w-full  py-3 px-2 border border-[#D5D5D5]"  
- -->
+ -->, onMounted
