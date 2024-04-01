@@ -19,10 +19,6 @@ const renderColTable = computed(() => props.columnTable)
 const keyColTable = computed(() => Object.keys(renderColTable.value))
  
 
-const handleActiveAction = (indexRow) => {
-  if (indexRow === isActiveAction.value) isActiveAction.value = null
-  else isActiveAction.value = indexRow
-}
 
 const handleOpenModal = async ({ type, rowTable }) => {
   await store.dispatch('apiDetail', { method : 'GET' , url : props.typeTable , data : rowTable })
@@ -76,7 +72,8 @@ const highlightKeyword = (value) => {
                     {{ col }}
                   </th>
 
-                  <th scope="col" class="px-6 py-3 text-right">Tùy chọn</th>
+                  <th scope="col" class="px-6 py-3 text-right" v-if="props.typeTable !== 'users'"
+                  >Tùy chọn</th>
                 </tr>
               </thead>
 
@@ -123,7 +120,7 @@ const highlightKeyword = (value) => {
 
 
                   <!-- Button Action -->
-                  <td class="px-6 py-5  flexEnd gap-x-8 "  >
+                  <td class="px-6 py-5  flexEnd gap-x-8 "  v-if="props.typeTable !== 'users'">
                       <Button
                       left-icon="fa-solid fa-pen-to-square text-xl "
                       @click="handleOpenModal({ type: 'update', rowTable })"

@@ -9,7 +9,10 @@ import { arrayToObject } from '@/utils/function'
 
 const route = useRouter()
 const emit = defineEmits(['setLoading'])
-const errors = ref({})
+const errors = ref({
+  username: '',
+  password: ''
+})
 let formLogin = reactive({
   username: '',
   password: ''

@@ -38,6 +38,9 @@ onMounted(() => {
 })
 
 watchEffect(() => {
+  if (!Object.keys(route.query).length > 0) {
+    localStorage.setItem('previousRoute', route.path)
+  }
   filtersAndSort.gender = route.query.gender || ''
   filtersAndSort.status = route.query.status || ''
   filtersAndSort.search = route.query.search || ''
@@ -218,10 +221,6 @@ const handleClickForm = debounce(async ({ type }) => {
     innerModal.value = false
   }
 }, 500)
-
-// onUnmounted(() => {
-//   localStorage.removeItem('previousRoute')
-// })
 </script>
 
 <template>
@@ -229,7 +228,10 @@ const handleClickForm = debounce(async ({ type }) => {
 
   <!-- Table -->
   <div class="max-md:p-0">
-    <div class="px-4 flexBetween min-h-[60px] mb-2 bg-transparent max-md:flex-wrap max-md:gap-y-2">
+    <div
+      class="px-4 flexBetween min-h-[60px] mb-2 bg-transparent max-md:flex-wrap max-md:gap-y-2"
+      v-if="detailTypeTable !== 'users'"
+    >
       <div class="flex items-center gap-x-2">
         <Select
           style-class="!w-auto  "
