@@ -1,7 +1,7 @@
 <script setup>
 import useTransitionState from '../utils/axios'
-import { defineEmits, defineProps, ref } from 'vue'
-import { toastInfo } from '@/utils/function'
+import { computed, defineEmits, defineProps, onMounted, ref } from 'vue'
+import { fetchDoUpLoadFile, toastInfo } from '@/utils/function'
 
 const { callApi } = useTransitionState()
 const emit = defineEmits(['update:modelValue'])
@@ -16,15 +16,14 @@ const props = defineProps({
   disabled: Boolean,
   styleByClass: String
 })
-
 const fileRef = ref()
 
 let imageUrl = ref({ bucket: '', key: '', url: '' })
-let imageInner = ref('')
+let imageInner = ref(props.modelValue.url)
 
 const handleFileChange = async (event) => {
   const file = event.target.files[0]
-
+  console.log('file', file)
   if (file && isImageFile(file)) {
     await readAndDisplayImage(file)
   } else {
@@ -33,7 +32,7 @@ const handleFileChange = async (event) => {
 }
 
 const isImageFile = (file) => {
-  const acceptedFormats = ['image/jpeg', 'image/jpg', 'image/png']
+  const acceptedFormats = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
   return acceptedFormats.includes(file.type)
 }
 
@@ -47,13 +46,20 @@ const readAndDisplayImage = async (file) => {
   reader.readAsDataURL(file)
 
   const res = await callApi('attachments/signature', 'POST', { filename: file.name })
-  const { bucket, key } = res.data.formData
-  imageUrl.value = {
-    bucket,
-    key,
-    url: res.data.postURL
+
+  if (res.data) {
+    const url = res.data.postURL
+    const form = res.data.formData
+    await fetchDoUpLoadFile({ url, file, form })
+
+    const { bucket, key } = res.data.formData
+    imageUrl.value = {
+      bucket,
+      key,
+      url: res.data.getUrl
+    }
+    emit('update:modelValue', imageUrl.value)
   }
-  emit('update:modelValue', imageUrl.value)
 }
 </script>
 
@@ -64,8 +70,8 @@ const readAndDisplayImage = async (file) => {
     :class="props.styleByClass"
   >
     <img
-      v-if="imageUrl.url || imageInner"
-      :src="imageInner || imageUrl.url"
+      v-if="imageInner"
+      :src="imageInner"
       loading="lazy"
       class="w-full h-full object-cover rounded-full border border-gray-300"
     />
@@ -80,7 +86,7 @@ const readAndDisplayImage = async (file) => {
       class="bg-gray-200 hidden focus:bg-white input_form"
     />
     <div
-      v-show="!imageUrl.url && !imageInner"
+      v-show="!imageInner"
       class="absolute top-0 w-full h-full rounded-full flexCenter h4 text-black"
     >
       <i class="fa-solid fa-camera text-4xl"></i>
@@ -106,7 +112,7 @@ const readAndDisplayImage = async (file) => {
 }
 
 .beforeImg:hover > div {
-  color: #e1ecec;
+  color: #414141;
   z-index: 99;
   display: flex !important;
   background: #ffffff4f;

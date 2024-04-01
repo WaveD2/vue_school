@@ -5,25 +5,16 @@ import Note from './Note.vue'
 import LoadingComponentVue from './LoadingComponent.vue'
 
 import { ref, computed } from 'vue'
+import { LIST_OPTIONS } from '@/utils/constants'
 
 const props = defineProps(['listDataTable', 'columnTable', 'keySearch' , 'isLoading' , 'typeTable'])
 const emit = defineEmits(['setModal'])
 
 const isLoading = computed(()=> (props.isLoading))
 let isActiveAction = ref(null)
-const dataRedundancy = ref([])
-const typeDefaultTable = ref('')
+ 
 
-
-function updateBInitialValue(newValue) {
-  if (dataRedundancy.value.length === 0 || typeDefaultTable.value !==props.typeTable) {
-     dataRedundancy.value = newValue
-     typeDefaultTable.value= props.typeTable
-  }
-  return newValue.length > 0 ? newValue : dataRedundancy.value
-}
-
-const renderRowTable = computed(() => updateBInitialValue(props.listDataTable))
+const renderRowTable = computed(() =>  props.listDataTable)
 const renderColTable = computed(() => props.columnTable)
 const keyColTable = computed(() => Object.keys(renderColTable.value))
  
@@ -34,7 +25,7 @@ const handleActiveAction = (indexRow) => {
 }
 
 const handleOpenModal = async ({ type, rowTable }) => {
-   await store.dispatch('apiDetail', { method : 'GET' , url : props.typeTable , data : rowTable })
+  await store.dispatch('apiDetail', { method : 'GET' , url : props.typeTable , data : rowTable })
   emit('setModal', { type })
   isActiveAction.value = null
 }
@@ -60,53 +51,49 @@ const highlightKeyword = (value) => {
 <template>
   <div class="flex flex-wrap mx-3 relative">
     <LoadingComponentVue 
-      v-if="isLoading || renderRowTable?.length <= 0 || Object.keys(renderColTable).length <= 0"
-     :isLoading="isLoading || renderRowTable?.length <= 0 || Object.keys(renderColTable).length <= 0 "
+      v-if="isLoading "
+     :isLoading="isLoading  "
       />
 
     <div class="mx-auto w-full" >
       <div
-        class="relative flex-auto flex flex-col break-words min-w-0 bg-clip-border rounded-xl bg-white m-1"
+        class="relative flex-auto flex flex-col bg-inherit rounded-[14px] border border-zinc-200"
       >
         <div
-          class="relative flex flex-col min-w-0 break-words border border-dashed bg-clip-border rounded-2xl border-stone-200 bg-light/30"
+          class="flex flex-col min-w-0"
         >
-          <div class="min-h-[calc(100vh-14rem)] w-full p-2  overflow-y-scroll max-h-[calc(100vh-14rem)]" >
-            <table class="w-full my-0 align-middle text-text border-neutral-200" 
+          <div class="min-h-[calc(100vh-14rem)] w-full overflow-y-scroll max-h-[calc(100vh-14rem)]" >
+            <table class="w-full text-base text-left  dark:text-gray-400" 
             v-if="Object.keys(renderColTable).length > 0"> 
 
             <!-- Col -->
-              <thead class="align-bottom" >
-                <tr class="font-semibold text-base text-secondary-dark bg-grey-2">
-                  <th
-                    class="py-3 text-center min-w-[120px]"
+              <thead class="text-base text-gray-700 uppercase font-bold dark:bg-gray-700 dark:text-gray-400" >
+                <tr >
+                  <th scope="col" class="md:px-6 md:py-5 text-nowrap px-4 py-3"
                     v-for="(col, index) of renderColTable"
                     :key="index"
                   >
                     {{ col }}
                   </th>
 
-                  <th class="py-3 text-center min-w-[120px]">Tùy chọn</th>
+                  <th scope="col" class="px-6 py-3 text-right">Tùy chọn</th>
                 </tr>
               </thead>
 
               <!-- Row -->
-              <tbody class="w-full" v-if="renderRowTable.length > 0">
+              <tbody class="w-full" v-if="renderRowTable.length > 0" >
                 <tr
-                  class="border-b py-2 border-dashed bg-slate rounded-lg cursor-pointer hover:bg-blue-200"
+                  class="bg-white cursor-pointer border-y dark:bg-gray-800 dark:border-gray-700 hover:bg-slate"
                   v-for="(rowTable, i) in renderRowTable"
                   :key="i"
                 >
                   <td
-                    class=""
+                    class="md:px-6 md:py-5 text-nowrap px-4 py-3"
                     v-for="key of keyColTable"
                     @click="handleOpenModal({ type: 'detail', rowTable })"
                   >
-                    <div class="flex justify-center">
-                      <p
-                        class="mb-1 font-semibold transition-colors duration-200 ease-in-out text-base text-secondary-inverse hover:text-primary"
-                      >
-                       
+                    <div class="flex ">
+                      <p class=" font-semibold text-base">
                         <Note v-if="key === 'status' || key === 'gender'">
                           <span
                             :class="
@@ -118,56 +105,45 @@ const highlightKeyword = (value) => {
                             "
                             class="p-1 rounded-md"
                           >
-                            {{ rowTable[key] }}
+                          {{
+                             LIST_OPTIONS[key]
+                                .find(item => item.value === rowTable[key])?.text
+                           }}
+                       
                           </span>
                         </Note>
-
                         <span v-else-if="shouldHighlight(rowTable[key])">
                           <strong v-html="highlightKeyword(rowTable[key])"</strong>
                         </span>
                         
                         <span v-else>{{ rowTable[key] }}</span>
-
-
                       </p>
                     </div>
                   </td>
 
 
                   <!-- Button Action -->
-                  <td class="p-2 pl-0 text-center relative  "  >
-                    <Button
-                      left-icon="fa-solid fa-ellipsis text-sm align-center"
-                      @click="handleActiveAction(i)"
-                      :class="isActiveAction === i && '!bg-primary !max-h-10  !text-#'"
+                  <td class="px-6 py-5  flexEnd gap-x-8 "  >
+                      <Button
+                      left-icon="fa-solid fa-pen-to-square text-xl "
+                      @click="handleOpenModal({ type: 'update', rowTable })"
                     />
-                    <div
-                      v-if="isActiveAction === i"
-                      class="flexCol max-w-32 w-full  absolute border bg-while border-grey-2 rounded-md z-[99] left-0  p-1"
-                    >
-                      <Button
-                        byStyleClass="!text-black !text-sm !w-full !bg-slate py-2 my-1 hover:!bg-[#74a5fc] "
-                        @click="handleOpenModal({ type: 'detail', rowTable })"
-                        >Chi tiết</Button
-                      >
 
-                      <Button
-                        byStyleClass="!text-black !text-sm !w-full !bg-slate py-2 my-1   hover:!bg-[#74a5fc] "
-                        @click="handleOpenModal({ type: 'update', rowTable })"
-                        >Sửa</Button
-                      >
-                      <Button
-                        byStyleClass="!text-black !text-sm !w-full !bg-slate py-2 my-1 hover:!bg-[#74a5fc] "
-                        @click="handleOpenModal({ type: 'delete', rowTable })"
-                        >Xóa</Button
-                      >
-                    </div>
+                    <Button
+                      left-icon="fa-solid fa-trash text-xl  text-[#979797]"
+                      @click="handleOpenModal({ type: 'delete', rowTable })"
+                    />
                   </td>
-
                 </tr>
               </tbody>
+
               
             </table>
+            <div v-if="renderRowTable.length === 0" class="flexCenter w-full min-h-52">
+            <p class="  h3 ">Không tìm dữ liệu
+              <i class="fa-solid fa-database text-xl  text-[#979797]"></i>
+            </p>
+            </div>
         
           </div>
         </div>
@@ -179,3 +155,6 @@ const highlightKeyword = (value) => {
 
 </template>
  
+<style scoped>
+  
+</style>

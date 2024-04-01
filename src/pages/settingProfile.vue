@@ -6,6 +6,7 @@ import Input from '../components/Input.vue'
 import Field from '../components/Field.vue'
 import Select from '@/components/Select.vue'
 import FiledImage from '@/components/FiledImage.vue'
+import FieldFile from '@/components/FieldFile.vue'
 import Tabs from '@/components/Tabs.vue'
 
 import { validateUser } from '@/utils/validateYub'
@@ -16,10 +17,6 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 
 const formProfile = computed(() => store.state.user)
-const testImg = ref({
-  // url : "",
-  url: 'https://yt3.ggpht.com/ytc/AIdro_lXowMh9tllnRErA_ONodvDXnZ6dCIM4dlPS6fTJXXD-o9Ub3cv0f8lQu91U7aW=s88-c-k-c0x00ffffff-no-rj'
-})
 
 const errors = ref({})
 
@@ -53,12 +50,6 @@ async function submit() {
     <div class="mt-6 w-full flex gap-2 max-md:flex-col">
       <div class="flex max-md:justify-center"></div>
       <div class="flex gap-x-4">
-        <filed-image
-          v-model="testImg"
-          type="file"
-          styleByClass="w-40 h-40 rounded-full max-md:!w-50 max-md:!h-50"
-        />
-
         <div class="flex-1 px-4 flex flex-wrap gap-3 max-md:flexCol max-md:gap-2">
           <Field label="Tên đăng nhập" required :error="errors.username">
             <Input v-model="formProfile.username" type="text" />

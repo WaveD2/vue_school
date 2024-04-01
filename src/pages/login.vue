@@ -1,13 +1,15 @@
 <script setup>
-import useTransition from '@/utils/axios'
 import { loginSchema } from '@/utils/validateYub'
 import { reactive, ref, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
-
 import store from '@/store'
+import Field from '@/components/Field.vue'
+import { LABEL_LOGIN } from '@/utils/constants'
+import { arrayToObject } from '@/utils/function'
 
 const route = useRouter()
 const emit = defineEmits(['setLoading'])
+const errors = ref({})
 let formLogin = reactive({
   username: '',
   password: ''
@@ -20,24 +22,23 @@ const typeError = reactive({
 
 const handleSubmitForm = async () => {
   try {
-    loginSchema.validateSync(formLogin)
-    typeError.type = null
-    typeError.message = null
+    loginSchema.validateSync(formLogin, { abortEarly: false })
+    errors.value = null
+
     emit('setLoading', true)
     // CALL API
     await store.dispatch('loginUser', formLogin)
 
     route.push('/teacher')
   } catch (error) {
-    const { path, message } = error
-    typeError.type = path
-    typeError.message = message
+    if (Array.isArray(error.inner)) {
+      const errorMess = error.inner.map((e) => ({
+        [e.path]: e.message
+      }))
+      return (errors.value = arrayToObject(errorMess))
+    }
   } finally {
     emit('setLoading', false)
-    // formLogin = {
-    //   password: '',
-    //   username: ''
-    // }
   }
 }
 </script>
@@ -48,43 +49,24 @@ const handleSubmitForm = async () => {
 
     <form @submit.prevent="handleSubmitForm" class="flexCol gap-y-3">
       <div class="mb-4">
-        <label for="username" class="text-lg block mb-2 text-gray-600">Tên đăng nhập</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          class="input_form"
-          autocomplete="off"
-          v-model="formLogin.username"
-        />
-        <p v-show="typeError.type == 'username'" class="p text-error mt-2">
-          {{ typeError.message }}
-        </p>
-      </div>
-
-      <div class="mb-4">
-        <label for="password" class="text-lg block mb-2 text-gray-600">Mật khẩu</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          class="input_form"
-          autocomplete="off"
-          v-model="formLogin.password"
-        />
-        <p v-show="typeError.type === 'password'" class="p text-error mt-2">
-          {{ typeError.message }}
-        </p>
-      </div>
-
-      <div class="mb-4 flex items-center">
-        <input type="checkbox" id="remember" name="remember" class="text-blue-500" />
-        <label for="remember" class="text-gray-600 ml-2">Ghi nhớ </label>
+        <Field
+          v-for="(value, key) of LABEL_LOGIN"
+          :error="errors[key]"
+          :label="value.text"
+          :required="value.required"
+        >
+          <input
+            :type="`${key === 'password' ? 'password' : 'text'}`"
+            :id="key"
+            :name="formLogin[key]"
+            class="input_form"
+            autocomplete="off"
+            v-model="formLogin[key]"
+          />
+        </Field>
       </div>
 
       <div class="mb-4 flexBetween text-blue-500 hover:underline">
-        <RouterLink to="#" class="">Quên mật khẩu</RouterLink>
-
         <RouterLink to="register" class="">Đăng ký</RouterLink>
       </div>
 

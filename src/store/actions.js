@@ -41,10 +41,24 @@ export const getInfoUser = async ({ commit }) => {
 //  GET ALL OR GET Filter
 export const getInfo = async (ctx, listParams) => {
   const { params, url, typeCommitStore } = listParams
-  console.log('params', params)
+
   let res = null
   if (params) {
-    res = await callApi(url, 'GET', null, params)
+    const queryParams = Object.keys(params).reduce((acc, key) => {
+      if (params[key]) {
+        acc[`filter[${key}]`] = params[key]
+      } else if (params.page) {
+        acc.page = params.page
+      } else if (params.search) {
+        acc.search = params.search
+      }
+
+      return acc
+    }, {})
+
+    res = await callApi(url, 'GET', null, {
+      ...queryParams
+    })
   } else {
     res = await callApi(url, 'GET')
   }

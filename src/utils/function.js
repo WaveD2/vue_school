@@ -34,3 +34,28 @@ export const arrayToObject = (arr) => {
   })
   return obj
 }
+
+export const fetchDoUpLoadFile = async ({ url, file, form }) => {
+  console.log(url, file, form)
+  const formData = new FormData()
+  for (const key in form) {
+    formData.append(key, form[key])
+  }
+
+  formData.append('file', file)
+
+  await fetch(url, {
+    method: 'POST',
+    body: formData
+  })
+}
+
+export const filterObject = ({ obj }) => {
+  console.log('obj', obj)
+  for (let key in obj) {
+    if (!obj[key]) {
+      delete obj[key]
+    }
+  }
+  return obj
+}

@@ -1,6 +1,6 @@
 <script setup>
 import store from '@/store'
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted, onUpdated } from 'vue'
 import {
   LABEL_MODAL_DETAIL_TEACHER,
   LABEL_TABLE_TEACHER,
@@ -10,11 +10,19 @@ import {
 const emit = defineEmits(['getDataTable'])
 
 onMounted(async () => {
-  const sort = JSON.parse(localStorage.getItem('sort_current')) || ''
+  const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
+
+  const params = new URLSearchParams(sortPreviousRoute.split('?')[1])
+
+  const queryParamsObject = {}
+  for (const [key, value] of params) {
+    queryParamsObject[key] = value
+  }
+
   const listParams = {
     url: 'teachers',
     typeCommitStore: 'SET_LIST_USER_TABLE',
-    params: sort
+    params: sortPreviousRoute ? queryParamsObject : sortPreviousRoute
   }
   await store.dispatch('getInfo', listParams)
 
@@ -25,6 +33,11 @@ onMounted(async () => {
     typeTable: 'teachers'
   })
 })
+
+onUnmounted(() => {
+  localStorage.removeItem('previousRoute')
+})
 </script>
 
 <template></template>
+, onUpdated

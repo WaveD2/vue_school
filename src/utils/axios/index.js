@@ -28,6 +28,7 @@ export default function useTransition() {
       if (err.response && err.response.data) {
         if (err.response.data.code === 'NotAuthen') {
           toastInfo({ type: 'error', mes: err.response.data.message })
+     
           router.push('/login')
         } else if (err.response.data.error) {
           error.value = err.response.data.error.issues.map((issue) => ({

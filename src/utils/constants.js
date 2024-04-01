@@ -4,6 +4,18 @@ export const VALUE_LOGIN = {
   username: '',
   password: ''
 }
+export const LABEL_LOGIN = {
+  username: {
+    text: 'Tên đăng nhập',
+    required: true,
+    disabled: false
+  },
+  password: {
+    text: 'Mật khẩu',
+    required: true,
+    disabled: false
+  }
+}
 
 export const VALUE_REGISTER = {
   username: '',
@@ -51,21 +63,17 @@ export const MENU_SIDE_NAV = [
   }
 ]
 
-export const GENDER = [
-  { value: 'male', text: 'Nam' },
-  { value: 'female', text: 'Nữ' },
-  { value: 'other', text: 'Khác' }
-]
-
 export const LIST_OPTIONS = {
   status: [
+    { value: '', text: 'Trạng thái' },
     { value: 'active', text: 'Hoạt động' },
-    { value: 'disabled', text: 'Tạm dừng' }
+    { value: 'disabled', text: 'Không hoạt động' }
   ],
+
   gender: [
+    { value: '', text: 'Giới tính' },
     { value: 'male', text: 'Nam' },
-    { value: 'female', text: 'Nữ' },
-    { value: 'other', text: 'Khác' }
+    { value: 'female', text: 'Nữ' }
   ],
   type: [
     { value: 'official', text: 'Chính thức' },
@@ -73,14 +81,13 @@ export const LIST_OPTIONS = {
     { value: 'parttime', text: 'Thời vụ' }
   ],
   role: [
-    { value: 'parent', text: 'parent' },
-    { value: 'teacher', text: 'teacher' },
-    { value: 'admin', text: 'admin' }
+    { value: 'parent', text: 'Người dùng' },
+    { value: 'teacher', text: 'Giáo viên ' },
+    { value: 'admin', text: 'Quản lý' }
   ]
 }
 
 export const LABEL_TABLE_TEACHER = {
-  // avatar: 'Ảnh',
   name: 'Tên',
   gender: 'Giới tính',
   phone: 'Số điện thoại',
@@ -90,10 +97,6 @@ export const LABEL_TABLE_TEACHER = {
 }
 
 export const LABEL_MODAL_DETAIL_TEACHER = {
-  // avatar: {
-  //   text: 'Ảnh',
-  //   required: false
-  // },
   name: {
     text: 'Tên',
     required: true,
@@ -169,14 +172,30 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
     required: false,
     disabled: true
   },
+  contracts: {
+    text: 'Làm việc',
+    required: false,
+    disabled: false
+  },
   note: {
     text: 'Ghi chú ',
+    required: false,
+    disabled: false
+  },
+
+  avatar: {
     required: false,
     disabled: false
   }
 }
 
 export const VALUE_MODAL_DETAIL_TEACHER = {
+  avatar: {
+    bucket: '',
+    key: '',
+    url: ''
+  },
+  contracts: [],
   name: '',
   gender: '',
   phone: '',
@@ -203,10 +222,10 @@ export const LABEL_TABLE_USER = {
 }
 
 export const LABEL_MODAL_DETAIL_USER = {
-  // avatar: {
-  //   text: 'Ảnh',
-  //   required: false
-  // },
+  avatar: {
+    text: 'Ảnh',
+    required: false
+  },
   username: {
     text: 'Tên đăng nhập',
     required: true,

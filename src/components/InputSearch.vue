@@ -24,9 +24,9 @@ const handleSearchInput = (event) => {
       name="search"
       :value="props.modelValue"
       placeholder="Tìm kiếm..."
-      class="bg-white h-10 px-5 w-full pr-10 rounded-full text-sm focus:outline-none focus:border focus:border-[#6366f1]"
       @keyup="handleSearchInput"
       :class="props.byStyleClass"
+      class="pl-3 pr-10 w-full"
     />
     <button type="submit" class="absolute right-0 top-0 mt-3 mr-4">
       <svg

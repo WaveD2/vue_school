@@ -1,7 +1,27 @@
 <script setup>
 import { computed } from 'vue'
+import LoadingComponent from './LoadingComponent.vue'
 
-const props = defineProps(['isInnerModal', 'styleModalContainer'])
+const props = defineProps({
+  isInnerModal: Boolean,
+  styleModalContainer: {
+    type: String,
+    default: 'top-0 right-0 bottom-0'
+  },
+  styleModalBox: {
+    type: String,
+    default: 'top-0 right-0 left-0'
+  },
+  placeholder: {
+    type: String,
+    default: 'Mô tả...'
+  },
+  isLoadingModal: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const emit = defineEmits(['closeModal'])
 
 const isInner = computed(() => props.isInnerModal)
@@ -12,15 +32,19 @@ const handleClose = () => {
 </script>
 
 <template>
+  <LoadingComponent :is-loading="props.isLoadingModal" />
+  <!-- top-0 right-0 left-0 -->
   <div
     @click.self="handleClose"
     id="crud-modal"
     aria-hidden="true"
-    class="overflow-hidden overflow-x-hidden gap-3 items-center w-full md:inset-0 max-h-full fixed top-0 right-0 left-0 z-50 bg-[#3f373787]"
-    :class="!isInner && 'hidden'"
+    class="gap-3 items-center w-full md:inset-0 max-h-full fixed z-50 bg-[#3f373787]"
+    :class="[props.styleModalContainer, !isInner && 'hidden']"
   >
-    <div class="relativeCenter z-50 w-full max-w-5xl max-h-full" :class="props.styleModalContainer">
-      <div class="relative w-full bg-white rounded-lg shadow dark:bg-gray-700">
+    <div class="absolute z-50 w-full max-w-6xl max-h-full" :class="props.styleModalBox">
+      <div
+        class="relative overflow-y-scroll flex flex-col h-full w-full bg-white rounded-lg shadow dark:bg-gray-700"
+      >
         <!-- Modal header -->
         <div
           class="flex items-center justify-between md:px-10 md:py-5 border-b rounded-t dark:border-gray-600"
@@ -52,7 +76,9 @@ const handleClose = () => {
         </div>
 
         <!-- content -->
-        <slot name="content" />
+        <div class="flex-1">
+          <slot name="content" />
+        </div>
 
         <!-- footer -->
         <slot name="footer" />
@@ -62,11 +88,11 @@ const handleClose = () => {
 </template>
 
 <style>
-.relativeCenter {
+.absoluteRight {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  bottom: 0;
+  right: 0;
 }
 </style>
 computed,

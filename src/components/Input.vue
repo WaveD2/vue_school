@@ -8,14 +8,15 @@ const props = defineProps({
   disabled: Boolean,
   invalid: Boolean,
   ariaDescribedBy: String,
-  type: String
+  type: String,
+  styleClass: String
 })
 
 const emit = defineEmits(['update:modelValue'])
 </script>
 <template>
   <input
-    class="bg-gray-200 focus:bg-while"
+    class="w-full text-[18px] py-3 px-3 border rounded-lg bg-[#f5f6fa] border-[#D5D5D5] focus:bg-while"
     :disabled="props.disabled"
     :type="props.type"
     :id="props.id"
@@ -24,7 +25,7 @@ const emit = defineEmits(['update:modelValue'])
     "
     :required="props.required"
     @input="($event) => emit('update:modelValue', $event.target.value)"
-    :class="['input_form', props.invalid ? 'border-error' : 'border-slate']"
+    :class="[props.styleClass, props.invalid ? 'border-error' : 'border-slate']"
   />
 </template>
 <!--   -->

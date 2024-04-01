@@ -47,19 +47,20 @@ onMounted(() => {
     <!--sidenav -->
     <section
       :class="isOpenMenuSidebar && '!block'"
-      class="fixed left-0 top-0 w-64 pl-4 h-full bg-purple py-4 z-50 transition-all max-md:pl-2 max-md:hidden"
+      class="fixed left-0 top-0 w-64 pl-4 h-full bg-while shadow-xl shadow-gray-300 z-50 transition-all max-md:pl-2 max-md:hidden"
       ref="menu"
     >
-      <a
-        href="#"
-        class="flex items-center px-4 pb-4 border-b border-b-gray-200 max-md:px-2 max-md:justify-between"
+      <div
+        class="flex items-center px-2 h-[85px] border-b border-b-gray-200 max-md:px-2 max-md:justify-between"
       >
-        <h2 class="h2">Wave <span class="bg-[#f84525] text-white px-2 rounded-md">D</span></h2>
+        <h2>
+          <span class="h1 font-black font-['Mont']">WaveD</span>
+        </h2>
 
         <div class="hidden max-md:inline-block cursor-pointer" @click="toggleMenuSidebar">
           <i class="fa-regular fa-circle-xmark text-while text-3xl"></i>
         </div>
-      </a>
+      </div>
       <ul
         class="mt-2"
         v-for="(sidebar, index) in MENU_SIDE_NAV"
@@ -69,11 +70,11 @@ onMounted(() => {
           <RouterLink
             @click="sidebar?.func()"
             :to="sidebar.link"
-            class="flex text-lg font-semibold items-center py-3 px-4 text-grey-2 rounded-tl-md rounded-bl-md transition-all max-md:px-2 max-md:text-base"
-            :class="route.path === sidebar.link && '!bg-background !text-purple'"
+            class="flex items-center py-3 px-4 text-zinc-400 rounded-tl-md rounded-bl-md transition-all max-md:px-2 max-md:text-base"
+            :class="route.path === sidebar.link && '!bg-background !text-[#1814F3]'"
           >
             <i class="mr-3 text-lg" :class="sidebar.icon" />
-            <span class="text-sm">{{ sidebar.text }}</span>
+            <span class="h5 font-medium font-['Inter']">{{ sidebar.text }}</span>
           </RouterLink>
         </li>
       </ul>
@@ -85,19 +86,19 @@ onMounted(() => {
     ></div>
 
     <section
-      class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-linear min-h-screen transition-all main"
+      class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-while min-h-screen transition-all main"
     >
       <!-- navbar -->
 
-      <div class="h-[68px] max-md:h-[138px]">
+      <div class="h-[85px] bg-white">
         <div
-          class="py-2 px-6 bg-transparent flexBetween shadow-md shadow-black/5 sticky top-0 left-0 z-30 max-md:relative max-md:pb-[70px]"
+          class="h-full px-8 bg-transparent flexBetween shadow-md shadow-black/5 sticky top-0 left-0 z-30 max-md:relative"
         >
           <div class="hidden cursor-pointer max-md:inline-block" @click="toggleMenuSidebar">
             <i class="fa-solid fa-bars text-lg"></i>
           </div>
 
-          <h3 class="font-medium text-text text-2xl max-md:text-lg">{{ route.name }}</h3>
+          <h3 class="text-slate-700 text-[25px] font-semibold font-['Inter']">{{ route.name }}</h3>
           <div class="ml-2" v-if="userCurrent">
             <div class="flex items-center">
               <div class="flex-shrink-0 w-10 h-10 relative">
@@ -131,7 +132,7 @@ onMounted(() => {
 
       <!-- content -->
 
-      <section class="p-3"><slot /></section>
+      <section class="p-3 pb-0"><slot /></section>
     </section>
   </main>
 </template>

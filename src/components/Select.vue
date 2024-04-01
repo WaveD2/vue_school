@@ -5,7 +5,8 @@ const props = defineProps({
   invalid: Boolean,
   styleClass: String,
   options: [Array],
-  disabled: Boolean
+  disabled: Boolean,
+  valueDefault: Object
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -20,12 +21,12 @@ const handleChange = (event) => {
     @change="handleChange"
     :value="props.modelValue"
     :disabled="props.disabled"
-    class="bg-gray-200 focus:bg-while input_form"
+    class="w-full text-[18px] py-3 px-3 border rounded-lg bg-[#f5f6fa] border-[#D5D5D5] focus:bg-while"
     :class="[props.styleClass, props.invalid ? 'border-error' : 'border-slate']"
   >
     <option
-      :required="props.required"
       v-for="(item, index) in options"
+      :required="props.required"
       :value="item.value"
       :key="index"
     >
