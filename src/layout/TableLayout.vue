@@ -31,6 +31,7 @@ const filtersAndSort = reactive({
   page: queryParams.value.page || 0
 })
 
+//  SET URL DEFAULT
 onMounted(() => {
   if (!Object.keys(route.query).length > 0) {
     localStorage.setItem('previousRoute', route.path)
@@ -149,6 +150,7 @@ function handleSortTable(newPage) {
   filtersAndSort.page = newPage
 }
 
+// FILTER AND SET URL CURRENT
 const handleFilterAndSort = debounce(async () => {
   isLoading.value = true
 
@@ -176,8 +178,8 @@ watch(
     newQueryParams.status = newVal.status || undefined
     newQueryParams.search = newVal.search || undefined
     newQueryParams.page = newVal.page || undefined
-    handleFilterAndSort()
     router.push({ path: route.path, query: newQueryParams })
+    handleFilterAndSort()
   },
   { deep: true }
 )
@@ -197,7 +199,7 @@ const handleClickForm = debounce(async ({ type }) => {
       return
     }
     const newForm = trimInput(valueForm.value)
-    console.log('newForm', newForm)
+
     validateTeacher.validateSync(newForm, { abortEarly: false })
 
     const API_METHOD = type === 'add' ? 'POST' : 'PATCH'
@@ -364,8 +366,3 @@ const handleClickForm = debounce(async ({ type }) => {
     </template>
   </ModalComponent>
 </template>
-
-<!-- 
-
-     style-class="!w-full  py-3 px-2 border border-[#D5D5D5]"  
- -->, onMounted
