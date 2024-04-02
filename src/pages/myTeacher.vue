@@ -1,6 +1,6 @@
 <script setup>
 import store from '@/store'
-import { onMounted, onUnmounted, onUpdated } from 'vue'
+import { onMounted } from 'vue'
 import {
   LABEL_MODAL_DETAIL_TEACHER,
   LABEL_TABLE_TEACHER,

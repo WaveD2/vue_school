@@ -1,22 +1,24 @@
 <script setup>
+import { computed, watchEffect, onMounted, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
 import Table from '@/components/Table.vue'
 import Select from '@/components/Select.vue'
 import InputSearch from '@/components/InputSearch.vue'
 import ModalComponent from '@/components/ModalComponent.vue'
-import { computed, watchEffect, onMounted, reactive, ref, watch } from 'vue'
 import Field from '@/components/Field.vue'
 import Input from '@/components/Input.vue'
 import Button from '@/components/Button.vue'
 import store from '@/store'
 import FiledImage from '@/components/FiledImage.vue'
-import { validateTeacher } from '@/utils/validateYub'
-import { arrayToObject, trimInput } from '@/utils/function'
 import TextareaVue from '@/components/Textarea.vue'
 import debounce from 'lodash.debounce'
-import { LIST_OPTIONS } from '@/utils/constants'
 import Pagination from '@/components/Pagination.vue'
-import { useRoute, useRouter } from 'vue-router'
 import FieldFile from '@/components/FieldFile.vue'
+
+import { LIST_OPTIONS } from '@/utils/constants'
+import { validateTeacher } from '@/utils/validateYub'
+import { arrayToObject, trimInput } from '@/utils/function'
 
 const route = useRoute()
 

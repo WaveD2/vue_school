@@ -28,7 +28,8 @@ const handleSubmitForm = async () => {
     // CALL API
     await store.dispatch('loginUser', formNew)
 
-    route.push('/teacher')
+    const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
+    return sortPreviousRoute ? route.push(sortPreviousRoute) : route.push('/teacher')
   } catch (error) {
     if (Array.isArray(error.inner)) {
       const errorMess = error.inner.map((e) => ({
