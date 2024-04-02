@@ -43,15 +43,15 @@ export const MENU_SIDE_NAV = [
       return
     }
   },
-  {
-    text: 'Cài đặt',
-    isActive: false,
-    icon: 'fa-solid fa-gear',
-    link: '/setting-profile',
-    func: function () {
-      return
-    }
-  },
+  // {
+  //   text: 'Cài đặt',
+  //   isActive: false,
+  //   icon: 'fa-solid fa-gear',
+  //   link: '/setting-profile',
+  //   func: function () {
+  //     return
+  //   }
+  // },
   {
     text: 'Đăng xuất',
     isActive: false,

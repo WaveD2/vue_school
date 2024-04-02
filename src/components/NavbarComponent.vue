@@ -12,7 +12,7 @@ const isOpenMenuSidebar = ref(false)
 const isActiveSideBar = ref(0)
 const menuRef = ref(null)
 
-const userCurrent = computed(() => store.state.user)
+const userCurrent = ref(store.state.user)
 
 const handleActiveSideBar = (index) => {
   isActiveSideBar.value = index

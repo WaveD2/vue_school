@@ -30,12 +30,11 @@ const handleClose = () => {
   emit('closeModal')
 }
 </script>
-
+<!--  @click.self="handleClose" -->
 <template>
   <LoadingComponent :is-loading="props.isLoadingModal" />
   <!-- top-0 right-0 left-0 -->
   <div
-    @click.self="handleClose"
     id="crud-modal"
     aria-hidden="true"
     class="gap-3 items-center w-full md:inset-0 max-h-full fixed z-50 bg-[#3f373787]"

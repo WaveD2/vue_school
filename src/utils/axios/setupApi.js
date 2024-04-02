@@ -41,10 +41,16 @@ export async function fetchToken() {
     return true
   } catch (error) {
     if (error.response.data.code === 'NotAuthen') {
+      // router.push({
+      //   path: '/login',
+      //   query: { url: window.location.pathname + window.location.search }
+      // })
+      // sessionStorage.setItem('redirectUrl', window.location.pathname + window.location.search)
       toastInfo({ type: 'error', mes: error.response.data.message })
     } else {
       toastInfo({ type: 'error', mes: error.message })
     }
+
     router.push('/login')
 
     return false

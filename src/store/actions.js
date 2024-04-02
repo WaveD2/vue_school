@@ -45,12 +45,12 @@ export const getInfo = async (ctx, listParams) => {
   let res = null
   if (params) {
     const queryParams = Object.keys(params).reduce((acc, key) => {
-      if (params[key]) {
-        acc[`filter[${key}]`] = params[key]
-      } else if (params.page) {
+      if (key === 'page') {
         acc.page = params.page
-      } else if (params.search) {
+      } else if (key === 'search') {
         acc.search = params.search
+      } else {
+        acc[`filter[${key}]`] = params[key]
       }
 
       return acc

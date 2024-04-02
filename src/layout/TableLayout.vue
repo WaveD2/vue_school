@@ -10,7 +10,7 @@ import Button from '@/components/Button.vue'
 import store from '@/store'
 import FiledImage from '@/components/FiledImage.vue'
 import { validateTeacher } from '@/utils/validateYub'
-import { arrayToObject } from '@/utils/function'
+import { arrayToObject, trimInput } from '@/utils/function'
 import TextareaVue from '@/components/Textarea.vue'
 import debounce from 'lodash.debounce'
 import { LIST_OPTIONS } from '@/utils/constants'
@@ -196,14 +196,15 @@ const handleClickForm = debounce(async ({ type }) => {
 
       return
     }
-
-    validateTeacher.validateSync(valueForm.value, { abortEarly: false })
+    const newForm = trimInput(valueForm.value)
+    console.log('newForm', newForm)
+    validateTeacher.validateSync(newForm, { abortEarly: false })
 
     const API_METHOD = type === 'add' ? 'POST' : 'PATCH'
 
     await store.dispatch('apiDetail', {
       method: API_METHOD,
-      data: valueForm.value,
+      data: newForm,
       url: detailTypeTable.value
     })
   } catch (error) {
@@ -217,8 +218,10 @@ const handleClickForm = debounce(async ({ type }) => {
     if (store.state.mesErrorServer.length !== 0) {
       return (errors.value = arrayToObject(store.state.mesErrorServer))
     } else if (Object.keys(errors.value).length !== 0) return
-    handleClose()
-    innerModal.value = false
+    else {
+      handleClose()
+      innerModal.value = false
+    }
   }
 }, 500)
 </script>
@@ -244,7 +247,7 @@ const handleClickForm = debounce(async ({ type }) => {
           :options="LIST_OPTIONS.status"
         />
         <InputSearch
-          by-style-class="h-10  bg-slate-100 !rounded-[20px] border border-neutral-300"
+          by-style-class="h-12  bg-slate-100 !rounded-md border border-neutral-300"
           v-model="filtersAndSort.search"
         />
       </div>
@@ -350,6 +353,7 @@ const handleClickForm = debounce(async ({ type }) => {
           >Đóng</Button
         >
         <Button
+          v-if="detailTypeTable !== 'users'"
           by-style-class="w-2/5 py-2 rounded-md text-lg bg-[#477df4eb] hover:bg-[#1159f8eb] text-white"
           id="btnSubmit"
           @click="typeButtonModal.handleActive({ type: typeButtonModal.type })"

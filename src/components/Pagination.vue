@@ -13,7 +13,9 @@ const arr = computed(() => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between bg-white mt-3 px-4 max-md:flex-wrap max-md:gap-y-4">
+  <div
+    class="flex items-center justify-end gap-x-4 bg-white mt-3 px-4 max-md:flex-wrap max-md:gap-y-4"
+  >
     <p class="text-base text-gray-700">
       Page
       <span class="font-medium">{{ 1 }}</span>

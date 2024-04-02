@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   if (res) {
     const routeCurrent = localStorage.getItem('previousRoute')
-
     const page = routeCurrent ? routeCurrent : '/teacher'
     return route.push(page)
   }

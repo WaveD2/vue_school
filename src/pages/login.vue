@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 import store from '@/store'
 import Field from '@/components/Field.vue'
 import { LABEL_LOGIN } from '@/utils/constants'
-import { arrayToObject } from '@/utils/function'
+import { arrayToObject, trimInput } from '@/utils/function'
 
 const route = useRouter()
 const emit = defineEmits(['setLoading'])
@@ -18,21 +18,15 @@ let formLogin = reactive({
   password: ''
 })
 
-const trimInput = () => {
-  for (let key in formLogin) {
-    formLogin[key] = formLogin[key].trim()
-  }
-}
-
 const handleSubmitForm = async () => {
   try {
-    trimInput()
-    loginSchema.validateSync(formLogin, { abortEarly: false })
+    const formNew = trimInput(formLogin)
+    loginSchema.validateSync(formNew, { abortEarly: false })
     errors.value = null
 
     emit('setLoading', true)
     // CALL API
-    await store.dispatch('loginUser', formLogin)
+    await store.dispatch('loginUser', formNew)
 
     route.push('/teacher')
   } catch (error) {

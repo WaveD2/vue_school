@@ -59,3 +59,16 @@ export const filterObject = ({ obj }) => {
   }
   return obj
 }
+
+export const trimInput = (form) => {
+  const trimmedForm = {}
+
+  for (let key in form) {
+    if (typeof form[key] === 'string') {
+      trimmedForm[key] = form[key].trim()
+    } else {
+      trimmedForm[key] = form[key]
+    }
+  }
+  return trimmedForm
+}
