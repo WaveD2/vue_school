@@ -1,5 +1,5 @@
 <template>
-  <div class="relative py-3 sm:max-w-xl sm:mx-auto">
+  <div class="relative mx-auto">
     <div class="group cursor-pointer relative inline-block">
       <span @hover="showTooltip" @mouseenter="showTooltip" @mouseleave="hideTooltip">
         <slot></slot>
@@ -7,7 +7,7 @@
 
       <div
         v-if="isTooltipVisible"
-        class="opacity-0 top-0 left-1/2 transform -translate-x-1/2 -translate-y-full min-w-14 w-full bg-gray-300 text-gray-700 font-bold text-center text-xs rounded-lg py-2 absolute z-10 group-hover:opacity-100 px-3 pointer-events-none"
+        class="opacity-0 top-0 left-1/2 transform -translate-x-1/2 -translate-y-full min-w-min w-full bg-gray-300 text-gray-700 font-bold text-center text-xs rounded-lg py-1 absolute z-10 group-hover:opacity-100 px-2 pointer-events-none"
       >
         <slot name="tooltip-content"></slot>
         <svg

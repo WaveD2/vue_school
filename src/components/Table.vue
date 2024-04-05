@@ -41,12 +41,12 @@ const highlightKeyword = (value) => {
     return value
   }
   const regex = new RegExp(`(${props.keySearch})`, 'ig')
-  return value.toString().replace(regex, '<span class="bg-[#5bdbc3]  rounded text-gray-200">$1</span>')
+  return value.toString().replace(regex, '<span class="bg-[#5bdbc3] text-gray-200">$1</span>')
 }
 </script>
 
 <template>
-  <div class="flex flex-wrap mx-3 relative">
+  <div class="flex flex-wrap mx-3 mt-2 relative">
     <LoadingComponentVue 
       v-if="isLoading "
      :isLoading="isLoading  "
@@ -54,27 +54,27 @@ const highlightKeyword = (value) => {
 
     <div class="mx-auto w-full" >
       <div
-        class="relative flex-auto flex flex-col bg-inherit rounded-[14px] border border-zinc-200"
+        class="relative flex-auto flex flex-col bg-inherit rounded-lg border border-zinc-200"
       >
         <div
           class="flex flex-col min-w-0"
         >
-          <div class="min-h-[calc(100vh-14rem)] w-full overflow-y-scroll max-h-[calc(100vh-14rem)]" >
-            <table class="w-full text-base text-left  dark:text-gray-400" 
+          <div class="min-h-[calc(100vh-15rem)] w-full overflow-y-scroll h-auto max-h-[calc(100vh-12rem)]" >
+            <table class="w-full h-full text-base text-left  dark:text-gray-400" 
             v-if="Object.keys(renderColTable).length > 0"> 
 
             <!-- Col -->
-              <thead class="text-base text-gray-700 uppercase font-bold dark:bg-gray-700 dark:text-gray-400" >
+              <thead class="text-base text-gray-600 uppercase font-bold dark:bg-gray-700 dark:text-gray-400" >
                 <tr >
-                  <th scope="col" class="md:px-6 md:py-5 text-nowrap px-4 py-3"
+                  <th scope="col" class="text-nowrap px-3 py-3"
                     v-for="(col, index) of renderColTable"
                     :key="index"
                   >
                     {{ col }}
                   </th>
 
-                  <th scope="col" class="px-6 py-3 text-right" v-if="props.typeTable !== 'users'"
-                  >Tùy chọn</th>
+                  <th scope="col" class="   text-right" v-if="props.typeTable !== 'users'"
+                  ></th>
                 </tr>
               </thead>
 
@@ -87,19 +87,19 @@ const highlightKeyword = (value) => {
                 >
 
                 <td
-                class="md:px-6 md:py-5 text-nowrap px-4 py-3"
+                class="text-nowrap px-3 py-3"
                 v-for="key of keyColTable"
                 @click="handleOpenModal({ type: 'detail', rowTable })"
                 >
                 <TooltipVue> 
                     <div class="flex ">
-                      <p class=" font-semibold text-base">
+                      <p class="text-sm">
                         <Note v-if="key === 'status'">
                           <span
                             :class="
                                  rowTable[key] === 'active'
-                                  ? 'bg-red-300'
-                                  : 'bg-blue-300'
+                                  ? 'bg-blue-300'
+                                  : 'bg-gray-300'
                             "
                             class="p-1 rounded-md"
                           >
@@ -111,7 +111,7 @@ const highlightKeyword = (value) => {
                           </span>
                         </Note>
                         <span v-else-if="shouldHighlight(rowTable[key])">
-                          <strong v-html="highlightKeyword(rowTable[key])"</strong>
+                          <span class="" v-html="highlightKeyword(rowTable[key])"</span>
                         </span>
                         
                         <span v-else>{{ rowTable[key] }}</span>
@@ -127,14 +127,14 @@ const highlightKeyword = (value) => {
 
 
                   <!-- Button Action -->
-                  <td class="px-6 py-5  flexEnd gap-x-8 "  v-if="props.typeTable !== 'users'">
+                  <td class="px-4 py-3  flexEnd gap-x-8 "  v-if="props.typeTable !== 'users'">
                       <Button
                       left-icon="fa-solid fa-pen-to-square text-xl "
                       @click="handleOpenModal({ type: 'update', rowTable })"
                     />
 
                     <Button
-                      left-icon="fa-solid fa-trash text-xl  text-[#979797]"
+                      left-icon="fa-solid fa-trash text-xl  text-red-500"
                       @click="handleOpenModal({ type: 'delete', rowTable })"
                     />
                   </td>

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 
 const props = defineProps({
   id: String,
@@ -8,11 +8,16 @@ const props = defineProps({
   },
   required: Boolean,
   disabled: Boolean,
-  invalid: Boolean,
+  invalid: {
+    type: [String, Boolean],
+    default: ''
+  },
   ariaDescribedBy: String,
   type: String,
   styleClass: String
 })
+const isError = ref(props.invalid !== '')
+const isChangeValue = ref(false)
 
 const emit = defineEmits(['update:modelValue'])
 
@@ -25,25 +30,39 @@ const focusFirstInput = {
   }
 }
 
+const handleChangeInput = (event) => {
+  isError.value = false
+  is
+  return emit('update:modelValue', event.target.value)
+}
+
 onMounted(() => {
   focusFirstInput.mounted(document.getElementById('container_input'))
 })
+
+watch(
+  () => props.invalid,
+  (newValue) => {
+    isError.value = newValue !== ''
+  }
+)
 </script>
 <template>
   <div id="container_input">
     <input
-      class="w-full text-[18px] py-3 px-3 border rounded-lg border-[#D5D5D5] focus:border-blue-300"
+      class="w-full text-base py-2 px-3 border rounded-lg border-[#D5D5D5] focus:border-blue-300"
       :disabled="props.disabled"
       :type="props.type"
       :value="
         props.type === 'date' && props.modelValue ? props.modelValue.slice(0, 10) : props.modelValue
       "
       :required="props.required"
-      @input="($event) => emit('update:modelValue', $event.target.value)"
+      @change="handleChangeInput"
       :class="[
         props.styleClass,
-        props.invalid ? 'border-error ' : 'border-slate',
-        props.disabled && 'bg-[#f5f6fa]'
+        isError ? 'border-error ' : 'border-slate',
+        props.disabled && 'bg-[#f5f6fa]',
+        isChangeValue
       ]"
     />
   </div>

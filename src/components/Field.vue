@@ -34,7 +34,7 @@ const ariaDescribedBy = computed(() => {
     </div>
 
     <HelperMessage
-      class="mt-1 text-sm text-gray-500 dark:text-gray-400"
+      class="mt-1 text-xs text-gray-500 dark:text-gray-400"
       v-if="props.help"
       :id="ariaDescribedBy"
     >

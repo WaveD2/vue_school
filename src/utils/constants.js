@@ -89,11 +89,10 @@ export const LIST_OPTIONS = {
 
 export const LABEL_TABLE_TEACHER = {
   name: 'Tên',
-  gender: 'Giới tính',
   phone: 'Số điện thoại',
   email: 'Gmail',
-  status: 'Trạng thái',
-  currentAddress: 'Địa chỉ'
+  currentAddress: 'Địa chỉ',
+  status: 'Trạng thái'
 }
 
 export const LABEL_MODAL_DETAIL_TEACHER = {
@@ -104,7 +103,7 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
   },
   gender: {
     text: 'Giới tính',
-    required: true,
+    required: false,
     disabled: false
   },
   phone: {
@@ -134,7 +133,7 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
   },
   nationality: {
     text: 'Quốc tịch',
-    required: true,
+    required: false,
     disabled: false
   },
   permanentResidence: {
@@ -144,7 +143,7 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
   },
   healthInsuranceNumber: {
     text: 'Số bảo hiểm',
-    required: true,
+    required: false,
     disabled: false
   },
   status: {
@@ -164,7 +163,7 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
   },
   dateOfBirth: {
     text: 'Ngày sinh',
-    required: true,
+    required: false,
     disabled: false
   },
   slug: {

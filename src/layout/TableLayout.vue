@@ -9,7 +9,6 @@ import ModalComponent from '@/components/ModalComponent.vue'
 import Field from '@/components/Field.vue'
 import Input from '@/components/Input.vue'
 import Button from '@/components/Button.vue'
-import store from '@/store'
 import FiledImage from '@/components/FiledImage.vue'
 import TextareaVue from '@/components/Textarea.vue'
 import debounce from 'lodash.debounce'
@@ -19,19 +18,49 @@ import FieldFile from '@/components/FieldFile.vue'
 import { LIST_OPTIONS } from '@/utils/constants'
 import { validateTeacher } from '@/utils/validateYub'
 import { arrayToObject, trimInput } from '@/utils/function'
-import TooltipVue from '@/components/Tooltip.vue'
+import store from '@/store'
+import Tag from '@/components/Tag.vue'
 
 const route = useRoute()
-
 const router = useRouter()
 
+const innerModal = ref(false)
+const isLoading = ref(false)
+const isLoadingModal = ref(false)
+const isDisabledModal = ref(false)
+const innerModalFilter = ref(false)
+const errors = ref({})
+
+const titleModal = ref('')
+
+const valueForm = ref(null)
+const renderColTableRender = ref([])
+const labelModal = ref({})
+const valueModal = ref({})
+
+const detailTypeTable = ref('')
+
+const pag = computed(() => store.state.pagination)
 const queryParams = computed(() => route.query)
+const renderRowTable = computed(() => store.state.listUser)
 
 const filtersAndSort = reactive({
   gender: queryParams.value.gender || '',
   status: queryParams.value.status || '',
   search: queryParams.value.search || '',
+  type: queryParams.value.type || '',
   page: queryParams.value.page || 0
+})
+
+const typeModal = reactive({
+  type: null,
+  label: null,
+  optionSelect: null
+})
+const typeButtonModal = reactive({
+  type: null,
+  label: null,
+  handleActive: null
 })
 
 //  SET URL DEFAULT
@@ -48,38 +77,24 @@ watchEffect(() => {
   filtersAndSort.gender = route.query.gender || ''
   filtersAndSort.status = route.query.status || ''
   filtersAndSort.search = route.query.search || ''
+  filtersAndSort.type = route.query.type || ''
   filtersAndSort.page = route.query.page || 0
 })
+watch(
+  filtersAndSort,
+  (newVal, oldVal) => {
+    const newQueryParams = { ...queryParams.value }
 
-const typeModal = reactive({
-  type: null,
-  label: null,
-  optionSelect: null
-})
-const typeButtonModal = reactive({
-  type: null,
-  label: null,
-  handleActive: null
-})
-
-const innerModal = ref(false)
-const isLoading = ref(false)
-const isLoadingModal = ref(false)
-const isDisabledModal = ref(false)
-const errors = ref({})
-
-const titleModal = ref('')
-
-const valueForm = ref(null)
-const renderColTableRender = ref([])
-const labelModal = ref({})
-const valueModal = ref({})
-
-const detailTypeTable = ref('')
-
-const pag = computed(() => store.state.pagination)
-
-const renderRowTable = computed(() => store.state.listUser)
+    newQueryParams.gender = newVal.gender || undefined
+    newQueryParams.status = newVal.status || undefined
+    newQueryParams.search = newVal.search || undefined
+    newQueryParams.page = newVal.page || undefined
+    newQueryParams.type = newVal.type || undefined
+    router.push({ path: route.path, query: newQueryParams })
+    handleFilterAndSort()
+  },
+  { deep: true }
+)
 
 const handleSetDataRender = (data) => {
   const { colTable, labelModalDetail, valueModalDetail, typeTable, sortTable } = data
@@ -172,21 +187,6 @@ const handleFilterAndSort = debounce(async () => {
   isLoading.value = false
 }, 1000)
 
-watch(
-  filtersAndSort,
-  (newVal, oldVal) => {
-    const newQueryParams = { ...queryParams.value }
-
-    newQueryParams.gender = newVal.gender || undefined
-    newQueryParams.status = newVal.status || undefined
-    newQueryParams.search = newVal.search || undefined
-    newQueryParams.page = newVal.page || undefined
-    router.push({ path: route.path, query: newQueryParams })
-    handleFilterAndSort()
-  },
-  { deep: true }
-)
-
 //  XỬ LÝ SỰ KIỆN CỦA BUTTON ACTION
 const handleClickForm = debounce(async ({ type }) => {
   errors.value = {}
@@ -237,31 +237,41 @@ const handleClickForm = debounce(async ({ type }) => {
   <!-- Table -->
   <div class="max-md:p-0">
     <div
-      class="px-4 flexBetween min-h-[60px] mb-2 bg-transparent max-md:flex-wrap max-md:gap-y-2"
+      class="px-4 flexBetween h-auto mt-2 mb-1 bg-transparent max-md:flex-wrap max-md:gap-y-2"
       v-if="detailTypeTable !== 'users'"
     >
       <div class="flex items-center gap-x-2">
-        <Select
-          style-class="!w-auto  "
-          v-model="filtersAndSort.gender"
-          :options="LIST_OPTIONS.gender"
-        />
-        <Select
+        <!-- <Select
           style-class="!w-auto "
           v-model="filtersAndSort.status"
           :options="LIST_OPTIONS.status"
-        />
+        /> -->
         <InputSearch
-          by-style-class="h-12  bg-slate-100 !rounded-md border border-neutral-300"
+          by-style-class="h-10  bg-slate-100 !rounded-md border border-neutral-300"
           v-model="filtersAndSort.search"
         />
       </div>
-      <div @click="handlerSetModal({ type: 'add' })">
-        <i
-          class="fa-solid fa-user-plus text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-xl hover:bg-slate"
-        />
+      <div class="flex items-center gap-x-2">
+        <div @click="() => (innerModalFilter = true)">
+          <i
+            class="fa-solid fa-filter text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-xl hover:bg-slate"
+          />
+        </div>
+        <div @click="handlerSetModal({ type: 'add' })">
+          <i
+            class="fa-solid fa-user-plus text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-xl hover:bg-slate"
+          />
+        </div>
       </div>
     </div>
+
+    <!-- <div class="ml-4 h-7">
+      <Tag>
+        <template #content>
+          <p>Con chim non nho nhỏ</p>
+        </template>
+      </Tag>
+    </div> -->
 
     <Table
       :isLoading="isLoading"
@@ -286,7 +296,7 @@ const handleClickForm = debounce(async ({ type }) => {
     "
   >
     <template #title>
-      <p class="h4">{{ titleModal }}</p>
+      <p class="h5">{{ titleModal }}</p>
     </template>
     <template #content v-if="typeModal.label">
       <h3 class="text-red-400 font-bold text-center my-2" v-if="errors['error']">
@@ -316,6 +326,7 @@ const handleClickForm = debounce(async ({ type }) => {
               v-if="LIST_OPTIONS.hasOwnProperty(key)"
               v-model="valueForm[key]"
               :options="LIST_OPTIONS[key]"
+              :invalid="errors[key]"
               :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
             />
             <Input
@@ -323,6 +334,7 @@ const handleClickForm = debounce(async ({ type }) => {
               :disabled="isDisabledModal || label.disabled"
               v-model="valueForm[key]"
               type="date"
+              :invalid="errors[key]"
               :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
             />
             <TextareaVue
@@ -330,6 +342,7 @@ const handleClickForm = debounce(async ({ type }) => {
               :disabled="isDisabledModal || label.disabled"
               v-model="valueForm[key]"
               type="date"
+              :invalid="errors[key]"
               :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
             />
             <FieldFile
@@ -343,6 +356,7 @@ const handleClickForm = debounce(async ({ type }) => {
               v-else-if="key !== 'avatar'"
               v-model="valueForm[key]"
               type="text"
+              :invalid="errors[key]"
               :disabled="isDisabledModal || label.disabled"
               :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
             />
@@ -354,17 +368,62 @@ const handleClickForm = debounce(async ({ type }) => {
     <template #footer>
       <div class="w-full flexAround py-3 border-t border-gray-200">
         <Button
-          by-style-class="w-2/5 py-2 rounded-md text-lg bg-[#93b1f3eb] hover:bg-[#1159f8eb] text-white"
+          by-style-class="w-2/5 py-2 rounded-md text-base bg-[#93b1f3eb] hover:bg-[#1159f8eb] text-white"
           @click="handleClose"
           >Đóng</Button
         >
         <Button
           v-if="detailTypeTable !== 'users'"
-          by-style-class="w-2/5 py-2 rounded-md text-lg bg-[#477df4eb] hover:bg-[#1159f8eb] text-white"
+          by-style-class="w-2/5 py-2 rounded-md text-base bg-[#417bfa] hover:bg-[#1159f8eb] text-white"
           id="btnSubmit"
           @click="typeButtonModal.handleActive({ type: typeButtonModal.type })"
         >
           {{ typeButtonModal.label }}
+        </Button>
+      </div>
+    </template>
+  </ModalComponent>
+
+  <ModalComponent
+    :is-inner-modal="innerModalFilter"
+    @close-modal="() => (innerModalFilter = false)"
+    :is-loading-modal="isLoadingModal"
+    style-modal-box="!max-w-xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+  >
+    <template #title>
+      <p class="text-base font-bold">Lọc</p>
+    </template>
+
+    <template #content>
+      <div class="flex flex-wrap items-center gap-2 ml-8 my-4">
+        <Select
+          style-class="!w-auto "
+          v-model="filtersAndSort.status"
+          :options="LIST_OPTIONS.status"
+        />
+        <Select
+          style-class="!w-auto "
+          v-model="filtersAndSort.gender"
+          :options="LIST_OPTIONS.gender"
+        />
+        <Select style-class="!w-auto " v-model="filtersAndSort.type" :options="LIST_OPTIONS.type" />
+      </div>
+    </template>
+
+    <template #footer>
+      <div class="w-full flexAround py-3 border-t border-gray-200">
+        <Button
+          by-style-class="w-2/5 py-2 rounded-md text-base bg-[#93b1f3eb] hover:bg-[#1159f8eb] text-white"
+          @click="handleClose"
+          >Đóng</Button
+        >
+        <Button
+          v-if="detailTypeTable !== 'users'"
+          by-style-class="w-2/5 py-2 rounded-md text-base bg-[#417bfa] hover:bg-[#1159f8eb] text-white"
+          id="btnSubmit"
+          @click="typeButtonModal.handleActive({ type: typeButtonModal.type })"
+        >
+          Tìm kiếm
         </Button>
       </div>
     </template>

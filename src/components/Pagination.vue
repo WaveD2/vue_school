@@ -16,7 +16,7 @@ const arr = computed(() => {
   <div
     class="flex items-center justify-end gap-x-4 bg-white mt-3 px-4 max-md:flex-wrap max-md:gap-y-4"
   >
-    <p class="text-base text-gray-700">
+    <p class="text-sm text-gray-700">
       Page
       <span class="font-medium">{{ 1 }}</span>
 
@@ -38,7 +38,7 @@ const arr = computed(() => {
       <button
         v-for="(num, index) in arr"
         @click="() => emit('onPageChanged', index + 1)"
-        class="rounded-md z-10 inline-flex items-center border border-grey-2 bg-#fff px-4 py-2 text-sm font-semibold text-black focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+        class="rounded-md z-10 inline-flex items-center border border-grey-2 bg-#fff px-3 py-2 text-sm font-semibold text-black focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
         :class="
           index === (pag.page - 1 < 0 ? pag.page : pag.page - 1) &&
           'bg-indigo-600 border border-indigo-600  text-while'

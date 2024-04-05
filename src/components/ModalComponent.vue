@@ -31,7 +31,8 @@ const emit = defineEmits(['closeModal'])
 const isInner = computed(() => props.isInnerModal)
 
 const handleClose = (e) => {
-  if (props.disabled || e.target.type === 'button') {
+  // props.disabled ||
+  if (e.target.type === 'button') {
     emit('closeModal')
   }
 }
@@ -45,13 +46,13 @@ const handleClose = (e) => {
     :class="[props.styleModalContainer, !isInner && 'hidden']"
     @click.self="handleClose"
   >
-    <div class="absolute z-50 w-full max-w-6xl max-h-full" :class="props.styleModalBox">
+    <div class="absolute z-50 w-full max-w-5xl max-h-full" :class="props.styleModalBox">
       <div
         class="relative overflow-hidden flex flex-col h-full w-full bg-white rounded-lg shadow dark:bg-gray-700"
       >
         <!-- Modal header -->
         <div
-          class="flex items-center justify-between md:px-10 md:py-5 border-b rounded-t dark:border-gray-600"
+          class="flex items-center justify-between md:px-10 md:py-3 border-b rounded-t dark:border-gray-600"
         >
           <slot name="title"></slot>
           <button

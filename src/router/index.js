@@ -7,10 +7,24 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      name: 'authentication',
+      component: Authentication,
+      children: [
+        {
+          path: '/login',
+          component: () => import('../pages/login.vue')
+        },
+        {
+          path: '/register',
+          component: () => import('../pages/register.vue')
+        }
+      ]
+    },
+
+    {
       path: '/',
       name: 'trang chủ',
       component: Default,
-      meta: { requiresAuth: true },
       children: [
         {
           path: '/',
@@ -33,21 +47,6 @@ const router = createRouter({
           path: '/setting-profile',
           name: 'Cài đặt thông tin',
           component: () => import('@/pages/settingProfile.vue')
-        }
-      ]
-    },
-    {
-      path: '/',
-      name: 'authentication',
-      component: Authentication,
-      children: [
-        {
-          path: 'login',
-          component: () => import('../pages/login.vue')
-        },
-        {
-          path: 'register',
-          component: () => import('../pages/register.vue')
         }
       ]
     }

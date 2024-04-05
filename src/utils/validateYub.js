@@ -27,10 +27,16 @@ export const validateTeacher = object().shape({
     .matches(emailRegExp, 'Email không hợp lệ')
     .email('Email không hợp lệ.')
     .required('Vui lòng nhập email'),
-  permanentResidence: string().required('Vui lòng nhập hộ khẩu thường trú'),
-  currentAddress: string().required('Vui lòng nhập chỗ ở hiện tại'),
+  permanentResidence: string()
+    .min(6, 'Nhập đúng hộ khẩu thường trú')
+    .required('Vui lòng nhập hộ khẩu thường trú'),
+  currentAddress: string()
+    .min(6, 'Nhập đúng hộ khẩu thường trú')
+    .required('Vui lòng nhập chỗ ở hiện tại'),
   type: string().required('Vui lòng nhập hợp đồng'),
   phone: string().required().matches(phoneRegExp, 'Số điện thoại không chính xác'),
-  passport: string().required('Vui lòng số chứng minh nhân dân'),
+  passport: string()
+    .min(6, 'Nhập đúng số chứng minh nhân dân')
+    .required('Vui lòng số chứng minh nhân dân'),
   status: string().required('Vui lòng chọn trạng thái')
 })

@@ -58,7 +58,7 @@ onMounted(() => {
         </h2>
 
         <div class="hidden max-md:inline-block cursor-pointer" @click="toggleMenuSidebar">
-          <i class="fa-regular fa-circle-xmark text-while text-3xl"></i>
+          <i class="fa-regular fa-circle-xmark text-while text-2xl"></i>
         </div>
       </div>
       <ul
@@ -70,11 +70,11 @@ onMounted(() => {
           <RouterLink
             @click="sidebar?.func()"
             :to="sidebar.link"
-            class="flex items-center py-3 px-4 text-zinc-400 rounded-tl-md rounded-bl-md transition-all max-md:px-2 max-md:text-base"
+            class="flex items-center py-3 px-4 text-zinc-400 rounded-tl-md rounded-bl-md transition-all max-md:px-2 max-md:text-sm"
             :class="route.path === sidebar.link && '!bg-background !text-[#1814F3]'"
           >
-            <i class="mr-3 text-lg" :class="sidebar.icon" />
-            <span class="h5 font-medium font-['Inter']">{{ sidebar.text }}</span>
+            <i class="mr-3" :class="sidebar.icon" />
+            <span class="text-base font-bold">{{ sidebar.text }}</span>
           </RouterLink>
         </li>
       </ul>
@@ -98,7 +98,7 @@ onMounted(() => {
             <i class="fa-solid fa-bars text-lg"></i>
           </div>
 
-          <h3 class="text-slate-700 text-[25px] font-semibold font-['Inter']">{{ route.name }}</h3>
+          <h3 class="text-slate-700 text-xl font-bold">{{ route.name }}</h3>
           <div class="ml-2" v-if="userCurrent">
             <div class="flex items-center">
               <div class="flex-shrink-0 w-10 h-10 relative">
@@ -132,7 +132,7 @@ onMounted(() => {
 
       <!-- content -->
 
-      <section class="p-3 pb-0"><slot /></section>
+      <section class="px-3 py-1 pb-0"><slot /></section>
     </section>
   </main>
 </template>
