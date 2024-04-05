@@ -8,6 +8,7 @@ import Select from '@/components/Select.vue'
 import FiledImage from '@/components/FiledImage.vue'
 import FieldFile from '@/components/FieldFile.vue'
 import Tabs from '@/components/Tabs.vue'
+import TooltipVue from '@/components/Tooltip.vue'
 
 import { validateUser } from '@/utils/validateYub'
 import { arrayToObject } from '@/utils/function'
@@ -70,6 +71,13 @@ async function submit() {
           </Field>
         </div>
       </div>
+
+      <TooltipVue>
+        <span class="bg-red-100 px-4 py-2">Hover me</span>
+        <template v-slot:tooltip-content>
+          <span class="text-nowrap">This is a tooltip</span>
+        </template>
+      </TooltipVue>
     </div>
     <div class="w-full flexEnd">
       <button type="button" @click="submit" class="btn_blue_hover w-1/5 max-md:w-2/5">Lưu</button>

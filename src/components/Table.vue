@@ -3,6 +3,7 @@ import Button from './Button.vue'
 import store from '@/store'
 import Note from './Note.vue'
 import LoadingComponentVue from './LoadingComponent.vue'
+import TooltipVue from './Tooltip.vue'
 
 import { ref, computed } from 'vue'
 import { LIST_OPTIONS } from '@/utils/constants'
@@ -84,21 +85,21 @@ const highlightKeyword = (value) => {
                   v-for="(rowTable, i) in renderRowTable"
                   :key="i"
                 >
-                  <td
-                    class="md:px-6 md:py-5 text-nowrap px-4 py-3"
-                    v-for="key of keyColTable"
-                    @click="handleOpenModal({ type: 'detail', rowTable })"
-                  >
+
+                <td
+                class="md:px-6 md:py-5 text-nowrap px-4 py-3"
+                v-for="key of keyColTable"
+                @click="handleOpenModal({ type: 'detail', rowTable })"
+                >
+                <TooltipVue> 
                     <div class="flex ">
                       <p class=" font-semibold text-base">
-                        <Note v-if="key === 'status' || key === 'gender'">
+                        <Note v-if="key === 'status'">
                           <span
                             :class="
-                              rowTable[key] === 'male'
-                                ? 'bg-blue-300'
-                                : rowTable[key] === 'active'
+                                 rowTable[key] === 'active'
                                   ? 'bg-red-300'
-                                  : ' bg-orange'
+                                  : 'bg-blue-300'
                             "
                             class="p-1 rounded-md"
                           >
@@ -116,7 +117,13 @@ const highlightKeyword = (value) => {
                         <span v-else>{{ rowTable[key] }}</span>
                       </p>
                     </div>
+
+                     <template v-slot:tooltip-content> 
+                      <span class="text-nowrap">{{ rowTable[key] }}</span>
+                      </template>
+                  </TooltipVue>
                   </td>
+
 
 
                   <!-- Button Action -->
@@ -155,3 +162,4 @@ const highlightKeyword = (value) => {
 <style scoped>
   
 </style>
+

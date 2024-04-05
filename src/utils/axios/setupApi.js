@@ -51,7 +51,7 @@ export async function fetchToken() {
       toastInfo({ type: 'error', mes: error.message })
     }
 
-    router.push('/login')
+    router.push('/login?')
 
     return false
   }

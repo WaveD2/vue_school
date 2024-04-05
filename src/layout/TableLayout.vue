@@ -19,6 +19,7 @@ import FieldFile from '@/components/FieldFile.vue'
 import { LIST_OPTIONS } from '@/utils/constants'
 import { validateTeacher } from '@/utils/validateYub'
 import { arrayToObject, trimInput } from '@/utils/function'
+import TooltipVue from '@/components/Tooltip.vue'
 
 const route = useRoute()
 
@@ -274,6 +275,7 @@ const handleClickForm = debounce(async ({ type }) => {
   </div>
 
   <ModalComponent
+    :disabled="isDisabledModal"
     :is-inner-modal="innerModal"
     @close-modal="handleClose"
     :is-loading-modal="isLoadingModal"
@@ -350,9 +352,9 @@ const handleClickForm = debounce(async ({ type }) => {
     </template>
 
     <template #footer>
-      <div class="w-full flexAround py-3">
+      <div class="w-full flexAround py-3 border-t border-gray-200">
         <Button
-          by-style-class="w-2/5 py-2 rounded-md text-lg bg-[#477df4eb] hover:bg-[#1159f8eb] text-white"
+          by-style-class="w-2/5 py-2 rounded-md text-lg bg-[#93b1f3eb] hover:bg-[#1159f8eb] text-white"
           @click="handleClose"
           >Đóng</Button
         >

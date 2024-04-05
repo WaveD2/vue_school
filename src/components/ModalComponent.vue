@@ -19,6 +19,10 @@ const props = defineProps({
   isLoadingModal: {
     type: Boolean,
     default: false
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -26,23 +30,24 @@ const emit = defineEmits(['closeModal'])
 
 const isInner = computed(() => props.isInnerModal)
 
-const handleClose = () => {
-  emit('closeModal')
+const handleClose = (e) => {
+  if (props.disabled || e.target.type === 'button') {
+    emit('closeModal')
+  }
 }
 </script>
-<!--  @click.self="handleClose" -->
 <template>
   <LoadingComponent :is-loading="props.isLoadingModal" />
-  <!-- top-0 right-0 left-0 -->
   <div
     id="crud-modal"
     aria-hidden="true"
-    class="gap-3 items-center w-full md:inset-0 max-h-full fixed z-50 bg-[#3f373787]"
+    class="modal_container transition-all gap-3 items-center w-full md:inset-0 max-h-full fixed z-50 bg-[#3f373787]"
     :class="[props.styleModalContainer, !isInner && 'hidden']"
+    @click.self="handleClose"
   >
     <div class="absolute z-50 w-full max-w-6xl max-h-full" :class="props.styleModalBox">
       <div
-        class="relative overflow-y-scroll flex flex-col h-full w-full bg-white rounded-lg shadow dark:bg-gray-700"
+        class="relative overflow-hidden flex flex-col h-full w-full bg-white rounded-lg shadow dark:bg-gray-700"
       >
         <!-- Modal header -->
         <div
@@ -75,12 +80,14 @@ const handleClose = () => {
         </div>
 
         <!-- content -->
-        <div class="flex-1">
+        <div class="flex-1 h-auto overflow-y-scroll">
           <slot name="content" />
         </div>
 
         <!-- footer -->
-        <slot name="footer" />
+        <div class="shadow-md shadow-gray-600">
+          <slot name="footer" />
+        </div>
       </div>
     </div>
   </div>
@@ -93,5 +100,8 @@ const handleClose = () => {
   bottom: 0;
   right: 0;
 }
+
+.modal_container {
+  transition: display ease-in-out 0.3s;
+}
 </style>
-computed,
