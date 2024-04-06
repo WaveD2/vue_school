@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted, watch, onUnmounted } from 'vue'
 
 const props = defineProps({
   id: String,
@@ -32,13 +32,15 @@ const focusFirstInput = {
 
 const handleChangeInput = (event) => {
   isError.value = false
-  is
+  isChangeValue.value = true
   return emit('update:modelValue', event.target.value)
 }
 
 onMounted(() => {
   focusFirstInput.mounted(document.getElementById('container_input'))
 })
+
+onUnmounted(() => (isChangeValue.value = false))
 
 watch(
   () => props.invalid,
@@ -62,7 +64,7 @@ watch(
         props.styleClass,
         isError ? 'border-error ' : 'border-slate',
         props.disabled && 'bg-[#f5f6fa]',
-        isChangeValue
+        isChangeValue && 'bg-[#f0d0976b]'
       ]"
     />
   </div>

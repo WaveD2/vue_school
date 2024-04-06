@@ -31,8 +31,7 @@ const emit = defineEmits(['closeModal'])
 const isInner = computed(() => props.isInnerModal)
 
 const handleClose = (e) => {
-  // props.disabled ||
-  if (e.target.type === 'button') {
+  if (props.disabled || e.target.id !== 'crud-modal') {
     emit('closeModal')
   }
 }
@@ -56,12 +55,13 @@ const handleClose = (e) => {
         >
           <slot name="title"></slot>
           <button
+            @click.prevent="handleClose"
             type="button"
-            @click="handleClose"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
             data-modal-toggle="crud-modal"
           >
             <svg
+              type="svg"
               class="w-3 h-3"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
@@ -69,6 +69,7 @@ const handleClose = (e) => {
               viewBox="0 0 14 14"
             >
               <path
+                type="svg"
                 stroke="currentColor"
                 stroke-linecap="round"
                 stroke-linejoin="round"

@@ -51,7 +51,7 @@ onMounted(() => {
       ref="menu"
     >
       <div
-        class="flex items-center px-2 h-[85px] border-b border-b-gray-200 max-md:px-2 max-md:justify-between"
+        class="flex items-center px-2 h-[75px] border-b border-b-gray-200 max-md:px-2 max-md:justify-between"
       >
         <h2>
           <span class="h1 font-black font-['Mont']">WaveD</span>
@@ -90,7 +90,7 @@ onMounted(() => {
     >
       <!-- navbar -->
 
-      <div class="h-[85px] bg-white">
+      <div class="h-[75px] bg-white">
         <div
           class="h-full px-8 bg-transparent flexBetween shadow-md shadow-black/5 sticky top-0 left-0 z-30 max-md:relative"
         >

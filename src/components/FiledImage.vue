@@ -19,7 +19,7 @@ const props = defineProps({
 const fileRef = ref()
 
 let imageUrl = ref({ bucket: '', key: '', url: '' })
-let imageInner = ref(props.modelValue.url)
+let imageInner = ref(props.modelValue ? props.modelValue.url : '')
 
 const handleFileChange = async (event) => {
   const file = event.target.files[0]

@@ -76,11 +76,13 @@ export const LIST_OPTIONS = {
     { value: 'female', text: 'Nữ' }
   ],
   type: [
+    { value: '', text: 'Hợp đồng' },
     { value: 'official', text: 'Chính thức' },
     { value: 'contract', text: 'Hợp đồng' },
     { value: 'parttime', text: 'Thời vụ' }
   ],
   role: [
+    { value: '', text: 'Chức vụ' },
     { value: 'parent', text: 'Người dùng' },
     { value: 'teacher', text: 'Giáo viên ' },
     { value: 'admin', text: 'Quản lý' }

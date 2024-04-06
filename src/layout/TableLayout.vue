@@ -17,7 +17,7 @@ import FieldFile from '@/components/FieldFile.vue'
 
 import { LIST_OPTIONS } from '@/utils/constants'
 import { validateTeacher } from '@/utils/validateYub'
-import { arrayToObject, trimInput } from '@/utils/function'
+import { arrayToObject, filterKeys, trimInput } from '@/utils/function'
 import store from '@/store'
 import Tag from '@/components/Tag.vue'
 
@@ -34,7 +34,8 @@ const errors = ref({})
 const titleModal = ref('')
 
 const valueForm = ref(null)
-const renderColTableRender = ref([])
+const renderColTable = ref([])
+const renderFilterTag = ref([])
 const labelModal = ref({})
 const valueModal = ref({})
 
@@ -79,6 +80,11 @@ watchEffect(() => {
   filtersAndSort.search = route.query.search || ''
   filtersAndSort.type = route.query.type || ''
   filtersAndSort.page = route.query.page || 0
+
+  const resultFilter = filterKeys(route.query, LIST_OPTIONS, Object.keys(LIST_OPTIONS))
+
+  renderFilterTag.value = resultFilter
+  console.log(renderFilterTag)
 })
 watch(
   filtersAndSort,
@@ -101,8 +107,10 @@ const handleSetDataRender = (data) => {
 
   valueModal.value = valueModalDetail
   labelModal.value = labelModalDetail
-  renderColTableRender.value = colTable
+  renderColTable.value = colTable
   detailTypeTable.value = typeTable
+
+  if (!valueModal.hasOwnProperty('avatar')) valueModal['avatar'] = { url: '' }
 
   if (sortTable) {
     filtersAndSort.gender = sortTable.gender || ''
@@ -229,6 +237,14 @@ const handleClickForm = debounce(async ({ type }) => {
     }
   }
 }, 500)
+
+const handleDeleteTag = (tagDelete) => {
+  for (let key in filtersAndSort) {
+    if (filtersAndSort[key] === tagDelete) {
+      filtersAndSort[key] = ''
+    }
+  }
+}
 </script>
 
 <template>
@@ -265,20 +281,20 @@ const handleClickForm = debounce(async ({ type }) => {
       </div>
     </div>
 
-    <!-- <div class="ml-4 h-7">
-      <Tag>
+    <div class="ml-4 h-4 flex gap-x-2">
+      <Tag v-for="tags of renderFilterTag" :tagValue="tags.value" @delete-tag="handleDeleteTag">
         <template #content>
-          <p>Con chim non nho nhỏ</p>
+          <p>Nhân viên {{ tags.text }}</p>
         </template>
       </Tag>
-    </div> -->
+    </div>
 
     <Table
       :isLoading="isLoading"
       :key-search="filtersAndSort.search"
       @set-modal="handlerSetModal"
       :list-data-table="renderRowTable"
-      :column-table="renderColTableRender"
+      :column-table="renderColTable"
       :type-table="detailTypeTable"
     />
     <Pagination :pag="pag" @on-page-changed="handleSortTable" />
@@ -304,10 +320,9 @@ const handleClickForm = debounce(async ({ type }) => {
       </h3>
 
       <div class="mt-4">
-        <Field v-if="valueForm.avatar" :error="errors.avatar" :class="'flex justify-center'">
+        <Field :error="errors.avatar" :class="'flex justify-center'">
           <filed-image
             :disabled="isDisabledModal"
-            v-if="valueForm.avatar"
             v-model="valueForm.avatar"
             type="file"
             styleByClass="w-40 h-40 rounded-full max-md:!w-50 max-md:!h-50"
@@ -388,6 +403,7 @@ const handleClickForm = debounce(async ({ type }) => {
     :is-inner-modal="innerModalFilter"
     @close-modal="() => (innerModalFilter = false)"
     :is-loading-modal="isLoadingModal"
+    :disabled="true"
     style-modal-box="!max-w-xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
   >
     <template #title>
@@ -407,24 +423,6 @@ const handleClickForm = debounce(async ({ type }) => {
           :options="LIST_OPTIONS.gender"
         />
         <Select style-class="!w-auto " v-model="filtersAndSort.type" :options="LIST_OPTIONS.type" />
-      </div>
-    </template>
-
-    <template #footer>
-      <div class="w-full flexAround py-3 border-t border-gray-200">
-        <Button
-          by-style-class="w-2/5 py-2 rounded-md text-base bg-[#93b1f3eb] hover:bg-[#1159f8eb] text-white"
-          @click="handleClose"
-          >Đóng</Button
-        >
-        <Button
-          v-if="detailTypeTable !== 'users'"
-          by-style-class="w-2/5 py-2 rounded-md text-base bg-[#417bfa] hover:bg-[#1159f8eb] text-white"
-          id="btnSubmit"
-          @click="typeButtonModal.handleActive({ type: typeButtonModal.type })"
-        >
-          Tìm kiếm
-        </Button>
       </div>
     </template>
   </ModalComponent>

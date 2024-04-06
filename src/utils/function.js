@@ -1,8 +1,5 @@
 import { toast } from 'vue3-toastify'
 
-export const getKeyObj = (array) => {
-  return Object.keys(array)
-}
 const typeToast = 'success' | 'error' | 'info'
 export const toastInfo = ({ type = typeToast, mes, ...rest }) => {
   toast[type](mes, {
@@ -11,21 +8,7 @@ export const toastInfo = ({ type = typeToast, mes, ...rest }) => {
     ...rest
   })
 }
-export const getTimeYear = (dateString) => {
-  var dateObject = new Date(dateString)
 
-  var year = dateObject.getFullYear()
-  var month = dateObject.getMonth() + 1
-  var day = dateObject.getDate()
-
-  return day + '/' + month + '/' + year
-}
-
-export const getByGender = (gender) => {
-  const genders = { male: 'Nam', female: 'Nữ' }
-
-  return genders[gender]
-}
 export const arrayToObject = (arr) => {
   const obj = {}
   arr.forEach((item) => {
@@ -51,13 +34,21 @@ export const fetchDoUpLoadFile = async ({ url, file, form }) => {
 }
 
 export const filterObject = ({ obj }) => {
-  console.log('obj', obj)
   for (let key in obj) {
     if (!obj[key]) {
       delete obj[key]
     }
   }
   return obj
+}
+
+export function filterKeys(objValue, objFilter, keys) {
+  return keys
+    .filter((key) => objValue[key] !== undefined)
+    .map((key) => ({
+      value: objValue[key],
+      text: objFilter[key].find((option) => option.value === objValue[key]).text
+    }))
 }
 
 export const trimInput = (form) => {
