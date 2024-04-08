@@ -64,7 +64,7 @@ watch(
         props.styleClass,
         isError ? 'border-error ' : 'border-slate',
         props.disabled && 'bg-[#f5f6fa]',
-        isChangeValue && 'bg-[#f0d0976b]'
+        isChangeValue && 'bg-[#cde0e16b]'
       ]"
     />
   </div>

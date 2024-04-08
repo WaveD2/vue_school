@@ -12,7 +12,11 @@ const isOpenMenuSidebar = ref(false)
 const isActiveSideBar = ref(0)
 const menuRef = ref(null)
 
-const userCurrent = ref(store.state.user)
+const userCurrent = computed(() => store.state.user)
+
+onMounted(() => {
+  store.dispatch('getInfoUser')
+})
 
 const handleActiveSideBar = (index) => {
   isActiveSideBar.value = index
@@ -47,7 +51,7 @@ onMounted(() => {
     <!--sidenav -->
     <section
       :class="isOpenMenuSidebar && '!block'"
-      class="fixed left-0 top-0 w-64 pl-4 h-full bg-while shadow-xl shadow-gray-300 z-50 transition-all max-md:pl-2 max-md:hidden"
+      class="fixed left-0 top-0 w-64 pl-4 h-full border border-r-gray-200 bg-while z-50 transition-all max-md:pl-2 max-md:hidden"
       ref="menu"
     >
       <div
@@ -90,9 +94,9 @@ onMounted(() => {
     >
       <!-- navbar -->
 
-      <div class="h-[75px] bg-white">
+      <div class="h-[75px] bg-white border-b border-b-gray-200">
         <div
-          class="h-full px-8 bg-transparent flexBetween shadow-md shadow-black/5 sticky top-0 left-0 z-30 max-md:relative"
+          class="h-full px-8 bg-transparent flexBetween sticky top-0 left-0 z-30 max-md:relative"
         >
           <div class="hidden cursor-pointer max-md:inline-block" @click="toggleMenuSidebar">
             <i class="fa-solid fa-bars text-lg"></i>

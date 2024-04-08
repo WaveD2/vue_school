@@ -26,9 +26,9 @@ const handleSearchInput = (event) => {
       placeholder="Tìm kiếm..."
       @keyup="handleSearchInput"
       :class="props.byStyleClass"
-      class="pl-3 pr-10 w-full"
+      class="pl-3 pr-10 w-full focus:border focus:border-blue-300"
     />
-    <button type="submit" class="absolute right-0 top-0 mt-3 mr-4">
+    <button type="button" class="absolute right-0 top-0 mt-3 mr-4">
       <svg
         class="h-4 w-4 fill-current"
         xmlns="http://www.w3.org/2000/svg"

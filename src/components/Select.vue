@@ -21,7 +21,7 @@ const handleChange = (event) => {
     @change="handleChange"
     :value="props.modelValue"
     :disabled="props.disabled"
-    class="relative w-full text-base py-2 px-2 border rounded-lg border-[#D5D5D5] focus:bg-while"
+    class="relative w-full text-base py-2 px-2 border rounded-lg border-[#D5D5D5] focus:bg-while focus:border focus:border-blue-300"
     :class="[
       props.styleClass,
       props.invalid ? 'border-error' : 'border-slate',

@@ -28,7 +28,6 @@ const innerModal = ref(false)
 const isLoading = ref(false)
 const isLoadingModal = ref(false)
 const isDisabledModal = ref(false)
-const innerModalFilter = ref(false)
 const errors = ref({})
 
 const titleModal = ref('')
@@ -48,9 +47,9 @@ const renderRowTable = computed(() => store.state.listUser)
 const filtersAndSort = reactive({
   gender: queryParams.value.gender || '',
   status: queryParams.value.status || '',
-  search: queryParams.value.search || '',
   type: queryParams.value.type || '',
-  page: queryParams.value.page || 0
+  page: queryParams.value.page || 1,
+  search: queryParams.value.search || ''
 })
 
 const typeModal = reactive({
@@ -75,16 +74,15 @@ watchEffect(() => {
   if (!Object.keys(route.query).length > 0) {
     localStorage.setItem('previousRoute', route.path)
   }
-  filtersAndSort.gender = route.query.gender || ''
-  filtersAndSort.status = route.query.status || ''
-  filtersAndSort.search = route.query.search || ''
-  filtersAndSort.type = route.query.type || ''
-  filtersAndSort.page = route.query.page || 0
+  ;(filtersAndSort.gender = route.query.gender || ''),
+    (filtersAndSort.status = route.query.status || ''),
+    (filtersAndSort.search = route.query.search || ''),
+    (filtersAndSort.type = route.query.type || ''),
+    (filtersAndSort.page = route.query.page || 1)
 
   const resultFilter = filterKeys(route.query, LIST_OPTIONS, Object.keys(LIST_OPTIONS))
 
   renderFilterTag.value = resultFilter
-  console.log(renderFilterTag)
 })
 watch(
   filtersAndSort,
@@ -94,8 +92,9 @@ watch(
     newQueryParams.gender = newVal.gender || undefined
     newQueryParams.status = newVal.status || undefined
     newQueryParams.search = newVal.search || undefined
-    newQueryParams.page = newVal.page || undefined
+    newQueryParams.page = newVal.page || 1
     newQueryParams.type = newVal.type || undefined
+
     router.push({ path: route.path, query: newQueryParams })
     handleFilterAndSort()
   },
@@ -152,7 +151,7 @@ const handlerSetModal = ({ type }) => {
     typeButtonModal.label = 'Tạo người dùng'
     typeButtonModal.handleActive = handleClickForm
   } else if (type === 'delete') {
-    titleModal.value = `Bạn chắc chắn muốn xóa !`
+    titleModal.value = `Bạn chắc chắn muốn xóa  ${currentUserDetail.name}  `
     typeModal.value = null
     typeButtonModal.type = type
     valueForm.value = currentUserDetail
@@ -195,7 +194,7 @@ const handleFilterAndSort = debounce(async () => {
   isLoading.value = false
 }, 1000)
 
-//  XỬ LÝ SỰ KIỆN CỦA BUTTON ACTION
+//  Handle action button submit
 const handleClickForm = debounce(async ({ type }) => {
   errors.value = {}
 
@@ -257,34 +256,35 @@ const handleDeleteTag = (tagDelete) => {
       v-if="detailTypeTable !== 'users'"
     >
       <div class="flex items-center gap-x-2">
-        <!-- <Select
-          style-class="!w-auto "
-          v-model="filtersAndSort.status"
-          :options="LIST_OPTIONS.status"
-        /> -->
         <InputSearch
           by-style-class="h-10  bg-slate-100 !rounded-md border border-neutral-300"
           v-model="filtersAndSort.search"
         />
+
+        <Select
+          style-class="!w-auto "
+          v-model="filtersAndSort.status"
+          :options="LIST_OPTIONS.status"
+        />
+        <Select
+          style-class="!w-auto "
+          v-model="filtersAndSort.gender"
+          :options="LIST_OPTIONS.gender"
+        />
+        <Select style-class="!w-auto " v-model="filtersAndSort.type" :options="LIST_OPTIONS.type" />
       </div>
-      <div class="flex items-center gap-x-2">
-        <div @click="() => (innerModalFilter = true)">
-          <i
-            class="fa-solid fa-filter text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-xl hover:bg-slate"
-          />
-        </div>
-        <div @click="handlerSetModal({ type: 'add' })">
-          <i
-            class="fa-solid fa-user-plus text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-xl hover:bg-slate"
-          />
-        </div>
+
+      <div @click="handlerSetModal({ type: 'add' })">
+        <i
+          class="fa-solid fa-user-plus text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-xl hover:bg-slate"
+        />
       </div>
     </div>
 
     <div class="ml-4 h-4 flex gap-x-2">
       <Tag v-for="tags of renderFilterTag" :tagValue="tags.value" @delete-tag="handleDeleteTag">
         <template #content>
-          <p>Nhân viên {{ tags.text }}</p>
+          <p class="text-gray-500">Nhân viên {{ tags.text }}</p>
         </template>
       </Tag>
     </div>
@@ -305,14 +305,15 @@ const handleDeleteTag = (tagDelete) => {
     :is-inner-modal="innerModal"
     @close-modal="handleClose"
     :is-loading-modal="isLoadingModal"
-    :style-modal-box="
+    :style-modal-box="[
       typeModal.label
         ? 'top-0 right-0 bottom-0'
-        : 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
-    "
+        : 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2',
+      typeButtonModal.type == 'delete' && '!w-[500px]'
+    ]"
   >
     <template #title>
-      <p class="h5">{{ titleModal }}</p>
+      <p class="text-base text-[#353636] font-bold">{{ titleModal }}</p>
     </template>
     <template #content v-if="typeModal.label">
       <h3 class="text-red-400 font-bold text-center my-2" v-if="errors['error']">
@@ -383,46 +384,18 @@ const handleDeleteTag = (tagDelete) => {
     <template #footer>
       <div class="w-full flexAround py-3 border-t border-gray-200">
         <Button
-          by-style-class="w-2/5 py-2 rounded-md text-base bg-[#93b1f3eb] hover:bg-[#1159f8eb] text-white"
+          :by-style-class="`${typeButtonModal.type == 'delete' ? 'bg-[#417bfa] hover:bg-[#1159f8eb]' : 'bg-[#93b1f3eb] hover:bg-[#1159f8eb] '} w-2/5 py-2 rounded-md text-base   text-white`"
           @click="handleClose"
           >Đóng</Button
         >
         <Button
           v-if="detailTypeTable !== 'users'"
-          by-style-class="w-2/5 py-2 rounded-md text-base bg-[#417bfa] hover:bg-[#1159f8eb] text-white"
+          :by-style-class="`${typeButtonModal.type == 'delete' ? 'bg-[#93b1f3eb] hover:bg-[#1159f8eb]' : 'bg-[#417bfa] hover:bg-[#1159f8eb] '} w-2/5 py-2 rounded-md text-base   text-white`"
           id="btnSubmit"
           @click="typeButtonModal.handleActive({ type: typeButtonModal.type })"
         >
           {{ typeButtonModal.label }}
         </Button>
-      </div>
-    </template>
-  </ModalComponent>
-
-  <ModalComponent
-    :is-inner-modal="innerModalFilter"
-    @close-modal="() => (innerModalFilter = false)"
-    :is-loading-modal="isLoadingModal"
-    :disabled="true"
-    style-modal-box="!max-w-xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-  >
-    <template #title>
-      <p class="text-base font-bold">Lọc</p>
-    </template>
-
-    <template #content>
-      <div class="flex flex-wrap items-center gap-2 ml-8 my-4">
-        <Select
-          style-class="!w-auto "
-          v-model="filtersAndSort.status"
-          :options="LIST_OPTIONS.status"
-        />
-        <Select
-          style-class="!w-auto "
-          v-model="filtersAndSort.gender"
-          :options="LIST_OPTIONS.gender"
-        />
-        <Select style-class="!w-auto " v-model="filtersAndSort.type" :options="LIST_OPTIONS.type" />
       </div>
     </template>
   </ModalComponent>

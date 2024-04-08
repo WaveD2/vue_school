@@ -19,7 +19,6 @@ export const arrayToObject = (arr) => {
 }
 
 export const fetchDoUpLoadFile = async ({ url, file, form }) => {
-  console.log(url, file, form)
   const formData = new FormData()
   for (const key in form) {
     formData.append(key, form[key])

@@ -46,7 +46,7 @@ const highlightKeyword = (value) => {
 </script>
 
 <template>
-  <div class="flex flex-wrap mx-3 mt-2 relative">
+  <div class="flex flex-wrap mx-3 mt-1 relative">
     <LoadingComponentVue 
       v-if="isLoading "
      :isLoading="isLoading  "
@@ -59,12 +59,12 @@ const highlightKeyword = (value) => {
         <div
           class="flex flex-col min-w-0"
         >
-          <div class="min-h-[calc(100vh-15rem)] w-full overflow-y-scroll h-auto max-h-[calc(100vh-12rem)]" >
+          <div class="min-h-[calc(100vh-13rem)] w-full overflow-y-scroll h-auto max-h-[calc(100vh-13rem)]" >
             <table class="w-full h-full text-base text-left  dark:text-gray-400" 
             v-if="Object.keys(renderColTable).length > 0"> 
 
             <!-- Col -->
-              <thead class="text-base text-gray-600 uppercase font-bold dark:bg-gray-700 dark:text-gray-400" >
+              <thead class="text-sm text-gray-600  font-bold dark:bg-gray-700 dark:text-gray-400" >
                 <tr >
                   <th scope="col" class="text-nowrap px-3 py-3"
                     v-for="(col, index) of renderColTable"
@@ -81,7 +81,7 @@ const highlightKeyword = (value) => {
               <!-- Row -->
               <tbody class="w-full" v-if="renderRowTable.length > 0" >
                 <tr
-                  class="bg-white cursor-pointer border-y dark:bg-gray-800 dark:border-gray-700 hover:bg-slate"
+                  class="bg-white cursor-pointer border-y  border-gray-200 hover:bg-slate"
                   v-for="(rowTable, i) in renderRowTable"
                   :key="i"
                 >
@@ -143,8 +143,8 @@ const highlightKeyword = (value) => {
 
               
             </table>
-            <div v-if="renderRowTable.length === 0" class="flexCenter w-full min-h-52">
-            <p class="  h3 ">Không tìm dữ liệu
+            <div v-if="renderRowTable.length === 0" class="flexCenter w-full min-h-52 border-t border-gray-200">
+            <p class="  h5 ">Không tìm dữ liệu
               <i class="fa-solid fa-database text-xl  text-[#979797]"></i>
             </p>
             </div>

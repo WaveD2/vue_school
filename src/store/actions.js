@@ -49,7 +49,7 @@ export const getInfo = async (ctx, listParams) => {
         acc.page = params.page
       } else if (key === 'search') {
         acc.search = params.search
-      } else {
+      } else if (acc[key]) {
         acc[`filter[${key}]`] = params[key]
       }
 

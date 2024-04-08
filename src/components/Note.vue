@@ -4,7 +4,7 @@ const props = defineProps(['styleByClass'])
 
 <template>
   <div
-    class="w-full relative font-sans font-bold uppercase whitespace-nowrap select-none py-1 px-2 text-xs rounded-md"
+    class="w-full relative font-bold whitespace-nowrap select-none py-1 px-2 text-xs rounded-md"
     :class="props.styleByClass"
   >
     <slot />

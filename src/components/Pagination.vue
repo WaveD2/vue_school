@@ -28,6 +28,7 @@ const arr = computed(() => {
 
     <nav class="isolate inline-flex gap-x-1 rounded-md shadow-sm" aria-label="Pagination">
       <button
+        v-if="pag.page > 1"
         :disabled="!pag.hasPrevPage"
         @click="() => emit('onPageChanged', 1)"
         class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
@@ -45,6 +46,14 @@ const arr = computed(() => {
         "
       >
         {{ num }}
+      </button>
+
+      <button
+        v-if="pag.page !== 2 && pag.totalPages !== 1"
+        @click="() => emit('onPageChanged', 2)"
+        class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+      >
+        <i class="fa-solid fa-chevron-right"></i>
       </button>
     </nav>
   </div>

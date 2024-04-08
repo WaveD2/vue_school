@@ -31,7 +31,7 @@ async function submit() {
   errors.value = {}
   try {
     const { username } = formProfile.value
-    console.log('testImg', testImg.value)
+
     validateUser.validateSync({ name: username }, { abortEarly: false })
 
     // await store.dispatch('updateUserCurrent', {
