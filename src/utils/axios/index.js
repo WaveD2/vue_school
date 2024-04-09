@@ -36,12 +36,10 @@ export default function useTransition() {
           }))
           store.commit('SET_MES_API_ERROR', error.value)
         } else {
-          store.commit('SET_MES_API_ERROR', [{ error: 'Thông tin không chính xác!' }])
+          store.commit('SET_MES_API_ERROR', { error: 'Thông tin không chính xác!' })
+          router.push('/login')
         }
-      } else {
-        toastInfo({ type: 'error', mes: err.message })
       }
-
       return false
     }
   }

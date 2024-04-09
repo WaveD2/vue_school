@@ -179,6 +179,8 @@ function handleSortTable(newPage) {
 const handleFilterAndSort = debounce(async () => {
   isLoading.value = true
 
+  if (filtersAndSort.search) filtersAndSort.page = 1
+
   const listParams = {
     url: detailTypeTable.value,
     params: filtersAndSort,
