@@ -51,7 +51,7 @@ const handleClose = (e) => {
       >
         <!-- Modal header -->
         <div
-          class="flex items-center justify-between md:px-4 md:py-2 border-b rounded-t dark:border-gray-600"
+          class="flex items-center justify-between px-5 py-2 border-b rounded-t dark:border-gray-600"
         >
           <slot name="title"></slot>
           <button

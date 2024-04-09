@@ -151,7 +151,7 @@ const handlerSetModal = ({ type }) => {
     typeButtonModal.label = 'Tạo người dùng'
     typeButtonModal.handleActive = handleClickForm
   } else if (type === 'delete') {
-    titleModal.value = `Bạn chắc chắn muốn xóa  ${currentUserDetail.name}  `
+    titleModal.value = `Bạn chắc chắn muốn xóa <span style="color:#eb4747">${currentUserDetail.name} </span> `
     typeModal.value = null
     typeButtonModal.type = type
     valueForm.value = currentUserDetail
@@ -286,7 +286,7 @@ const handleDeleteTag = (tagDelete) => {
     <div class="ml-4 h-4 flex gap-x-2">
       <Tag v-for="tags of renderFilterTag" :tagValue="tags.value" @delete-tag="handleDeleteTag">
         <template #content>
-          <p class="text-gray-500">Nhân viên {{ tags.text }}</p>
+          <p class="text-gray-500">Giáo viên {{ tags.text }}</p>
         </template>
       </Tag>
     </div>
@@ -315,7 +315,7 @@ const handleDeleteTag = (tagDelete) => {
     ]"
   >
     <template #title>
-      <p class="text-base text-[#353636] font-bold">{{ titleModal }}</p>
+      <p class="text-base text-[#353636] font-bold" v-html="titleModal"></p>
     </template>
     <template #content v-if="typeModal.label">
       <h3 class="text-red-400 font-bold text-center my-2" v-if="errors['error']">

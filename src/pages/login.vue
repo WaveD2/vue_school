@@ -20,7 +20,8 @@ let formLogin = reactive({
 
 const handleSubmitForm = async () => {
   try {
-    const formNew = trimInput(formLogin)
+    const username = formLogin.username.trim()
+    const formNew = { ...formLogin, username }
     loginSchema.validateSync(formNew, { abortEarly: false })
     errors.value = null
 
