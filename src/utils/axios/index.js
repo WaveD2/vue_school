@@ -25,21 +25,22 @@ export default function useTransition() {
 
       return response.data
     } catch (err) {
+      console.log('error:', err)
       if (err.response && err.response.data) {
         if (err.response.data.code === 'NotAuthen') {
           toastInfo({ type: 'error', mes: err.response.data.message })
 
-          router.push('/login')
+          return router.push('/login')
         } else if (err.response.data.error) {
           error.value = err.response.data.error.issues.map((issue) => ({
             [issue.path[0]]: issue.message
           }))
-          store.commit('SET_MES_API_ERROR', error.value)
+          return store.commit('SET_MES_API_ERROR', error.value)
         } else {
-          store.commit('SET_MES_API_ERROR', { error: 'Thông tin không chính xác!' })
-          router.push('/login')
+          return toastInfo({ type: 'error', mes: err.response.data.message })
         }
       }
+
       return false
     }
   }

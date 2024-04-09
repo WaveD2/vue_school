@@ -34,7 +34,9 @@ export const validateTeacher = object().shape({
     .min(6, 'Nhập đúng hộ khẩu thường trú')
     .required('Vui lòng nhập chỗ ở hiện tại'),
   type: string().required('Vui lòng nhập hợp đồng'),
-  phone: string().required().matches(phoneRegExp, 'Số điện thoại không chính xác'),
+  phone: string()
+    .required('Vui lòng nhập số điện thoại')
+    .matches(phoneRegExp, 'Số điện thoại không chính xác'),
   passport: string()
     .min(6, 'Nhập đúng số chứng minh nhân dân')
     .required('Vui lòng số chứng minh nhân dân'),

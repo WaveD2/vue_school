@@ -323,11 +323,12 @@ const handleDeleteTag = (tagDelete) => {
       </h3>
 
       <div class="mt-4">
-        <Field :error="errors.avatar" :class="'flex justify-center'">
+        <Field :class="'flex justify-center'">
           <filed-image
             :disabled="isDisabledModal"
             v-model="valueForm.avatar"
             type="file"
+            :error="errors.avatar"
             styleByClass="w-40 h-40 rounded-full max-md:!w-50 max-md:!h-50"
           />
         </Field>
@@ -335,13 +336,13 @@ const handleDeleteTag = (tagDelete) => {
           <Field
             v-for="(label, key) of typeModal.label"
             :class="`${key === 'note' || key === 'contracts' ? 'w-[calc(50%-20px)]' : 'w-[30%]' || (key === 'avatar' && '!hidden')}`"
-            :label="label.text"
-            :error="errors[key]"
+            :label="key !== 'avatar' && label.text"
+            :error="key !== 'avatar' && errors[key]"
             :required="label.required"
           >
             <Select
-              :disabled="isDisabledModal || label.disabled"
               v-if="LIST_OPTIONS.hasOwnProperty(key)"
+              :disabled="isDisabledModal || label.disabled"
               v-model="valueForm[key]"
               :options="LIST_OPTIONS[key]"
               :invalid="errors[key]"
@@ -372,8 +373,8 @@ const handleDeleteTag = (tagDelete) => {
 
             <Input
               v-else-if="key !== 'avatar'"
-              v-model="valueForm[key]"
               type="text"
+              v-model="valueForm[key]"
               :invalid="errors[key]"
               :disabled="isDisabledModal || label.disabled"
               :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"

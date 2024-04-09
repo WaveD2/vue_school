@@ -185,7 +185,7 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
   },
 
   avatar: {
-    required: false,
+    required: true,
     disabled: false
   }
 }
