@@ -92,8 +92,8 @@ watch(
     newQueryParams.gender = newVal.gender || undefined
     newQueryParams.status = newVal.status || undefined
     newQueryParams.search = newVal.search || undefined
-    newQueryParams.page = newVal.page || 1
     newQueryParams.type = newVal.type || undefined
+    newQueryParams.page = newVal.page || 1
 
     router.push({ path: route.path, query: newQueryParams })
     handleFilterAndSort()
@@ -332,54 +332,62 @@ const handleDeleteTag = (tagDelete) => {
             styleByClass="w-40 h-40 rounded-full max-md:!w-50 max-md:!h-50"
           />
         </Field>
-        <div class="px-10 flex gap-x-10 flex-wrap w-auto">
-          <Field
+        <div class="w-auto px-10 flex gap-x-10 flex-wrap">
+          <div
             v-for="(label, key) of typeModal.label"
+            :key="key"
             :class="`${key === 'note' || key === 'contracts' ? 'w-[calc(50%-20px)]' : 'w-[30%]' || (key === 'avatar' && '!hidden')}`"
-            :label="key !== 'avatar' && label.text"
-            :error="key !== 'avatar' && errors[key]"
-            :required="label.required"
           >
-            <Select
-              v-if="LIST_OPTIONS.hasOwnProperty(key)"
-              :disabled="isDisabledModal || label.disabled"
-              v-model="valueForm[key]"
-              :options="LIST_OPTIONS[key]"
-              :invalid="errors[key]"
-              :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
-            />
-            <Input
-              v-else-if="key === 'dateOfBirth'"
-              :disabled="isDisabledModal || label.disabled"
-              v-model="valueForm[key]"
-              type="date"
-              :invalid="errors[key]"
-              :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
-            />
-            <TextareaVue
-              v-else-if="key === 'note'"
-              :disabled="isDisabledModal || label.disabled"
-              v-model="valueForm[key]"
-              type="date"
-              :invalid="errors[key]"
-              :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
-            />
-            <FieldFile
-              v-else-if="key === 'contracts'"
-              :disabled="isDisabledModal || label.disabled"
-              v-model="valueForm.contracts"
-              style-by-class="!max-h-[140px] !min-h-[138px] overflow-y-scroll"
-            />
+            <template v-if="key !== 'avatar'">
+              <Field
+                v-if="key !== 'avatar'"
+                :label="label.text"
+                :error="errors[key]"
+                :required="label.required"
+              >
+                <Select
+                  v-model="valueForm[key]"
+                  :options="LIST_OPTIONS[key]"
+                  :invalid="errors[key]"
+                  v-if="LIST_OPTIONS.hasOwnProperty(key)"
+                  :disabled="isDisabledModal || label.disabled"
+                  :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
+                />
+                <Input
+                  v-model="valueForm[key]"
+                  type="date"
+                  :invalid="errors[key]"
+                  v-else-if="key === 'dateOfBirth'"
+                  :disabled="isDisabledModal || label.disabled"
+                  :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
+                  @clearError="handleClearError(someField)"
+                />
+                <TextareaVue
+                  type="date"
+                  v-model="valueForm[key]"
+                  :invalid="errors[key]"
+                  v-else-if="key === 'note'"
+                  :disabled="isDisabledModal || label.disabled"
+                  :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
+                />
+                <FieldFile
+                  v-else-if="key === 'contracts'"
+                  :disabled="isDisabledModal || label.disabled"
+                  v-model="valueForm.contracts"
+                  style-by-class="!max-h-[140px] !min-h-[138px] overflow-y-scroll"
+                />
 
-            <Input
-              v-else-if="key !== 'avatar'"
-              type="text"
-              v-model="valueForm[key]"
-              :invalid="errors[key]"
-              :disabled="isDisabledModal || label.disabled"
-              :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
-            />
-          </Field>
+                <Input
+                  v-else-if="key !== 'avatar'"
+                  type="text"
+                  v-model="valueForm[key]"
+                  :invalid="errors[key]"
+                  :disabled="isDisabledModal || label.disabled"
+                  :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
+                />
+              </Field>
+            </template>
+          </div>
         </div>
       </div>
     </template>

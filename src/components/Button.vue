@@ -4,7 +4,7 @@ const props = defineProps({
   leftIcon: String,
   textBtn: String,
   isLoading: Boolean,
-  byStyleClass: String,
+  byStyleClass: [String, Array],
   handleClick: function () {}
 })
 </script>

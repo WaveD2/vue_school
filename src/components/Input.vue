@@ -19,7 +19,7 @@ const props = defineProps({
 const isError = ref(props.invalid !== '')
 const isChangeValue = ref(false)
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'clearError'])
 
 const focusFirstInput = {
   mounted(el) {
@@ -33,7 +33,7 @@ const focusFirstInput = {
 const handleChangeInput = (event) => {
   isError.value = false
   isChangeValue.value = true
-  return emit('update:modelValue', event.target.value)
+  emit('update:modelValue', event.target.value)
 }
 
 onMounted(() => {

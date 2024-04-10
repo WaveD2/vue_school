@@ -22,23 +22,24 @@ export const validateUser = object().shape({
 })
 
 export const validateTeacher = object().shape({
-  name: string().min(6, 'Nhập đầy đủ họ và tên').required('Vui lòng nhập Họ và tên'),
+  name: string().min(6, 'Họ và tên tối thiểu 6 kí tự').required('Vui lòng nhập Họ và tên'),
   email: string()
     .matches(emailRegExp, 'Email không hợp lệ')
     .email('Email không hợp lệ.')
     .required('Vui lòng nhập email'),
   permanentResidence: string()
-    .min(6, 'Nhập đúng hộ khẩu thường trú')
+    .min(6, 'Độ dài tối thiểu hộ khẩu 6 kí tự')
     .required('Vui lòng nhập hộ khẩu thường trú'),
   currentAddress: string()
-    .min(6, 'Nhập đúng hộ khẩu thường trú')
+    .min(6, 'Độ dài tối thiểu địa chỉ 6 kí tự')
     .required('Vui lòng nhập chỗ ở hiện tại'),
   type: string().required('Vui lòng nhập hợp đồng'),
+  gender: string().required('Vui lòng chọn giới tính'),
   phone: string()
     .required('Vui lòng nhập số điện thoại')
     .matches(phoneRegExp, 'Số điện thoại không chính xác'),
   passport: string()
-    .min(6, 'Nhập đúng số chứng minh nhân dân')
+    .min(6, 'Chứng minh nhân dân tối thiểu 6 kí tự')
     .required('Vui lòng số chứng minh nhân dân'),
   status: string().required('Vui lòng chọn trạng thái')
 })

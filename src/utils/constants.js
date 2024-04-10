@@ -105,7 +105,7 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
   },
   gender: {
     text: 'Giới tính',
-    required: false,
+    required: true,
     disabled: false
   },
   phone: {
@@ -185,6 +185,8 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
   },
 
   avatar: {
+    text: 'ảnh ',
+
     required: true,
     disabled: false
   }
