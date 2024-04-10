@@ -12,6 +12,8 @@ const emit = defineEmits(['getDataTable'])
 onMounted(async () => {
   const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
 
+  const sortTeacher = { search: '', gender: '', type: '', status: '' }
+
   const params = new URLSearchParams(sortPreviousRoute.split('?')[1])
 
   const queryParamsObject = {}
@@ -22,7 +24,7 @@ onMounted(async () => {
   const listParams = {
     url: 'teachers',
     typeCommitStore: 'SET_LIST_USER_TABLE',
-    params: sortPreviousRoute ? queryParamsObject : sortPreviousRoute
+    params: sortPreviousRoute && queryParamsObject
   }
   await store.dispatch('getInfo', listParams)
 
@@ -30,7 +32,8 @@ onMounted(async () => {
     colTable: LABEL_TABLE_TEACHER,
     labelModalDetail: LABEL_MODAL_DETAIL_TEACHER,
     valueModalDetail: VALUE_MODAL_DETAIL_TEACHER,
-    typeTable: 'teachers'
+    typeTable: 'teachers',
+    sortTable: { ...sortTeacher, ...queryParamsObject }
   })
 })
 </script>

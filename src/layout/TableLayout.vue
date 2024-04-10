@@ -17,7 +17,7 @@ import FieldFile from '@/components/FieldFile.vue'
 
 import { LIST_OPTIONS } from '@/utils/constants'
 import { validateTeacher } from '@/utils/validateYub'
-import { arrayToObject, filterKeys, trimInput } from '@/utils/function'
+import { arrayToObject, filterKeys, filterKeysWithValues, trimInput } from '@/utils/function'
 import store from '@/store'
 import Tag from '@/components/Tag.vue'
 
@@ -45,11 +45,7 @@ const queryParams = computed(() => route.query)
 const renderRowTable = computed(() => store.state.listUser)
 
 const filtersAndSort = reactive({
-  gender: queryParams.value.gender || '',
-  status: queryParams.value.status || '',
-  type: queryParams.value.type || '',
-  page: queryParams.value.page || 1,
-  search: queryParams.value.search || ''
+  // search: queryParams.value.search || ''
 })
 
 const typeModal = reactive({
@@ -63,22 +59,10 @@ const typeButtonModal = reactive({
   handleActive: null
 })
 
-//  SET URL DEFAULT
-onMounted(() => {
-  if (!Object.keys(route.query).length > 0) {
-    localStorage.setItem('previousRoute', route.path)
-  }
-})
-
 watchEffect(() => {
   if (!Object.keys(route.query).length > 0) {
     localStorage.setItem('previousRoute', route.path)
   }
-  ;(filtersAndSort.gender = route.query.gender || ''),
-    (filtersAndSort.status = route.query.status || ''),
-    (filtersAndSort.search = route.query.search || ''),
-    (filtersAndSort.type = route.query.type || ''),
-    (filtersAndSort.page = route.query.page || 1)
 
   const resultFilter = filterKeys(route.query, LIST_OPTIONS, Object.keys(LIST_OPTIONS))
 
@@ -87,15 +71,9 @@ watchEffect(() => {
 watch(
   filtersAndSort,
   (newVal, oldVal) => {
-    const newQueryParams = { ...queryParams.value }
-
-    newQueryParams.gender = newVal.gender || undefined
-    newQueryParams.status = newVal.status || undefined
-    newQueryParams.search = newVal.search || undefined
-    newQueryParams.type = newVal.type || undefined
-    newQueryParams.page = newVal.page || 1
-
+    const newQueryParams = filterKeysWithValues(newVal)
     router.push({ path: route.path, query: newQueryParams })
+
     handleFilterAndSort()
   },
   { deep: true }
@@ -103,7 +81,6 @@ watch(
 
 const handleSetDataRender = (data) => {
   const { colTable, labelModalDetail, valueModalDetail, typeTable, sortTable } = data
-
   valueModal.value = valueModalDetail
   labelModal.value = labelModalDetail
   renderColTable.value = colTable
@@ -112,10 +89,9 @@ const handleSetDataRender = (data) => {
   if (!valueModal.hasOwnProperty('avatar')) valueModal['avatar'] = { url: '' }
 
   if (sortTable) {
-    filtersAndSort.gender = sortTable.gender || ''
-    filtersAndSort.status = sortTable.status || ''
-    filtersAndSort.search = sortTable.search || ''
-    filtersAndSort.page = sortTable.page || 0
+    for (let keySort in sortTable) {
+      filtersAndSort[keySort] = sortTable[keySort]
+    }
   }
 
   isLoading.value = false
@@ -172,14 +148,16 @@ const handleClose = () => {
 // Search
 function handleSortTable(newPage) {
   isLoading.value = true
-  filtersAndSort.page = newPage
+  filtersAndSort['page'] = newPage
 }
 
 // FILTER AND SET URL CURRENT
 const handleFilterAndSort = debounce(async () => {
   isLoading.value = true
 
-  if (filtersAndSort.search) filtersAndSort.page = 1
+  if (filtersAndSort.search) {
+    filtersAndSort['page'] = 1
+  }
 
   const listParams = {
     url: detailTypeTable.value,
@@ -190,11 +168,9 @@ const handleFilterAndSort = debounce(async () => {
   await store.dispatch('getInfo', listParams)
 
   const queryParamsString = new URLSearchParams(route.query).toString()
-
   localStorage.setItem('previousRoute', `${route.path}?${queryParamsString}`)
-
   isLoading.value = false
-}, 1000)
+}, 500)
 
 //  Handle action button submit
 const handleClickForm = debounce(async ({ type }) => {
@@ -258,22 +234,19 @@ const handleDeleteTag = (tagDelete) => {
       v-if="detailTypeTable !== 'users'"
     >
       <div class="flex items-center gap-x-2">
-        <InputSearch
-          by-style-class="h-10  bg-slate-100 !rounded-md border border-neutral-300"
-          v-model="filtersAndSort.search"
-        />
-
-        <Select
-          style-class="!w-auto "
-          v-model="filtersAndSort.status"
-          :options="LIST_OPTIONS.status"
-        />
-        <Select
-          style-class="!w-auto "
-          v-model="filtersAndSort.gender"
-          :options="LIST_OPTIONS.gender"
-        />
-        <Select style-class="!w-auto " v-model="filtersAndSort.type" :options="LIST_OPTIONS.type" />
+        <div v-for="(label, key) of filtersAndSort">
+          <InputSearch
+            v-if="key === 'search'"
+            by-style-class="h-10  bg-slate-100 !rounded-md border border-neutral-300"
+            v-model="filtersAndSort['search']"
+          />
+          <Select
+            v-if="LIST_OPTIONS[key]"
+            style-class="!w-auto"
+            v-model="filtersAndSort[key]"
+            :options="LIST_OPTIONS[key]"
+          />
+        </div>
       </div>
 
       <div @click="handlerSetModal({ type: 'add' })">

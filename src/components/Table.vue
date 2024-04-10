@@ -48,8 +48,8 @@ const highlightKeyword = (value) => {
 <template>
   <div class="flex flex-wrap mx-3 mt-1 relative">
     <LoadingComponentVue 
-      v-if="isLoading "
-     :isLoading="isLoading  "
+      v-if="isLoading"
+     :isLoading="isLoading"
       />
 
     <div class="mx-auto w-full" >

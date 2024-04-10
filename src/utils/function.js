@@ -62,3 +62,13 @@ export const trimInput = (form) => {
   }
   return trimmedForm
 }
+
+export function filterKeysWithValues(obj) {
+  const newObj = {}
+  for (const key in obj) {
+    if (obj[key] !== '' && obj[key] != '1') {
+      newObj[key] = obj[key]
+    }
+  }
+  return newObj
+}

@@ -25,7 +25,6 @@ export default function useTransition() {
 
       return response.data
     } catch (err) {
-      console.log('error:', err)
       if (err.response && err.response.data) {
         if (err.response.data.code === 'NotAuthen') {
           toastInfo({ type: 'error', mes: err.response.data.message })
