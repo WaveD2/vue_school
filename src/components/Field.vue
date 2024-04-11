@@ -13,16 +13,17 @@ const props = defineProps({
   label: String,
   required: Boolean,
   error: String,
-  help: String
+  help: String,
+  styleClass: String
 })
 
 const ariaDescribedBy = computed(() => {
   return !!props.help ? `help-${uuid()}` : null
 })
 </script>
-
+<!-- min-w-56 -->
 <template>
-  <div class="min-w-56 max-md:w-full">
+  <div class="min-w-max max-md:w-full" :class="styleClass">
     <Label v-if="props.label" :for="props.id" :required="props.required">{{ props.label }}</Label>
 
     <slot v-bind="props" />

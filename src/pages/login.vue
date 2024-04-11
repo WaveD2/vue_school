@@ -1,13 +1,15 @@
 <script setup>
 import { loginSchema } from '@/utils/validateYub'
-import { reactive, ref, defineEmits } from 'vue'
+import { reactive, ref, defineEmits, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import store from '@/store'
 import Field from '@/components/Field.vue'
 import { LABEL_LOGIN } from '@/utils/constants'
 import { arrayToObject, trimInput } from '@/utils/function'
+import { checkAccessToken } from '@/utils/axios/setupApi'
 
 const route = useRouter()
+
 const emit = defineEmits(['setLoading'])
 const errors = ref({
   username: '',

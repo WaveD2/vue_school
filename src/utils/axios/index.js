@@ -36,6 +36,7 @@ export default function useTransition() {
           }))
           return store.commit('SET_MES_API_ERROR', error.value)
         } else {
+          router.push('/login')
           return toastInfo({ type: 'error', mes: err.response.data.message })
         }
       }

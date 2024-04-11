@@ -179,14 +179,13 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
     disabled: false
   },
   note: {
-    text: 'Ghi chú ',
+    text: 'Ghi chú',
     required: false,
     disabled: false
   },
 
   avatar: {
-    text: 'ảnh ',
-
+    text: 'Ảnh',
     required: true,
     disabled: false
   }

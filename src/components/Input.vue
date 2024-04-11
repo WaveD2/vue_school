@@ -3,11 +3,13 @@ import { computed, ref, onMounted, watch, onUnmounted } from 'vue'
 
 const props = defineProps({
   id: String,
+  keyInput: String,
   modelValue: {
     type: [String, Number, Array, Object]
   },
   required: Boolean,
   disabled: Boolean,
+  checked: Boolean,
   invalid: {
     type: [String, Boolean],
     default: ''
@@ -31,9 +33,13 @@ const focusFirstInput = {
 }
 
 const handleChangeInput = (event) => {
+  console.log(event.target.key)
+  console.log(event.target.checked)
+  console.log(event.target.value)
+  console.log(props)
   isError.value = false
   isChangeValue.value = true
-  emit('update:modelValue', event.target.value)
+  // emit('update:modelValue', event.target.value)
 }
 
 onMounted(() => {
@@ -55,9 +61,11 @@ watch(
       class="w-full text-base py-2 px-3 border rounded-lg border-[#D5D5D5] focus:border-blue-300"
       :disabled="props.disabled"
       :type="props.type"
+      :key="props.keyInput"
       :value="
         props.type === 'date' && props.modelValue ? props.modelValue.slice(0, 10) : props.modelValue
       "
+      :checked="props.checked"
       :required="props.required"
       @change="handleChangeInput"
       :class="[
