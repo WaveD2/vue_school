@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
   modelValue: [String, Number, Array, Object],
@@ -9,38 +9,28 @@ const props = defineProps({
   tabs: [Array, Object],
   disabled: Boolean,
   valueDefault: [Object, String, Number],
-  isActive: {
-    type: [String, Number],
-    default: 0
-  }
+  isActive: [String, Number]
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['changeTab'])
 
 const handleChange = (event) => {
-  emit('update:modelValue', event.target.value)
+  emit('changeTab', event.target.id)
 }
-
-let isActive = ref(0)
 </script>
 
 <template>
-  <div>
-    <div class="flexStart overflow-x-auto overflow-y-hidden 00 whitespace-nowrap">
-      <button
-        type="button"
-        v-for="(menu, index) in props.tabs"
-        :key="menu.key"
-        class="h-10 px-4 p text-center text-text bg-transparent dark:border-blue-400 dark:text-blue-300 whitespace-nowrap focus:outline-none transition-colors"
-        :class="
-          isActive === menu.key ||
-          (isActive === index && '!text-active !border-b-active !border-b-2')
-        "
-        @click="handleChange"
-      >
-        <p class="text-left">{{ menu.tab }}</p>
-      </button>
-    </div>
+  <div class="flexStart overflow-x-auto overflow-y-hidden 00 whitespace-nowrap">
+    <button
+      v-for="menu of props.tabs"
+      type="button"
+      :id="menu.key"
+      class="h-10 px-4 p text-center text-text bg-transparent dark:border-blue-400 dark:text-blue-300 whitespace-nowrap focus:outline-none transition-colors"
+      :class="menu.key === props.isActive && '!text-active !border-b-active !border-b-2'"
+      @click="handleChange"
+    >
+      <p class="text-left" :id="menu.key">{{ menu.tab }}</p>
+    </button>
 
     <slot name="content"></slot>
   </div>

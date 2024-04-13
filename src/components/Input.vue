@@ -16,7 +16,8 @@ const props = defineProps({
   },
   ariaDescribedBy: String,
   type: String,
-  styleClass: String
+  styleClass: String,
+  focus: Boolean
 })
 const isError = ref(props.invalid !== '')
 const isChangeValue = ref(false)
@@ -34,17 +35,21 @@ const focusFirstInput = {
 
 const handleChangeInput = (event) => {
   console.log(event.target.key)
-  console.log(event.target.checked)
+
   console.log(event.target.value)
   console.log(props)
-  isError.value = false
-  isChangeValue.value = true
-  // emit('update:modelValue', event.target.value)
+  if (props.type === 'checkbox') {
+    emit('updateValueCheckBox', props.keyInput)
+  } else {
+    isError.value = false
+    isChangeValue.value = true
+    emit('update:modelValue', event.target.value)
+  }
 }
 
-onMounted(() => {
-  focusFirstInput.mounted(document.getElementById('container_input'))
-})
+// onMounted(() => {
+//   focusFirstInput.mounted(document.getElementById('container_input'))
+// })
 
 onUnmounted(() => (isChangeValue.value = false))
 
@@ -60,11 +65,9 @@ watch(
     <input
       class="w-full text-base py-2 px-3 border rounded-lg border-[#D5D5D5] focus:border-blue-300"
       :disabled="props.disabled"
+      :id="props.id"
       :type="props.type"
       :key="props.keyInput"
-      :value="
-        props.type === 'date' && props.modelValue ? props.modelValue.slice(0, 10) : props.modelValue
-      "
       :checked="props.checked"
       :required="props.required"
       @change="handleChangeInput"
@@ -74,6 +77,9 @@ watch(
         props.disabled && 'bg-[#f5f6fa]',
         isChangeValue && 'bg-[#cde0e16b]'
       ]"
+      :value="
+        props.type === 'date' && props.modelValue ? props.modelValue.slice(0, 10) : props.modelValue
+      "
     />
   </div>
 </template>

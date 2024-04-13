@@ -13,6 +13,7 @@ onMounted(async () => {
   const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
 
   const sortTeacher = { search: '', gender: '', type: '', status: '' }
+  const colTeacher = ['name', 'phone', 'email', 'currentAddress', 'status']
 
   const params = new URLSearchParams(sortPreviousRoute.split('?')[1])
 
@@ -33,7 +34,8 @@ onMounted(async () => {
     labelModalDetail: LABEL_MODAL_DETAIL_TEACHER,
     valueModalDetail: VALUE_MODAL_DETAIL_TEACHER,
     typeTable: 'teachers',
-    sortTable: { ...sortTeacher, ...queryParamsObject }
+    sortTable: sortTeacher,
+    filterSelect: queryParamsObject
   })
 })
 </script>
