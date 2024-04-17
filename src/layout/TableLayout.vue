@@ -15,7 +15,7 @@ import debounce from 'lodash.debounce'
 import Pagination from '@/components/Pagination.vue'
 import FieldFile from '@/components/FieldFile.vue'
 
-import { LIST_OPTIONS } from '@/utils/constants'
+import { LIST_OPTIONS, FIL_TAB_CONTENT_TEACHER, TAB_CONTENT_TEACHER } from '@/utils/constants'
 import { validateTeacher } from '@/utils/validateYub'
 import { arrayToObject, filterKeys, filterKeysWithValues, trimInput } from '@/utils/function'
 import store from '@/store'
@@ -44,16 +44,16 @@ const pag = computed(() => store.state.pagination)
 const renderRowTable = computed(() => store.state.listUser)
 
 const filtersAndSort = reactive({
-  // search: queryParams.value.search || ''
+  search: ''
 })
 const settingTable = reactive([
   {
     title: 'Mặc định',
-    // sort typeof Object {value}
-    sort: {},
-    // ['gender', 'status', 'type'],
+    // sort typeof Array ['gender', 'status', 'type'],
+    sort: [],
+
     // filed typeof Object {key : value}
-    filed: {},
+    filed: [],
     key: 0
   }
 ])
@@ -75,19 +75,57 @@ const typeButtonModal = reactive({
   handleActive: null
 })
 
+const activeSetting = reactive({
+  indexSettingTable: 0,
+  sort: [],
+  filed: []
+})
+
 watchEffect(() => {
   if (!Object.keys(route.query).length > 0) {
+    const page = localStorage.getItem('previousRoute')
+
+    if (page && page !== route.path) {
+      for (let keySort in filtersAndSort) {
+        filtersAndSort[keySort] = ''
+      }
+    }
+
     localStorage.setItem('previousRoute', route.path)
   }
-
   const resultFilter = filterKeys(route.query, LIST_OPTIONS, Object.keys(LIST_OPTIONS))
 
   renderFilterTag.value = resultFilter
 })
+
+const handleSetDataRender = (data) => {
+  const { colTable, labelModalDetail, valueModalDetail, typeTable, sortTable, filterSelect } = data
+  valueModal.value = valueModalDetail
+  typeModal.optionSelect = labelModalDetail
+  settingTable[isActiveSetting.keyActive].filed = colTable
+  activeSetting.filed = colTable
+  detailTypeTable.value = typeTable
+
+  if (sortTable) {
+    settingTable[isActiveSetting.keyActive].sort = sortTable
+    activeSetting.sort = sortTable
+  }
+
+  if (!valueModal.hasOwnProperty('avatar')) valueModal['avatar'] = { url: '' }
+
+  if (filterSelect && Object.keys(filterSelect).length > 0) {
+    for (let keySort in filterSelect) {
+      filtersAndSort[keySort] = filterSelect[keySort]
+    }
+  }
+  isLoading.value = false
+}
+
 watch(
   filtersAndSort,
   (newVal, oldVal) => {
     const newQueryParams = filterKeysWithValues(newVal)
+
     router.push({ path: route.path, query: newQueryParams })
 
     handleFilterAndSort()
@@ -95,39 +133,7 @@ watch(
   { deep: true }
 )
 
-const handleSetDataRender = (data) => {
-  const { colTable, labelModalDetail, valueModalDetail, typeTable, sortTable } = data
-  valueModal.value = valueModalDetail
-  typeModal.optionSelect = labelModalDetail
-  settingTable[0].filed = colTable
-  detailTypeTable.value = typeTable
-  settingTable[0].sort = sortTable
-  if (!valueModal.hasOwnProperty('avatar')) valueModal['avatar'] = { url: '' }
-
-  // if (sortTable) {
-  //   for (let keySort in sortTable) {
-  //     // filtersAndSort[keySort] = sortTable[keySort]
-  //     settingTable[0].sort[keySort] = sortTable[keySort]
-  //   }
-  // }
-
-  isLoading.value = false
-}
-
-watch(
-  settingTable[isActiveSetting.keyActive],
-  (newVal, oldVal) => {
-    console.log('new', newVal)
-    for (let keySort in newVal.sort) {
-      filtersAndSort[keySort] = ''
-
-      renderColTable.value = newVal.filed
-    }
-  },
-  { deep: true }
-)
-
-// Modal
+//  Modal
 const handlerSetModal = ({ type }) => {
   const currentUserDetail = store.state.infoDetailModal
 
@@ -139,6 +145,9 @@ const handlerSetModal = ({ type }) => {
       typeButtonModal.label = 'Chỉnh sửa thông tin'
       typeButtonModal.handleActive = handlerSetModal
     } else {
+      setTimeout(() => {
+        document.getElementById('wrapper-add-input').querySelectorAll('input')[0].focus()
+      }, 0)
       typeModal.label = 'Chỉnh sửa thông tin'
       isDisabledModal.value = false
       typeModal.type = type
@@ -148,6 +157,9 @@ const handlerSetModal = ({ type }) => {
 
     valueForm.value = currentUserDetail
   } else if (type === 'add') {
+    setTimeout(() => {
+      document.getElementById('wrapper-add-input').querySelectorAll('input')[0].focus()
+    }, 0)
     typeModal.label = 'Tạo thêm người dùng'
     valueForm.value = Object.assign({}, valueModal.value)
     isDisabledModal.value = false
@@ -169,6 +181,8 @@ const handleClose = () => {
   isLoading.value = false
   errors.value = {}
   valueForm.value = null
+  errors.value = {}
+  activeSetting.indexSettingTable = isActiveSetting.keyActive
 }
 
 // Search
@@ -192,8 +206,8 @@ const handleFilterAndSort = debounce(async () => {
   }
 
   await store.dispatch('getInfo', listParams)
-
   const queryParamsString = new URLSearchParams(route.query).toString()
+
   localStorage.setItem('previousRoute', `${route.path}?${queryParamsString}`)
   isLoading.value = false
 }, 500)
@@ -254,27 +268,44 @@ const handleSettingTable = () => {
   typeModal.isInner = true
   typeModal.type = 'add'
   typeButtonModal.handleActive = handleCreateSetting
+  typeButtonModal.label =
+    settingTable[isActiveSetting.keyActive].filed.length === 0 ? 'Tạo cài đặt' : 'Lưu cài đặt'
+  activeSetting.sort = settingTable[isActiveSetting.keyActive].sort
+  activeSetting.filed = settingTable[isActiveSetting.keyActive].filed
 }
 
 const handleCreateSetting = () => {
-  console.log()
+  if (activeSetting.filed.length >= 4) {
+    isActiveSetting.keyActive = activeSetting.indexSettingTable
+    settingTable[activeSetting.indexSettingTable].filed = activeSetting.filed
+    settingTable[activeSetting.indexSettingTable].sort = activeSetting.sort
+
+    handleClose()
+  } else {
+    return (errors.value = { error: 'Cài đặt trường dữ liệu tối thiểu 4 trường ' })
+  }
 }
-const handleChangeNameTag = (event) => {
-  if (
-    event.target.classList.contains('fa-regular') &&
-    event.target.classList.contains('fa-pen-to-square')
-  ) {
+const handleChangeSetting = (key) => {
+  activeSetting.indexSettingTable = key
+  activeSetting.sort = settingTable[key]?.sort
+  activeSetting.filed = settingTable[key]?.filed
+  typeButtonModal.label = settingTable[key]?.filed.length === 0 ? 'Tạo cài đặt' : 'Lưu cài đặt'
+}
+
+const handleChangeNameTag = (event, key) => {
+  if (event.target.classList.contains('fa-pen-to-square') && event.target) {
+    handleChangeSetting(key)
     isChangeTab.value = true
+    setTimeout(() => {
+      document.querySelectorAll('input')[activeSetting.indexSettingTable + 1].focus()
+    }, 0)
   } else {
     isChangeTab.value = false
   }
 }
 
 const handleChangeSettingOption = (newOption) => {
-  console.log('newOption', newOption)
-  const activeSetting = settingTable[isActiveSetting.keyActive][isActiveSetting.filedActive]
-
-  const uniqueOptions = new Set(activeSetting)
+  const uniqueOptions = new Set(activeSetting[isActiveSetting.filedActive])
 
   if (uniqueOptions.has(newOption)) {
     uniqueOptions.delete(newOption)
@@ -282,21 +313,35 @@ const handleChangeSettingOption = (newOption) => {
     uniqueOptions.add(newOption)
   }
 
-  settingTable[isActiveSetting.keyActive][isActiveSetting.filedActive] = Array.from(uniqueOptions)
+  activeSetting[isActiveSetting.filedActive] = Array.from(uniqueOptions)
 }
 
 const handleDeleteNameTag = (key) => {
-  if (settingTable.length === 1) return
-  return settingTable.splice(key, 1)
+  if (key === activeSetting.indexSettingTable) {
+    if (key > 0) {
+      activeSetting.indexSettingTable--
+      isActiveSetting.keyActive--
+    } else {
+      activeSetting.indexSettingTable++
+      isActiveSetting.keyActive++
+    }
+  } else {
+    if (key < activeSetting.indexSettingTable) {
+      activeSetting.indexSettingTable--
+    }
+  }
+
+  settingTable.splice(key, 1)
+  activeSetting.filed = settingTable[activeSetting.indexSettingTable].filed
+  activeSetting.sort = settingTable[activeSetting.indexSettingTable].sort
 }
 const handleCreateOptionSetting = () => {
   const newOptionSetting = {
     title: `Tạo mới ${settingTable.length}`,
-    // sort typeof Object {value}
-    sort: {},
-    // ['gender', 'status', 'type'],
-    // filed typeof Object {key : value}
-    filed: {},
+    // sort typeof Array ['gender', 'status', 'type'],
+    sort: [],
+    // filed typeof Object ['gender']
+    filed: [],
     key: settingTable.length
   }
   return settingTable.push(newOptionSetting)
@@ -310,15 +355,17 @@ const handleCreateOptionSetting = () => {
   <div class="max-md:p-0">
     <div
       class="px-4 flexBetween h-auto mt-2 mb-1 bg-transparent max-md:flex-wrap max-md:gap-y-2"
-      v-if="detailTypeTable !== 'users'"
+      v-if="route.path !== '/users'"
     >
-      <div class="flex items-center gap-x-2">
+      <div class="flex flex-wrap gap-x-2">
         <InputSearch
-          by-style-class="h-10  bg-slate-100 !rounded-md border border-neutral-300"
+          placeholder="Tìm kiếm..."
           v-model="filtersAndSort['search']"
+          by-style-class="h-10  bg-slate-100 !rounded-md border border-neutral-300"
         />
-        <div v-for="(label, key) of filtersAndSort">
+        <div v-for="key in settingTable[isActiveSetting.keyActive].sort">
           <Select
+            v-if="Array.isArray(LIST_OPTIONS[key])"
             style-class="!w-auto"
             v-model="filtersAndSort[key]"
             :options="LIST_OPTIONS[key]"
@@ -350,13 +397,13 @@ const handleCreateOptionSetting = () => {
     </div>
 
     <Table
-      v-if="renderColTable"
       :isLoading="isLoading"
       :key-search="filtersAndSort.search"
       @set-modal="handlerSetModal"
       :list-data-table="renderRowTable"
-      :column-table="renderColTable"
+      :column-table="settingTable[isActiveSetting.keyActive].filed"
       :type-table="detailTypeTable"
+      :detailTable="typeModal.optionSelect"
     />
     <Pagination :pag="pag" @on-page-changed="handleSortTable" />
   </div>
@@ -378,12 +425,14 @@ const handleCreateOptionSetting = () => {
 
     <!-- Modal Content -->
     <template #content>
-      <h3 class="text-red-400 font-bold text-center my-2 text-base" v-if="errors['error']">
-        {{ errors['error'] }}
-      </h3>
+      <div class="h-4">
+        <h3 class="text-red-400 font-bold text-center my-1 text-base" v-if="errors['error']">
+          {{ errors['error'] }}
+        </h3>
+      </div>
 
       <!-- This info detail table -->
-      <div class="mt-4" v-if="typeModal.optionSelect && valueForm">
+      <div class="mt-2" v-if="typeModal.optionSelect && valueForm">
         <Field :class="'flex justify-center'">
           <filed-image
             type="file"
@@ -393,7 +442,7 @@ const handleCreateOptionSetting = () => {
             styleByClass="w-40 h-40 rounded-full max-md:!w-50 max-md:!h-50"
           />
         </Field>
-        <div class="w-auto px-10 flex gap-x-10 flex-wrap">
+        <div class="w-auto px-10 flex gap-x-10 flex-wrap" id="wrapper-add-input">
           <div
             v-for="(label, key) of typeModal.optionSelect"
             :key="key"
@@ -401,7 +450,7 @@ const handleCreateOptionSetting = () => {
           >
             <template v-if="key !== 'avatar'">
               <Field
-                v-if="key !== 'avatar'"
+                v-if="key !== 'avatar' && key !== 'search'"
                 :label="label.text"
                 :error="errors[key]"
                 :required="label.required"
@@ -410,7 +459,7 @@ const handleCreateOptionSetting = () => {
                   v-model="valueForm[key]"
                   :options="LIST_OPTIONS[key]"
                   :invalid="errors[key]"
-                  v-if="LIST_OPTIONS.hasOwnProperty(key)"
+                  v-if="LIST_OPTIONS.hasOwnProperty(key) && Array.isArray(LIST_OPTIONS[key])"
                   :disabled="isDisabledModal || label.disabled"
                   :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
                 />
@@ -438,7 +487,7 @@ const handleCreateOptionSetting = () => {
                 />
 
                 <Input
-                  v-else-if="key !== 'avatar'"
+                  v-else-if="key !== 'avatar' && key !== 'search'"
                   type="text"
                   v-model="valueForm[key]"
                   :invalid="errors[key]"
@@ -452,41 +501,41 @@ const handleCreateOptionSetting = () => {
       </div>
 
       <!-- Config setting table - filter -->
+
+      <!--  -->
       <section
-        class="mt-4 px-10 flex gap-x-6"
+        class="mt-2 px-10 flex gap-x-6 h-full"
         v-if="typeModal.optionSelect && !valueForm && typeModal.type !== 'delete'"
       >
-        <div class="min-w-max max-w-52 overflow-hidden border border-r-gray-100 mt-9">
+        <div
+          class="min-w-max max-w-52 overflow-hidden border border-r-gray-300 mt-9 transition-all"
+        >
           <Button
-            byStyleClass="p-2 w-full text-center cursor-pointer hover:bg-blue-200"
-            @click.self="handleCreateOptionSetting"
+            byStyleClass="p-2 w-full text-center cursor-pointer hover:bg-blue-200 tr"
+            @click="handleCreateOptionSetting"
           >
-            <p class="text-base py-2 font-normal hover:text-while">
+            <p class="text-base py-2 font-normal">
               Tạo mới <i class="fa-solid fa-plus text-[#15ade3] ml-2"></i>
             </p>
           </Button>
           <div v-for="(setting, key) in settingTable">
             <Button
-              @click.self="
-                () => {
-                  isActiveSetting.keyActive = key
-                  isChangeTab = false
-                }
-              "
-              :id="key"
-              :byStyleClass="`p-2 w-full flex items-center gap-x-4  border border-b-gray-200 cursor-pointer ${setting.key == isActiveSetting.keyActive && 'bg-gray-200'} `"
+              @click.self="handleChangeSetting(setting.key)"
+              :id="setting.key"
+              :byStyleClass="`p-2 w-full flex items-center gap-x-4  border border-b-gray-200 cursor-pointer ${setting.key == activeSetting.indexSettingTable && 'bg-gray-200'} `"
             >
               <Input
+                @onClick="handleChangeSetting(setting.key)"
                 type="text"
-                :id="key"
+                :id="setting.key"
                 v-model="setting.title"
-                :styleClass="`border-transparent w-min cursor-pointer ${setting.key == isActiveSetting.keyActive && isChangeTab && ' !border-gray-200 !bg-white'} `"
-                :focus="setting.key == isActiveSetting.keyActive && isChangeTab"
-                :disabled="setting.key !== isActiveSetting.keyActive || !isChangeTab"
+                :styleClass="`border-transparent w-min ${setting.key == activeSetting.indexSettingTable && isChangeTab && ' !border-gray-200 !bg-white'} `"
+                :focus="setting.key === activeSetting.indexSettingTable && isChangeTab"
+                :disabled="setting.key !== activeSetting.indexSettingTable || !isChangeTab"
               />
               <i
                 class="fa-regular fa-pen-to-square text-[#15ade3] text-base"
-                @click.self="handleChangeNameTag"
+                @click.self="handleChangeNameTag($event, setting.key)"
               ></i>
               <i
                 class="fa-regular fa-trash-can text-red-500 text-base"
@@ -500,33 +549,44 @@ const handleCreateOptionSetting = () => {
           <Tabs
             @change-tab="(newTab) => (isActiveSetting.filedActive = newTab)"
             :is-active="isActiveSetting.filedActive"
-            :tabs="[
-              { tab: 'Cài đặt bộ lọc', key: 'sort' },
-              { tab: 'Cài đặt trường dữ liệu', key: 'filed' }
-            ]"
+            :tabs="TAB_CONTENT_TEACHER"
           />
 
           <!--Tabs Content -->
-          <div class="flex gap-4 flex-wrap mt-4">
-            <template v-for="(label, key) of typeModal.optionSelect">
-              <div class="w-auto" v-if="key !== 'avatar' && key !== 'contact'">
-                <Field
-                  :label="label.text"
-                  styleClass="flex items-center gap-x-4  flex-row-reverse py-1 pr-3 border border-gray-200 bg-[#ccc] rounded-md "
-                >
-                  <Input
-                    @update-value-check-box="handleChangeSettingOption"
-                    #content
-                    type="checkbox"
-                    :checked="
-                      !!settingTable[isActiveSetting.keyActive][isActiveSetting.filedActive][key]
+          <div class="px-3">
+            <div class="pt-1" v-for="tabContent in FIL_TAB_CONTENT_TEACHER">
+              <p class="text-base" v-if="isActiveSetting.filedActive === 'filed'">
+                {{ tabContent.label }} :
+              </p>
+
+              <div class="flex gap-4 flex-wrap mt-4">
+                <template v-for="(label, key) of typeModal.optionSelect">
+                  <div
+                    class="w-auto"
+                    v-if="
+                      key !== 'avatar' &&
+                      key !== 'contact' &&
+                      label.type === tabContent.key &&
+                      !!label?.group?.includes(isActiveSetting.filedActive)
                     "
-                    styleClass="w-[18px] h-[18px]"
-                    :keyInput="key"
-                  />
-                </Field>
+                  >
+                    <Field
+                      :label="label.text"
+                      styleClass="flex items-center gap-x-4  flex-row-reverse py-1 pr-3 border border-gray-200 bg-[#ccc] rounded-md "
+                    >
+                      <Input
+                        #content
+                        @on-update-value-check-box="handleChangeSettingOption"
+                        type="checkbox"
+                        :checked="!!activeSetting[isActiveSetting.filedActive].includes(key)"
+                        styleClass="w-[18px] h-[18px]"
+                        :keyInput="key"
+                      />
+                    </Field>
+                  </div>
+                </template>
               </div>
-            </template>
+            </div>
           </div>
         </div>
       </section>

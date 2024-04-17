@@ -12,7 +12,7 @@ const emit = defineEmits(['getDataTable'])
 onMounted(async () => {
   const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
 
-  const sortTeacher = { search: '', gender: '', type: '', status: '' }
+  const sortTeacher = ['gender', 'type', 'status']
   const colTeacher = ['name', 'phone', 'email', 'currentAddress', 'status']
 
   const params = new URLSearchParams(sortPreviousRoute.split('?')[1])
@@ -30,7 +30,7 @@ onMounted(async () => {
   await store.dispatch('getInfo', listParams)
 
   emit('getDataTable', {
-    colTable: LABEL_TABLE_TEACHER,
+    colTable: colTeacher,
     labelModalDetail: LABEL_MODAL_DETAIL_TEACHER,
     valueModalDetail: VALUE_MODAL_DETAIL_TEACHER,
     typeTable: 'teachers',

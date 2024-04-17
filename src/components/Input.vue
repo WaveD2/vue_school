@@ -2,7 +2,7 @@
 import { computed, ref, onMounted, watch, onUnmounted } from 'vue'
 
 const props = defineProps({
-  id: String,
+  id: [String, Number],
   keyInput: String,
   modelValue: {
     type: [String, Number, Array, Object]
@@ -17,39 +17,22 @@ const props = defineProps({
   ariaDescribedBy: String,
   type: String,
   styleClass: String,
-  focus: Boolean
+  onClick: function () {}
 })
 const isError = ref(props.invalid !== '')
 const isChangeValue = ref(false)
 
 const emit = defineEmits(['update:modelValue', 'clearError'])
 
-const focusFirstInput = {
-  mounted(el) {
-    const firstInput = el.querySelector('input')
-    if (firstInput) {
-      firstInput.focus()
-    }
-  }
-}
-
 const handleChangeInput = (event) => {
-  console.log(event.target.key)
-
-  console.log(event.target.value)
-  console.log(props)
   if (props.type === 'checkbox') {
-    emit('updateValueCheckBox', props.keyInput)
+    emit('onUpdateValueCheckBox', props.keyInput)
   } else {
     isError.value = false
     isChangeValue.value = true
     emit('update:modelValue', event.target.value)
   }
 }
-
-// onMounted(() => {
-//   focusFirstInput.mounted(document.getElementById('container_input'))
-// })
 
 onUnmounted(() => (isChangeValue.value = false))
 
@@ -61,7 +44,7 @@ watch(
 )
 </script>
 <template>
-  <div id="container_input">
+  <div>
     <input
       class="w-full text-base py-2 px-3 border rounded-lg border-[#D5D5D5] focus:border-blue-300"
       :disabled="props.disabled"
@@ -71,6 +54,7 @@ watch(
       :checked="props.checked"
       :required="props.required"
       @change="handleChangeInput"
+      @click="props.onClick"
       :class="[
         props.styleClass,
         isError ? 'border-error ' : 'border-slate',

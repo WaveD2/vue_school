@@ -9,7 +9,7 @@ const props = defineProps({
     default: 'top-0 right-0 bottom-0'
   },
   styleModalBox: {
-    type: String,
+    type: [String, Array],
     default: 'top-0 right-0 left-0'
   },
   placeholder: {

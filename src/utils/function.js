@@ -45,8 +45,10 @@ export function filterKeys(objValue, objFilter, keys) {
   return keys
     .filter((key) => objValue[key] !== undefined)
     .map((key) => ({
-      value: objValue[key],
-      text: objFilter[key].find((option) => option.value === objValue[key]).text
+      value: Array.isArray(objFilter[key]) ? objValue[key] : key,
+      text: Array.isArray(objFilter[key])
+        ? objFilter[key]?.find((option) => option.value === objValue[key]).text
+        : objValue[key]
     }))
 }
 

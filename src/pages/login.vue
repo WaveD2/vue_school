@@ -31,8 +31,12 @@ const handleSubmitForm = async () => {
     // CALL API
     await store.dispatch('loginUser', formNew)
 
-    const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
-    return sortPreviousRoute ? route.push(sortPreviousRoute) : route.push('/teacher')
+    if (store.state.mesErrorServer.length === 0) {
+      const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
+      return sortPreviousRoute ? route.push(sortPreviousRoute) : route.push('/teacher')
+    } else {
+      store.commit('SET_MES_API_ERROR', [])
+    }
   } catch (error) {
     if (Array.isArray(error.inner)) {
       const errorMess = error.inner.map((e) => ({

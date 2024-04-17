@@ -29,7 +29,7 @@ const handleChange = (event) => {
       :class="menu.key === props.isActive && '!text-active !border-b-active !border-b-2'"
       @click="handleChange"
     >
-      <p class="text-left" :id="menu.key">{{ menu.tab }}</p>
+      <p class="text-left text-base font-semibold" :id="menu.key">{{ menu.tab }}</p>
     </button>
 
     <slot name="content"></slot>

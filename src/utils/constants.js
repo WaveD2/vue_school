@@ -64,6 +64,7 @@ export const MENU_SIDE_NAV = [
 ]
 
 export const LIST_OPTIONS = {
+  // SELECT
   status: [
     { value: '', text: 'Trạng thái' },
     { value: 'active', text: 'Hoạt động' },
@@ -86,7 +87,8 @@ export const LIST_OPTIONS = {
     { value: 'parent', text: 'Người dùng' },
     { value: 'teacher', text: 'Giáo viên ' },
     { value: 'admin', text: 'Quản lý' }
-  ]
+  ],
+  search: 'Tìm kiếm ...'
 }
 
 export const LABEL_TABLE_TEACHER = {
@@ -97,74 +99,106 @@ export const LABEL_TABLE_TEACHER = {
   status: 'Trạng thái'
 }
 
+export const FIL_TAB_CONTENT_TEACHER = [
+  {
+    label: 'Thông tin cơ bản',
+    key: 'default'
+  },
+  {
+    label: 'Thông tin nâng cao',
+    key: 'raise'
+  }
+]
+
+export const TAB_CONTENT_TEACHER = [
+  { tab: 'Cài đặt bộ lọc', key: 'sort' },
+  { tab: 'Cài đặt trường dữ liệu', key: 'filed' }
+]
+
 export const LABEL_MODAL_DETAIL_TEACHER = {
+  teacherCode: {
+    text: 'Mã giáo viên',
+    required: false,
+    disabled: true,
+    type: 'default',
+    group: ['filed']
+  },
   name: {
     text: 'Tên',
     required: true,
-    disabled: false
+    disabled: false,
+    type: 'default',
+    group: ['filed']
   },
   gender: {
     text: 'Giới tính',
     required: true,
-    disabled: false
+    disabled: false,
+    type: 'raise',
+    group: ['sort', 'filed']
   },
   phone: {
     text: 'Số điện thoại',
     required: true,
-    disabled: false
+    disabled: false,
+    type: 'default',
+    group: ['filed']
   },
   email: {
     text: 'Gmail',
     required: true,
-    disabled: false
+    disabled: false,
+    type: 'default',
+    group: ['filed']
   },
   pastClassIds: {
     text: 'Lớp học',
     required: false,
     disabled: false
   },
-  teacherCode: {
-    text: 'Mã giáo viên',
-    required: false,
-    disabled: true
-  },
+
   currentAddress: {
     text: 'Địa chỉ',
     required: true,
-    disabled: false
-  },
-  nationality: {
-    text: 'Quốc tịch',
-    required: false,
-    disabled: false
+    disabled: false,
+    type: 'default',
+    group: ['filed']
   },
   permanentResidence: {
     text: 'Hộ khẩu thường trú',
     required: true,
-    disabled: false
+    disabled: false,
+    type: 'raise'
   },
-  healthInsuranceNumber: {
-    text: 'Số bảo hiểm',
-    required: false,
-    disabled: false
-  },
+
   status: {
     text: 'Trạng thái',
     required: true,
-    disabled: false
+    disabled: false,
+    type: 'raise',
+    group: ['sort', 'filed']
   },
   type: {
     text: 'Hợp đồng',
     required: true,
-    disabled: false
+    disabled: false,
+    type: 'raise',
+    group: ['sort', 'filed']
   },
   passport: {
     text: 'Chứng minh nhân dân',
     required: true,
-    disabled: false
+    disabled: false,
+    type: 'raise',
+    group: ['filed']
   },
   dateOfBirth: {
     text: 'Ngày sinh',
+    required: false,
+    disabled: false
+  },
+  healthInsuranceNumber: {
+    text: 'Số bảo hiểm',
     required: false,
     disabled: false
   },
@@ -177,6 +211,14 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
     text: 'Làm việc',
     required: false,
     disabled: false
+  },
+  nationality: {
+    text: 'Quốc tịch',
+    required: false,
+    disabled: false,
+    type: 'raise',
+    // thông tin nâng cao
+    group: ['filed']
   },
   note: {
     text: 'Ghi chú',
@@ -215,39 +257,30 @@ export const VALUE_MODAL_DETAIL_TEACHER = {
   note: ''
 }
 
-export const LABEL_TABLE_USER = {
-  username: 'Tên đăng nhập',
-  id: 'ID',
-  parentId: 'Parent ID',
-  role: 'Quyền',
-  status: 'Trạng thái'
-}
-
 export const LABEL_MODAL_DETAIL_USER = {
-  avatar: {
-    text: 'Ảnh',
-    required: false
-  },
-  username: {
-    text: 'Tên đăng nhập',
-    required: true,
-    disabled: false
-  },
-  role: {
-    text: 'Quyền',
-    required: true,
-    disabled: false
-  },
   id: {
     text: 'ID',
     required: true,
     disabled: true
   },
-  parentId: {
+  name: {
+    text: 'Tên đăng nhập',
+    required: true,
+    disabled: false
+  },
+
+  email: {
+    text: 'Email',
+    required: true,
+    disabled: false
+  },
+
+  phone: {
     text: 'Parent ID',
     required: true,
     disabled: true
   },
+
   status: {
     text: 'Trạng thái',
     required: true,
@@ -256,9 +289,10 @@ export const LABEL_MODAL_DETAIL_USER = {
 }
 
 export const VALUE_MODAL_DETAIL_USER = {
-  username: '',
+  name: '',
   id: '',
-  parentId: '',
+  email: '',
+  phone: '',
   role: '',
   status: ''
 }

@@ -1,7 +1,7 @@
 import axiosInstance from '@/utils/axios/api'
 import useTransition from '../utils/axios'
 
-import { removeTokenStore, setStoreTokens, getStoreTokens } from '@/utils/axios/setupApi'
+import { removeTokenStore, setLocalStorage, setCookie } from '@/utils/axios/setupApi'
 import { toastInfo } from '@/utils/function'
 
 const { callApi } = useTransition()
@@ -13,11 +13,15 @@ export const loginUser = async ({ commit }, formLogin) => {
     if (res.data.data.tokens) {
       const { access, refresh } = res.data.data.tokens
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${access.token}`
-      setStoreTokens({ accessToken: access, refreshToken: refresh })
+
+      setLocalStorage('refreshToken', refresh)
+      setCookie('accessToken', access.token, access.expires)
+
       commit('SET_USER', res.data.data.user)
     }
   } catch (err) {
     if (err.response.data.code === 'NotAuthen') {
+      commit('SET_MES_API_ERROR', err.response.data.message)
       toastInfo({ type: 'error', mes: err.response.data.message })
       return false
     }
@@ -25,10 +29,12 @@ export const loginUser = async ({ commit }, formLogin) => {
 }
 
 export const logoutUser = async ({ commit }) => {
-  const { refreshToken } = getStoreTokens()
+  // const { refreshToken } = getStoreTokens()
 
-  await callApi('v2/auth/logout', 'POST', { refreshToken: refreshToken })
-  removeTokenStore()
+  // await callApi('v2/auth/logout', 'POST', { refreshToken: refreshToken })
+  removeTokenStore('refreshToken')
+  removeTokenStore('previousRoute')
+
   commit('SET_USER', {})
 }
 

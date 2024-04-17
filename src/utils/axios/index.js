@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import router from '@/router'
 import store from '@/store'
 import { toastInfo } from '../function'
-import { checkAccessToken } from './setupApi'
+import { checkAccessToken, getCookie, setHeaderApi } from './setupApi'
 import axiosInstance from './api'
 
 export default function useTransition() {
@@ -18,6 +18,9 @@ export default function useTransition() {
         data: data,
         params: params
       }
+
+      const accessToken = getCookie('accessToken')
+      setHeaderApi('Authorization', accessToken)
 
       const response = await axiosInstance(config)
 

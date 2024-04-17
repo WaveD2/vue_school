@@ -5,10 +5,11 @@ import Note from './Note.vue'
 import LoadingComponentVue from './LoadingComponent.vue'
 import TooltipVue from './Tooltip.vue'
 
-import { ref, computed } from 'vue'
-import { LIST_OPTIONS } from '@/utils/constants'
+import { ref, computed, watchEffect } from 'vue'
+import {LIST_OPTIONS } from '@/utils/constants'
+ 
 
-const props = defineProps(['listDataTable', 'columnTable', 'keySearch' , 'isLoading' , 'typeTable'])
+const props = defineProps(['listDataTable', 'columnTable', 'keySearch' , 'isLoading' , 'typeTable' , 'detailTable'])
 const emit = defineEmits(['setModal'])
 
 const isLoading = computed(()=> (props.isLoading))
@@ -16,9 +17,19 @@ let isActiveAction = ref(null)
  
 
 const renderRowTable = computed(() =>  props.listDataTable)
-const renderColTable = computed(() => props.columnTable)
-const keyColTable = computed(() => Object.keys(renderColTable.value))
+const renderColTable = ref(props.columnTable)
  
+watchEffect(() => {
+  if (props.detailTable) {
+    
+    renderColTable.value= Object.keys(props.detailTable).reduce((acc, key) => {
+     if (props.columnTable.includes(key)) {
+       acc[key] = props.detailTable[key].text;
+     }
+     return acc;
+   }, {});
+  }
+})
 
 
 const handleOpenModal = async ({ type, rowTable }) => {
@@ -67,10 +78,12 @@ const highlightKeyword = (value) => {
               <thead class="text-sm text-gray-600  font-bold dark:bg-gray-700 dark:text-gray-400" >
                 <tr >
                   <th scope="col" class="text-nowrap px-3 py-3"
-                    v-for="(col, index) of renderColTable"
-                    :key="index"
+                    v-for="(col) in renderColTable"
+                    :key="col"
                   >
-                    {{ col }}
+                      {{
+                        col
+                      }}
                   </th>
 
                   <th scope="col" class="   text-right" v-if="props.typeTable !== 'users'"
@@ -85,18 +98,20 @@ const highlightKeyword = (value) => {
                   v-for="(rowTable, i) in renderRowTable"
                   :key="i"
                 >
-
                 <td
                 class="text-nowrap px-3 py-3"
-                v-for="key of keyColTable"
+                v-for="(label , key) in renderColTable"
                 @click="handleOpenModal({ type: 'detail', rowTable })"
                 >
+ 
+
                 <TooltipVue> 
                     <div class="flex ">
                       <p class="text-sm">
-                        <Note v-if="key === 'status'">
+                        <Note v-if="Array.isArray(LIST_OPTIONS[key]) "> 
                           <span
                             :class="
+                            key === 'status' &&
                                  rowTable[key] === 'active'
                                   ? 'bg-blue-300'
                                   : 'bg-gray-300'
@@ -107,7 +122,6 @@ const highlightKeyword = (value) => {
                              LIST_OPTIONS[key]
                                 .find(item => item.value === rowTable[key])?.text
                            }}
-                       
                           </span>
                         </Note>
                         <span v-else-if="shouldHighlight(rowTable[key])">

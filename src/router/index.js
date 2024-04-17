@@ -4,7 +4,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import TableLayoutVue from '@/layout/TableLayout.vue'
 import { checkAccessToken } from '@/utils/axios/setupApi'
 import notFoundVue from '@/pages/notFound.vue'
-import testVue from '@/pages/test.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,12 +14,12 @@ const router = createRouter({
       children: [
         {
           path: '/login',
-          name: 'login',
+          name: 'Login',
           component: () => import('../pages/login.vue')
         },
         {
           path: '/register',
-          name: 'register',
+          name: 'Register',
           component: () => import('../pages/register.vue')
         }
       ]
@@ -30,10 +29,11 @@ const router = createRouter({
       path: '/',
       name: 'trang chủ',
       component: Default,
+      meta: { requiresAuth: true },
       children: [
         {
           path: '/',
-          name: 'teacher',
+          name: 'Teacher',
           component: TableLayoutVue,
           children: [
             {
@@ -59,31 +59,21 @@ const router = createRouter({
       path: '/:catchAll(.*)',
       name: 'error404',
       component: notFoundVue
-    },
-    {
-      path: '/test',
-      name: 'error404',
-      component: testVue
     }
   ]
 })
 
-// router.beforeEach(async (to, from, next) => {
-//   if (to.path === '/login') {
-//     const isLogin = await checkAccessToken()
-//     console.log('isLogin', isLogin)
-//     if (isLogin) {
-//       const previousRoute = localStorage.getItem('previousRoute')
-//       const routerCurrent = previousRoute ? previousRoute : 'teacher'
-//       console.log('routerCurrent', routerCurrent)
-//       next(routerCurrent)
-//     } else {
-//       next() // Bỏ qua và tiếp tục chuyển hướng đến '/login'
-//     }
-//   } else {
-//     localStorage.setItem('previousRoute', `${to.path}`)
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  const isToken = checkAccessToken()
 
+  if (to.meta.requiresAuth === true) {
+    if (isToken) {
+      next()
+    } else {
+      next({ name: 'Login' })
+    }
+  } else {
+    next()
+  }
+})
 export default router

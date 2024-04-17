@@ -4,17 +4,23 @@ import axiosInstance from './api'
 import router from '@/router'
 
 export async function checkAccessToken() {
-  const { accessToken, refreshToken } = getStoreTokens()
+  const accessToken = getCookie('accessToken')
 
-  //Không có token
-  if (!accessToken || !refreshToken) return false
+  if (accessToken) return true
+
+  const refreshToken = getLocalStorage('refreshToken')
+
+  if (!accessToken || !refreshToken)
+    //Không có token
+    return false
   // accessToken và refreshToken còn hiệu lực
-  if (isExpired(accessToken?.expires) && isExpired(refreshToken?.expires)) {
-    setAuthorizationHeader()
+  if (accessToken && isExpired(refreshToken?.expires)) {
+    setHeaderApi('Authorization', accessToken)
+
     return true
   }
   // accessToken hết hạn và refreshToken còn hiệu lực
-  else if (!isExpired(accessToken?.expires) || isExpired(refreshToken?.expires)) {
+  else if (accessToken || isExpired(refreshToken?.expires)) {
     const isToken = await fetchToken()
     return isToken
   }
@@ -33,8 +39,9 @@ export async function fetchToken() {
 
     const { access, refresh } = response.data.data.tokens
 
-    setStoreTokens({ accessToken: access, refreshToken: refresh })
-    axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${access.token}`
+    setHeaderApi('Authorization', access.token)
+    setLocalStorage('refreshToken', refresh)
+    setCookie('accessToken', access.token, access.expires)
 
     store.commit('SET_USER', response.data.data.user)
 
@@ -57,30 +64,22 @@ export async function fetchToken() {
   }
 }
 
-export function setAuthorizationHeader() {
-  const { accessToken } = getStoreTokens()
-  if (accessToken) {
-    axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken.token}`
-  }
+export function setHeaderApi(name, value) {
+  axiosInstance.defaults.headers.common[name] = `Bearer ${value}`
 }
 
-export function getStoreTokens() {
-  const accessToken = JSON.parse(localStorage.getItem('access_token'))
-  const refreshToken = JSON.parse(localStorage.getItem('refresh_token'))
-  return { accessToken, refreshToken }
+export function getLocalStorage(name) {
+  const s = JSON.parse(localStorage.getItem(name))
+
+  return s
 }
 
-export function setStoreTokens({ accessToken, refreshToken }) {
-  localStorage.setItem('access_token', JSON.stringify(accessToken))
-  if (!refreshToken) return
-  localStorage.setItem('refresh_token', JSON.stringify(refreshToken))
+export function setLocalStorage(name, value) {
+  localStorage.setItem(name, JSON.stringify(value))
 }
 
-export function removeTokenStore() {
-  localStorage.removeItem('access_token')
-  localStorage.removeItem('refresh_token')
-  localStorage.removeItem('previousRoute')
-  localStorage.removeItem('current_page')
+export function removeTokenStore(name) {
+  localStorage.removeItem(name)
 }
 
 export function isExpired(expires) {
@@ -88,4 +87,20 @@ export function isExpired(expires) {
 
   const currentDate = new Date()
   return currentDate < expirationDate ? true : false
+}
+
+export function setCookie(name, value, expirationTime, path = '/') {
+  var expires = new Date(expirationTime)
+  document.cookie =
+    name + '=' + (value || '') + ';expires=' + expires.toUTCString() + '; path=' + path
+}
+export function getCookie(name) {
+  var nameEQ = name + '='
+  var ca = document.cookie.split(';')
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i]
+    while (c.charAt(0) == ' ') c = c.substring(1, c.length)
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length)
+  }
+  return null
 }

@@ -3,7 +3,8 @@ import debounce from 'lodash.debounce'
 
 const props = defineProps({
   byStyleClass: String,
-  modelValue: String
+  modelValue: String,
+  placeholder: String
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -23,7 +24,7 @@ const handleSearchInput = (event) => {
       type="type"
       name="search"
       :value="props.modelValue"
-      placeholder="Tìm kiếm..."
+      :placeholder="props.placeholder"
       @keyup="handleSearchInput"
       :class="props.byStyleClass"
       class="pl-3 pr-10 w-full focus:border focus:border-blue-300"
