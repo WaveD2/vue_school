@@ -5,8 +5,6 @@ const props = defineProps({
   textBtn: String,
   isLoading: Boolean,
   byStyleClass: [String, Array]
-  // handleClick: function () {},
-  // handleClickIcon: function () {}
 })
 
 const emit = defineEmits(['handleClickBtn', 'handleClickIcon'])

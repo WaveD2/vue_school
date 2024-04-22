@@ -9,16 +9,18 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
       name: 'authentication',
       component: Authentication,
+      redirect: '/login',
       children: [
         {
-          path: '/login',
+          path: 'login',
           name: 'Login',
           component: () => import('../pages/login.vue')
         },
         {
-          path: '/register',
+          path: 'register',
           name: 'Register',
           component: () => import('../pages/register.vue')
         }
@@ -26,9 +28,9 @@ const router = createRouter({
     },
 
     {
-      path: '/',
       name: 'trang chủ',
       component: Default,
+      path: '/',
       meta: { requiresAuth: true },
       children: [
         {
@@ -66,12 +68,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isToken = checkAccessToken()
 
-  if (to.meta.requiresAuth === true) {
-    if (isToken) {
-      next()
-    } else {
-      next({ name: 'Login' })
-    }
+  if (to.meta.requiresAuth && !isToken) {
+    next({ name: 'Login' })
   } else {
     next()
   }

@@ -504,7 +504,7 @@ const handleCreateOptionSetting = () => {
 
       <!--  -->
       <section
-        class="mt-2 px-10 flex gap-x-6 h-full"
+        class="mt-2 px-10 flex gap-x-6 h-[95%]"
         v-if="typeModal.optionSelect && !valueForm && typeModal.type !== 'delete'"
       >
         <div
@@ -596,13 +596,13 @@ const handleCreateOptionSetting = () => {
     <template #footer>
       <div class="w-full flexAround py-3 border-t border-gray-200">
         <Button
-          :by-style-class="`${typeModal.type == 'delete' ? 'bg-[#417bfa] hover:bg-[#1159f8eb]' : 'bg-[#93b1f3eb] hover:bg-[#1159f8eb] '} w-2/5 py-2 rounded-md text-base   text-white`"
+          :by-style-class="`${typeModal.type == 'delete' ? 'bg-[#417bfa] hover:bg-[#1159f8eb]' : 'bg-[#93b1f3eb] hover:bg-[#1159f8eb] '} w-1/4 py-2 rounded-md text-base   text-white`"
           @click="handleClose"
           >Đóng</Button
         >
         <Button
           v-if="detailTypeTable !== 'users' && typeButtonModal.label"
-          :by-style-class="`${typeModal.type == 'delete' ? 'bg-[#93b1f3eb] hover:bg-[#1159f8eb]' : 'bg-[#417bfa] hover:bg-[#1159f8eb] '} w-2/5 py-2 rounded-md text-base   text-white`"
+          :by-style-class="`${typeModal.type == 'delete' ? 'bg-[#93b1f3eb] hover:bg-[#1159f8eb]' : 'bg-[#417bfa] hover:bg-[#1159f8eb] '} w-1/4 py-2 rounded-md text-base   text-white`"
           id="btnSubmit"
           @click="typeButtonModal.handleActive({ type: typeModal.type })"
         >
