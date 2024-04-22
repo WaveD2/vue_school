@@ -1,6 +1,7 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import LoadingComponent from './LoadingComponent.vue'
+import { toastInfo } from '@/utils/function'
 
 const props = defineProps({
   isInnerModal: Boolean,
@@ -23,35 +24,49 @@ const props = defineProps({
   disabled: {
     type: Boolean,
     default: false
+  },
+  errors: {
+    type: String,
+    default: ''
   }
 })
 
 const emit = defineEmits(['closeModal'])
 
 const isInner = computed(() => props.isInnerModal)
+const errorMes = computed(() => props.errors)
 
 const handleClose = (e) => {
   if (props.disabled || e.target.id !== 'crud-modal') {
     emit('closeModal')
   }
 }
+
+// watchEffect(() => {
+//   if (isInner.value && errorMes.value) {
+//     toastInfo({ type: 'error', mess: errorMes.value })
+//   }
+// })
 </script>
 <template>
   <LoadingComponent :is-loading="props.isLoadingModal" />
   <div
     id="crud-modal"
     aria-hidden="true"
-    class="modal_container transition-all gap-3 items-center w-full md:inset-0 max-h-full fixed z-50 bg-[#3f373787]"
-    :class="[props.styleModalContainer, !isInner && 'hidden']"
+    class="modal_container gap-3 items-center w-full md:inset-0 max-h-full fixed z-50 bg-[#9b9b9b69]"
+    :class="[
+      props.styleModalContainer,
+      isInner ? 'animate-modal-slide-in-right block' : 'animate-modal-slide-out-left hidden'
+    ]"
     @click.self="handleClose"
   >
-    <div class="absolute z-50 w-full max-w-5xl max-h-full" :class="props.styleModalBox">
+    <div class="absolute z-50 w-full max-w-4xl max-h-full" :class="props.styleModalBox">
       <div
         class="relative overflow-hidden flex flex-col h-full w-full bg-white rounded-lg shadow dark:bg-gray-700"
       >
         <!-- Modal header -->
         <div
-          class="flex items-center justify-between px-5 py-2 border-b rounded-t dark:border-gray-600"
+          class="flex items-center justify-between px-6 py-5 border-b rounded-t dark:border-gray-600"
         >
           <slot name="title"></slot>
           <button

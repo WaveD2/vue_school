@@ -354,14 +354,14 @@ const handleCreateOptionSetting = () => {
   <!-- Table -->
   <div class="max-md:p-0">
     <div
-      class="px-4 flexBetween h-auto mt-2 mb-1 bg-transparent max-md:flex-wrap max-md:gap-y-2"
+      class="px-4 flex justify-between h-auto mt-2 mb-1 bg-transparent max-md:flex-wrap max-md:gap-y-2"
       v-if="route.path !== '/users'"
     >
-      <div class="flex flex-wrap gap-x-2">
+      <div class="flex flex-wrap gap-x-2 w-3/5">
         <InputSearch
           placeholder="Tìm kiếm..."
           v-model="filtersAndSort['search']"
-          by-style-class="h-10  bg-slate-100 !rounded-md border border-neutral-300"
+          by-style-class="h-10   bg-slate-100 !rounded-md border border-neutral-300"
         />
         <div v-for="key in settingTable[isActiveSetting.keyActive].sort">
           <Select
@@ -373,7 +373,15 @@ const handleCreateOptionSetting = () => {
         </div>
       </div>
 
-      <div class="flex items-center gap-x-2">
+      <div class="flex gap-x-2">
+        <div>
+          <Select
+            style-class="!w-auto"
+            v-model="filtersAndSort['gender']"
+            :options="LIST_OPTIONS['gender']"
+          />
+        </div>
+
         <div @click="handleSettingTable">
           <i
             class="fa-solid fa-gear text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-xl hover:bg-slate"
@@ -409,6 +417,7 @@ const handleCreateOptionSetting = () => {
   </div>
 
   <ModalComponent
+    :errors="errors['error']"
     :disabled="isDisabledModal"
     :is-inner-modal="typeModal.isInner"
     @close-modal="handleClose"
@@ -420,17 +429,11 @@ const handleCreateOptionSetting = () => {
     ]"
   >
     <template #title>
-      <p class="text-base text-[#353636] font-bold" v-html="typeModal.label"></p>
+      <p class="text-lg text-[#353636] font-bold" v-html="typeModal.label"></p>
     </template>
 
     <!-- Modal Content -->
     <template #content>
-      <div class="h-4">
-        <h3 class="text-red-400 font-bold text-center my-1 text-base" v-if="errors['error']">
-          {{ errors['error'] }}
-        </h3>
-      </div>
-
       <!-- This info detail table -->
       <div class="mt-2" v-if="typeModal.optionSelect && valueForm">
         <Field :class="'flex justify-center'">
@@ -504,12 +507,10 @@ const handleCreateOptionSetting = () => {
 
       <!--  -->
       <section
-        class="mt-2 px-10 flex gap-x-6 h-[95%]"
+        class="mt-2 px-6 flex gap-x-6 h-[95%]"
         v-if="typeModal.optionSelect && !valueForm && typeModal.type !== 'delete'"
       >
-        <div
-          class="min-w-max max-w-52 overflow-hidden border border-r-gray-300 mt-9 transition-all"
-        >
+        <div class="min-w-max max-w-52 overflow-hidden border-2 border-r-gray-300 mt-9 rounded-md">
           <Button
             byStyleClass="p-2 w-full text-center cursor-pointer hover:bg-blue-200 tr"
             @click="handleCreateOptionSetting"

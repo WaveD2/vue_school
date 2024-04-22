@@ -70,7 +70,7 @@ const highlightKeyword = (value) => {
         <div
           class="flex flex-col min-w-0"
         >
-          <div class="min-h-[calc(100vh-16rem)] w-full overflow-y-scroll h-auto max-h-[calc(100vh-16rem)]" >
+          <div class="min-h-[calc(100vh-13rem)] w-full overflow-y-scroll h-auto max-h-[calc(100vh-13rem)]" >
             <table class="w-full h-full text-base text-left  dark:text-gray-400" 
             v-if="Object.keys(renderColTable).length > 0"> 
 

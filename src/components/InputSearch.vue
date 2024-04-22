@@ -19,7 +19,7 @@ const handleSearchInput = (event) => {
 </script>
 
 <template>
-  <div class="relative text-gray-600 w-full">
+  <div class="relative text-gray-600 w-auto">
     <input
       type="type"
       name="search"

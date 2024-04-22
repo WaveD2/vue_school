@@ -31,7 +31,21 @@ export default {
       backgroundImage: {},
       screens: {},
       maxWidth: {},
-      borderRadius: {}
+      borderRadius: {},
+      keyframes: {
+        modalSlideInRight: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' }
+        },
+        modalSlideOutLeft: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(100%)' }
+        }
+      },
+      animation: {
+        'modal-slide-in-right': 'modalSlideInRight 0.2s ease-out',
+        'modal-slide-out-left': 'modalSlideOutLeft 0.2s ease-in'
+      }
     }
   },
   plugins: []
