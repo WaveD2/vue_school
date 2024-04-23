@@ -1,6 +1,6 @@
 <template>
   <div
-    class="text-xs inline-flex items-center gap-3 font-bold leading-sm py-1 px-2 bg-blue-200 rounded-md w-max"
+    class="text-xs inline-flex items-center gap-3 font-bold leading-sm px-2 bg-blue-200 rounded-sm w-max"
   >
     <slot name="content" :tagValue="tagValue" />
     <i

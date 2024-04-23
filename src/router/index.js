@@ -10,9 +10,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'authentication',
+      redirect: '/login',
       component: Authentication,
-      redirect: 'login',
       children: [
         {
           path: 'login',

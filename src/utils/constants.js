@@ -207,14 +207,7 @@ export const LABEL_MODAL_DETAIL_TEACHER = {
     required: false,
     disabled: true
   },
-  nationality: {
-    text: 'Quốc tịch',
-    required: false,
-    disabled: false,
-    type: 'raise',
-    // thông tin nâng cao
-    group: ['filed']
-  },
+
   contracts: {
     text: 'Làm việc',
     required: false,

@@ -1,6 +1,6 @@
 <script setup>
 import { loginSchema } from '@/utils/validateYub'
-import { reactive, ref, defineEmits, onMounted } from 'vue'
+import { reactive, ref, defineEmits, onMounted, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import store from '@/store'
 import Field from '@/components/Field.vue'
@@ -31,7 +31,7 @@ const handleSubmitForm = async () => {
     // CALL API
     await store.dispatch('loginUser', formNew)
 
-    if (store.state.mesErrorServer.length === 0) {
+    if (store.state.mesErrorServer.length === 0 && !errors.value) {
       const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
       return sortPreviousRoute ? route.push(sortPreviousRoute) : route.push('/teacher')
     } else {
