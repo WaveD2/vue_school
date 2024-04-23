@@ -1,10 +1,10 @@
 import { toast } from 'vue3-toastify'
 
 const typeToast = 'success' | 'error' | 'info'
-export const toastInfo = ({ type = typeToast, mes, ...rest }) => {
+export const toastInfo = ({ type = typeToast, mes, display = 'BOTTOM_RIGHT', ...rest }) => {
   toast[type](mes, {
     autoClose: 1000,
-    position: toast.POSITION.BOTTOM_RIGHT,
+    position: toast.POSITION[display],
     ...rest
   })
 }

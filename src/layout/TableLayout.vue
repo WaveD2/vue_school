@@ -5,36 +5,31 @@ import { useRoute, useRouter } from 'vue-router'
 import Table from '@/components/Table.vue'
 import Select from '@/components/Select.vue'
 import InputSearch from '@/components/InputSearch.vue'
-import ModalComponent from '@/components/ModalComponent.vue'
-import Field from '@/components/Field.vue'
-import Input from '@/components/Input.vue'
-import Button from '@/components/Button.vue'
-import FiledImage from '@/components/FiledImage.vue'
-import TextareaVue from '@/components/Textarea.vue'
 import debounce from 'lodash.debounce'
 import Pagination from '@/components/Pagination.vue'
-import FieldFile from '@/components/FieldFile.vue'
 
-import { LIST_OPTIONS, FIL_TAB_CONTENT_TEACHER, TAB_CONTENT_TEACHER } from '@/utils/constants'
+import { LIST_OPTIONS } from '@/utils/constants'
 import { validateTeacher } from '@/utils/validateYub'
-import { arrayToObject, filterKeys, filterKeysWithValues, trimInput } from '@/utils/function'
+import {
+  arrayToObject,
+  filterKeys,
+  filterKeysWithValues,
+  toastInfo,
+  trimInput
+} from '@/utils/function'
 import store from '@/store'
 import Tag from '@/components/Tag.vue'
-import Tabs from '@/components/Tabs.vue'
-import Checkbox from '@/components/Checkbox.vue'
 import ModalDetail from '@/components/ModalDetail.vue'
 
 const route = useRoute()
 const router = useRouter()
 
-const innerModal = ref(false)
 const isLoading = ref(false)
 const isLoadingModal = ref(false)
 const isDisabledModal = ref(false)
 const errors = ref({})
 
 const valueForm = ref({})
-const renderColTable = ref()
 const renderFilterTag = ref([])
 
 const valueModal = ref({})
@@ -48,14 +43,14 @@ const filtersAndSort = reactive({
   search: ''
 })
 
-// get value settingTable local store
-const settingTable = reactive([
+// get value settingTable.value local store
+const settingTable = ref([
   {
     title: 'Mặc định',
     // filed typeof Object {key : value}
-    filed: [],
+    filed: ['contact', 'name', 'gmail', 'phone', 'status'],
     // sort typeof Array ['gender', 'status', 'type'],
-    sort: [],
+    sort: ['gender', 'status', 'type'],
     key: 0
   }
 ])
@@ -110,12 +105,12 @@ const handleSetDataRender = (data) => {
   const { colTable, labelModalDetail, valueModalDetail, typeTable, sortTable, filterSelect } = data
   valueModal.value = valueModalDetail
   typeModal.optionSelect = labelModalDetail
-  settingTable[isActiveSetting.keyActive].filed = colTable
+  settingTable.value[isActiveSetting.keyActive].filed = colTable
 
   detailTypeTable.value = typeTable
 
   if (sortTable) {
-    settingTable[isActiveSetting.keyActive].sort = sortTable
+    settingTable.value[isActiveSetting.keyActive].sort = sortTable
   }
 
   if (!valueModal.hasOwnProperty('avatar')) valueModal['avatar'] = { url: '' }
@@ -266,15 +261,22 @@ const handleSettingTable = () => {
   typeModal.isInner = true
   typeModal.type = 'add'
   typeButtonModal.handleActive = handleCreateSetting
+  typeButtonModal.type = 'settingTable'
   typeButtonModal.label =
-    settingTable[isActiveSetting.keyActive].filed.length === 0 ? 'Tạo cài đặt' : 'Lưu cài đặt'
+    settingTable.value[isActiveSetting.keyActive].filed.length === 0 ? 'Tạo cài đặt' : 'Lưu cài đặt'
 }
 
-const handleCreateSetting = () => {
-  if (activeSetting.filed.length >= 4) {
+const handleCreateSetting = (listFiled) => {
+  console.log('data', listFiled)
+  if (listFiled.filed.length >= 4) {
+    settingTable.value = listFiled.filed
     handleClose()
   } else {
-    return (errors.value = { error: 'Cài đặt trường dữ liệu tối thiểu 4 trường ' })
+    return toastInfo({
+      type: 'error',
+      mes: 'Trường dữ liệu phải có tối thiểu 4 trường',
+      display: 'TOP_RIGHT'
+    })
   }
 }
 </script>
@@ -363,7 +365,7 @@ const handleCreateSetting = () => {
     :type-modal="typeModal"
     :value-detail-modal="valueForm"
     :typeButtonModal="typeButtonModal"
-    :setting-table="settingTable"
-    :isActiveSetting="isActiveSetting"
+    :setting-data-table="settingTable"
+    :is-active-setting-table="isActiveSetting"
   />
 </template>

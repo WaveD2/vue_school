@@ -10,7 +10,7 @@ export async function checkAccessToken() {
 
   const refreshToken = getLocalStorage('refreshToken')
 
-  if (!accessToken || !refreshToken)
+  if (!accessToken && !refreshToken)
     //Không có token
     return false
   // accessToken và refreshToken còn hiệu lực
@@ -28,7 +28,7 @@ export async function checkAccessToken() {
 }
 
 export async function fetchToken() {
-  const { refreshToken } = getStoreTokens()
+  const refreshToken = getLocalStorage('refreshToken')
 
   try {
     const response = await axiosInstance.post('/v2/auth/refresh-token', {
@@ -45,6 +45,8 @@ export async function fetchToken() {
 
     store.commit('SET_USER', response.data.data.user)
 
+    const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
+    router.push(sortPreviousRoute)
     return true
   } catch (error) {
     if (error.response.data.code === 'NotAuthen') {

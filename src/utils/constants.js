@@ -111,8 +111,8 @@ export const FIL_TAB_CONTENT_TEACHER = [
 ]
 
 export const TAB_CONTENT_TEACHER = [
-  { tab: 'Cài đặt bộ lọc', key: 'sort' },
-  { tab: 'Cài đặt trường dữ liệu', key: 'filed' }
+  { tab: 'Cài đặt trường dữ liệu', key: 'filed' },
+  { tab: 'Cài đặt bộ lọc', key: 'sort' }
 ]
 
 export const LABEL_MODAL_DETAIL_TEACHER = {
