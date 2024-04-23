@@ -98,6 +98,14 @@ watchEffect(() => {
   renderFilterTag.value = resultFilter
 })
 
+const handleDeleteTag = (tagDelete) => {
+  for (let key in filtersAndSort) {
+    if (filtersAndSort[key] === tagDelete) {
+      filtersAndSort[key] = ''
+    }
+  }
+}
+
 const handleSetDataRender = (data) => {
   const { colTable, labelModalDetail, valueModalDetail, typeTable, sortTable, filterSelect } = data
   valueModal.value = valueModalDetail
@@ -297,13 +305,11 @@ const handleCreateSetting = () => {
       </div>
 
       <div class="flex gap-x-2">
-        <div>
-          <Select
-            style-class="!w-auto"
-            v-model="isActiveSetting.keyActive"
-            :options="isActiveSetting.listTitleTable"
-          />
-        </div>
+        <Select
+          style-class="!w-auto"
+          v-model="isActiveSetting.keyActive"
+          :options="isActiveSetting.listTitleTable"
+        />
 
         <div @click="handleSettingTable">
           <i
