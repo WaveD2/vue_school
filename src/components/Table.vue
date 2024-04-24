@@ -101,7 +101,7 @@ const highlightKeyword = (value) => {
                 <td
                 class="text-nowrap px-3 py-3"
                 v-for="(label , key) in renderColTable"
-                @click="handleOpenModal({ type: 'detail', rowTable })"
+                @click.self="handleOpenModal({ type: 'detail', rowTable })"
                 >
  
 

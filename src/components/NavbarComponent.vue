@@ -125,9 +125,8 @@ onMounted(() => {
                 @click="isActiveModalUser = !isActiveModalUser"
               >
                 <h2 class="text-sm font-semibold text-gray-800">
-                  {{ userCurrent.username }}
+                  {{ userCurrent.name }}
                 </h2>
-                <p class="text-xs text-gray-500">{{ userCurrent.role }}</p>
               </div>
             </div>
           </div>

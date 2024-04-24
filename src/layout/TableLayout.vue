@@ -20,6 +20,7 @@ import {
 import store from '@/store'
 import Tag from '@/components/Tag.vue'
 import ModalDetail from '@/components/ModalDetail.vue'
+import { getLocalStorage, setLocalStorage } from '@/utils/axios/setupApi'
 
 const route = useRoute()
 const router = useRouter()
@@ -43,26 +44,25 @@ const filtersAndSort = reactive({
   search: ''
 })
 
-// get value settingTable.value local store
-const settingTable = ref([
-  {
+// get value settingTable local store
+let settingTable = reactive(
+  getLocalStorage('settingTable') || {
     title: 'Mặc định',
     // filed typeof Object {key : value}
-    filed: ['contact', 'name', 'gmail', 'phone', 'status'],
+    filed: [],
     // sort typeof Array ['gender', 'status', 'type'],
-    sort: ['gender', 'status', 'type'],
+    sort: [],
     key: 0
   }
-])
+)
 
-const isActiveSetting = reactive({
-  keyActive: 0,
-  filedActive: 'filed',
-  listTitleTable: [
-    { text: 'Mặc định', value: 0 },
-    { text: 'Cài số 2', value: 1 }
-  ]
-})
+const isActiveSetting = reactive(
+  getLocalStorage('nameSettingTable') || {
+    keyActive: 0,
+    filedActive: 'filed',
+    listTitleTable: [{ text: 'Mặc định', value: 0 }]
+  }
+)
 
 const typeModal = reactive({
   isInner: false,
@@ -105,14 +105,15 @@ const handleSetDataRender = (data) => {
   const { colTable, labelModalDetail, valueModalDetail, typeTable, sortTable, filterSelect } = data
   valueModal.value = valueModalDetail
   typeModal.optionSelect = labelModalDetail
-  settingTable.value[isActiveSetting.keyActive].filed = colTable
+  if (settingTable.filed.length === 0) {
+    settingTable.filed = colTable
 
-  detailTypeTable.value = typeTable
-
-  if (sortTable) {
-    settingTable.value[isActiveSetting.keyActive].sort = sortTable
+    if (sortTable) {
+      settingTable.sort = sortTable
+    }
   }
 
+  detailTypeTable.value = typeTable
   if (!valueModal.hasOwnProperty('avatar')) valueModal['avatar'] = { url: '' }
 
   if (filterSelect && Object.keys(filterSelect).length > 0) {
@@ -184,6 +185,9 @@ const handleClose = () => {
   errors.value = {}
   valueForm.value = {}
   errors.value = {}
+  typeButtonModal.type = null
+  typeButtonModal.label = null
+  typeButtonModal.handleActive = null
 }
 
 // Search
@@ -262,14 +266,40 @@ const handleSettingTable = () => {
   typeModal.type = 'add'
   typeButtonModal.handleActive = handleCreateSetting
   typeButtonModal.type = 'settingTable'
-  typeButtonModal.label =
-    settingTable.value[isActiveSetting.keyActive].filed.length === 0 ? 'Tạo cài đặt' : 'Lưu cài đặt'
+  typeButtonModal.label = settingTable.filed.length === 0 ? 'Tạo cài đặt' : 'Lưu cài đặt'
 }
 
 const handleCreateSetting = (listFiled) => {
-  console.log('data', listFiled)
-  if (listFiled.filed.length >= 4) {
-    settingTable.value = listFiled.filed
+  const { keyActive, settingTable: dataTable } = listFiled
+  const settingActive = dataTable.find((item) => item.key == keyActive)
+
+  if (settingActive.filed.length > 3) {
+    settingTable = settingActive
+    isActiveSetting.keyActive = keyActive
+    isActiveSetting.listTitleTable = dataTable.map((item) => {
+      return { text: item.title, value: item.key }
+    })
+
+    for (let i = dataTable.length - 1; i >= 0; i--) {
+      if (dataTable[i].filed.length < 3) {
+        dataTable.splice(i, 1)
+      }
+    }
+    //  reset filters and sort table
+    Object.keys(filtersAndSort).forEach((key) => {
+      if (key !== 'search') {
+        delete filtersAndSort[key]
+      }
+      filtersAndSort.search = ''
+    })
+    router.push({ path: route.path, query: '' })
+
+    // save value in local store
+    setLocalStorage('settingTable', settingActive)
+    setLocalStorage('previousRoute', `${route.path}`)
+    setLocalStorage('nameSettingTable', isActiveSetting)
+    setLocalStorage('listSettingTable', dataTable)
+
     handleClose()
   } else {
     return toastInfo({
@@ -279,6 +309,18 @@ const handleCreateSetting = (listFiled) => {
     })
   }
 }
+
+watch(isActiveSetting, (newValue, oldValue) => {
+  const newSetting = getLocalStorage('listSettingTable').find(
+    (item) => item.key == newValue.keyActive
+  )
+  settingTable = newSetting
+
+  router.push({ path: route.path })
+  setLocalStorage('nameSettingTable', newValue)
+  setLocalStorage('settingTable', newSetting)
+  setLocalStorage('previousRoute', `${route.path}`)
+})
 </script>
 
 <template>
@@ -296,7 +338,7 @@ const handleCreateSetting = (listFiled) => {
           v-model="filtersAndSort['search']"
           by-style-class="h-10   bg-slate-100 !rounded-md border border-neutral-300"
         />
-        <div v-for="key in settingTable[isActiveSetting.keyActive].sort">
+        <div v-for="key in settingTable.sort">
           <Select
             v-if="Array.isArray(LIST_OPTIONS[key])"
             style-class="!w-auto"
@@ -308,19 +350,19 @@ const handleCreateSetting = (listFiled) => {
 
       <div class="flex gap-x-2">
         <Select
-          style-class="!w-auto"
+          style-class="!w-auto h-10"
           v-model="isActiveSetting.keyActive"
           :options="isActiveSetting.listTitleTable"
         />
 
         <div @click="handleSettingTable">
           <i
-            class="fa-solid fa-gear text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-xl hover:bg-slate"
+            class="fa-solid fa-gear text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-md hover:bg-slate"
           />
         </div>
         <div @click="handlerSetModal({ type: 'add' })">
           <i
-            class="fa-solid fa-user-plus text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-xl hover:bg-slate"
+            class="fa-solid fa-user-plus text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-md hover:bg-slate"
           />
         </div>
       </div>
@@ -342,7 +384,7 @@ const handleCreateSetting = (listFiled) => {
       :key-search="filtersAndSort.search"
       @set-modal="handlerSetModal"
       :list-data-table="renderRowTable"
-      :column-table="settingTable[isActiveSetting.keyActive].filed"
+      :column-table="settingTable.filed"
       :type-table="detailTypeTable"
       :detailTable="typeModal.optionSelect"
     />

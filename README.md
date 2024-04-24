@@ -11,6 +11,6 @@ npm run dev
 ```
 
 ```
-username : admin3@gmail.com
+username : admin1@gmail.com
 password : Abcd@12345
 ```

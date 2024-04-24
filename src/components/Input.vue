@@ -44,7 +44,7 @@ watch(
 )
 </script>
 <template>
-  <div>
+  <div class="w-auto">
     <input
       class="w-full text-base py-2 px-3 border rounded-lg border-[#D5D5D5] focus:border-blue-300"
       :disabled="props.disabled"

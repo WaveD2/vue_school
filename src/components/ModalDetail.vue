@@ -9,12 +9,13 @@ import FieldFile from './FieldFile.vue'
 import Button from './Button.vue'
 import Textarea from './Textarea.vue'
 import ModalComponent from './ModalComponent.vue'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch, watchEffect } from 'vue'
+import { getLocalStorage } from '@/utils/axios/setupApi'
 
 const props = defineProps({
   settingDataTable: {
-    type: Array,
-    default: []
+    type: Object,
+    default: {}
   },
   isActiveSettingTable: {
     type: Object,
@@ -48,18 +49,33 @@ const props = defineProps({
 const emit = defineEmits(['closeModal'])
 const isChangeTab = ref(false)
 
-const settingTable = ref(JSON.parse(JSON.stringify(props.settingDataTable)))
-const isActiveSetting = ref(JSON.parse(JSON.stringify(props.isActiveSettingTable)))
+const settingTable = reactive(getLocalStorage('listSettingTable') || [])
+
+watch(props.settingDataTable, (newValue, oldValue) => {
+  if (settingTable.length > 0) return
+  settingTable.push(JSON.parse(JSON.stringify(newValue)))
+})
+
+const isActiveSetting = reactive({})
+watchEffect(() => {
+  Object.assign(isActiveSetting, JSON.parse(JSON.stringify(props.isActiveSettingTable)))
+})
+
 const typeButton = computed(() => props.typeButtonModal)
 
 const handleClose = () => {
+  for (let i = settingTable.length - 1; i >= 0; i--) {
+    if (settingTable[i].filed.length < 3) {
+      settingTable.splice(i, 1)
+    }
+  }
+  isActiveSetting.keyActive = settingTable[settingTable.length - 1].key
   emit('closeModal')
 }
 
 const handleChangeSetting = (key) => {
-  isActiveSetting.value.keyActive = key
-  typeButton.value.label =
-    settingTable.value[key]?.filed.length === 0 ? 'Tạo cài đặt' : 'Lưu cài đặt'
+  isActiveSetting.keyActive = key
+  typeButton.value.label = settingTable[key]?.filed.length === 0 ? 'Tạo cài đặt' : 'Lưu cài đặt'
 }
 
 const handleChangeNameTag = (event, key) => {
@@ -67,7 +83,7 @@ const handleChangeNameTag = (event, key) => {
     handleChangeSetting(key)
     isChangeTab.value = true
     setTimeout(() => {
-      document.querySelectorAll('input')[isActiveSetting.value.keyActive].focus()
+      document.querySelector(`#input-setting-${key}`).focus()
     }, 0)
   } else {
     isChangeTab.value = false
@@ -75,40 +91,55 @@ const handleChangeNameTag = (event, key) => {
 }
 
 const handleChangeSettingOption = (newOption) => {
-  const indexSettingCurrent = settingTable.value.findIndex(
-    (item) => item.key === isActiveSetting.value.keyActive
+  const indexSettingCurrent = settingTable.findIndex(
+    (item) => item.key == isActiveSetting.keyActive
   )
 
   if (indexSettingCurrent !== -1) {
-    const settingCurrent = settingTable.value[indexSettingCurrent]
+    const settingCurrent = settingTable[indexSettingCurrent]
 
-    if (settingCurrent.filed.includes(newOption)) {
+    if (settingCurrent[isActiveSetting.filedActive].includes(newOption)) {
       // Xóa giá trị nếu newOption đã tồn tại trong settingCurrent
-      settingCurrent.filed = settingCurrent.filed.filter((option) => option !== newOption)
+      settingCurrent[isActiveSetting.filedActive] = settingCurrent[
+        isActiveSetting.filedActive
+      ].filter((option) => option !== newOption)
     } else {
       // Thêm giá trị nếu newOption không tồn tại trong settingCurrent
-      settingCurrent.filed.push(newOption)
+      settingTable[indexSettingCurrent][isActiveSetting.filedActive].push(newOption)
     }
 
-    // Cập nhật settingTable.value tại indexSettingCurrent
-    settingTable.value.splice(indexSettingCurrent, 1, settingCurrent)
+    // Cập nhật settingTable tại indexSettingCurrent
+    settingTable.splice(indexSettingCurrent, 1, settingCurrent)
   }
 }
 
 const handleDeleteNameTag = (key) => {
-  if (key === isActiveSetting.value.keyActive) isActiveSetting.value.keyActive++
-  return (settingTable.value = settingTable.value.filter((setting) => setting.key !== key))
+  if (settingTable.length <= 1) return
+
+  const index = settingTable.findIndex((setTable) => setTable.key === key)
+
+  if (index !== -1 && isActiveSetting.keyActive === key) {
+    if (index > 0) {
+      isActiveSetting.keyActive = settingTable[index - 1].key
+    } else if (index < settingTable.length) {
+      isActiveSetting.keyActive = settingTable[index].key
+    }
+  }
+
+  settingTable.splice(index, 1)
+  isActiveSetting.listTitleTable.splice(index, 1)
 }
 const handleCreateOptionSetting = () => {
+  const keyIndex = Math.max(...settingTable.map((option) => option.key), 0) + 1
   const newOptionSetting = {
     title: 'Cài đặt mới',
-    // sort typeof Array ['gender', 'status', 'type'],
     sort: [],
-    // filed typeof Object ['gender']
     filed: [],
-    key: Math.max(...settingTable.value.map((option) => option.key), 0) + 1
+    key: keyIndex
   }
-  return settingTable.value.push(newOptionSetting)
+  settingTable.push(newOptionSetting)
+
+  isActiveSetting.listTitleTable.push({ text: newOptionSetting.title, value: keyIndex })
 }
 </script>
 
@@ -235,9 +266,9 @@ const handleCreateOptionSetting = () => {
               <Input
                 @onClick="handleChangeSetting(setting.key)"
                 type="text"
-                :id="setting.key"
+                :id="`input-setting-${setting.key}`"
                 v-model="setting.title"
-                :styleClass="`border-transparent w-min ${setting.key == isActiveSetting.keyActive && isChangeTab && ' !border-gray-200 !bg-white'} `"
+                :styleClass="` border-transparent w-min ${setting.key == isActiveSetting.keyActive && isChangeTab && ' !border-gray-200 !bg-white'} `"
                 :focus="setting.key === isActiveSetting.keyActive && isChangeTab"
                 :disabled="setting.key !== isActiveSetting.keyActive || !isChangeTab"
               />
@@ -261,16 +292,16 @@ const handleCreateOptionSetting = () => {
           />
 
           <!--Tabs Content  -->
-          <div class="px-3">
-            <div v-for="tabContent in FIL_TAB_CONTENT_TEACHER">
+          <div class="">
+            <div class="w-full" v-for="tabContent in FIL_TAB_CONTENT_TEACHER">
               <p class="text-base pt-1" v-if="isActiveSetting.filedActive === 'filed'">
                 {{ tabContent.label }} :
               </p>
 
-              <div class="flex gap-4 flex-wrap mt-4">
+              <div class="flex gap-3 flex-wrap mt-4">
                 <template v-for="(label, key) of typeModal.optionSelect">
                   <div
-                    class="w-auto"
+                    class="w-40"
                     v-if="
                       key !== 'avatar' &&
                       key !== 'contact' &&
@@ -279,10 +310,12 @@ const handleCreateOptionSetting = () => {
                     "
                   >
                     <Field
+                      :id="key"
                       :label="label.text"
-                      styleClass="flex items-center gap-x-4  flex-row-reverse py-1 pr-3 border border-gray-200 bg-[#ccc] rounded-md "
+                      styleClass="flex items-center w-full flex-start gap-x-4  flex-row-reverse pr-3 "
                     >
                       <Input
+                        :id="key"
                         #content
                         @on-update-value-check-box="handleChangeSettingOption"
                         type="checkbox"
@@ -291,7 +324,7 @@ const handleCreateOptionSetting = () => {
                             .find((item) => item.key == isActiveSetting.keyActive)
                             [isActiveSetting.filedActive].includes(key)
                         "
-                        styleClass="w-[18px] h-[18px]"
+                        styleClass="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 !h-5 !w-5 rounded checked:!bg-blue-300"
                         :keyInput="key"
                       />
                     </Field>
@@ -321,7 +354,7 @@ const handleCreateOptionSetting = () => {
           @click="
             typeButton.handleActive(
               typeButtonModal.type === 'settingTable'
-                ? settingTable.find((item) => item.key == isActiveSetting.keyActive)
+                ? { settingTable, keyActive: isActiveSetting.keyActive }
                 : { type: typeModal.type }
             )
           "
