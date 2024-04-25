@@ -79,7 +79,7 @@ export const LIST_OPTIONS = {
   type: [
     { value: '', text: 'Hợp đồng' },
     { value: 'official', text: 'Chính thức' },
-    { value: 'contract', text: 'Hợp đồng' },
+    // { value: 'contract', text: 'Hợp đồng' },
     { value: 'parttime', text: 'Thời vụ' }
   ],
   role: [

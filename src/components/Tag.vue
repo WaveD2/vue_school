@@ -1,10 +1,8 @@
 <template>
-  <div
-    class="text-xs inline-flex items-center gap-3 font-bold leading-sm px-2 bg-blue-200 rounded-sm w-max"
-  >
+  <div class="inline-flex items-center ml-4" :class="styleByClass">
     <slot name="content" :tagValue="tagValue" />
     <i
-      class="fa-solid fa-delete-left text-xs text-primary cursor-pointer"
+      class="fa-solid fa-delete-left text-xs text-blue-700 cursor-pointer"
       @click="handleDeleteTag"
     ></i>
   </div>
@@ -13,7 +11,8 @@
 <script setup>
 import { ref } from 'vue'
 const props = defineProps({
-  tagValue: String
+  tagValue: String,
+  styleByClass: String
 })
 const emit = defineEmits(['delete-tag'])
 

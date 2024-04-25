@@ -21,6 +21,7 @@ import store from '@/store'
 import Tag from '@/components/Tag.vue'
 import ModalDetail from '@/components/ModalDetail.vue'
 import { getLocalStorage, setLocalStorage } from '@/utils/axios/setupApi'
+import SelectComponent from '@/components/SelectComponent.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -339,7 +340,7 @@ watch(isActiveSetting, (newValue, oldValue) => {
           by-style-class="h-10   bg-slate-100 !rounded-md border border-neutral-300"
         />
         <div v-for="key in settingTable.sort">
-          <Select
+          <SelectComponent
             v-if="Array.isArray(LIST_OPTIONS[key])"
             style-class="!w-auto"
             v-model="filtersAndSort[key]"
@@ -349,7 +350,7 @@ watch(isActiveSetting, (newValue, oldValue) => {
       </div>
 
       <div class="flex gap-x-2">
-        <Select
+        <SelectComponent
           style-class="!w-auto h-10"
           v-model="isActiveSetting.keyActive"
           :options="isActiveSetting.listTitleTable"
@@ -369,11 +370,19 @@ watch(isActiveSetting, (newValue, oldValue) => {
     </div>
 
     <!-- Tag filter -->
-    <div class="ml-4 h-4 flex gap-x-2">
+
+    <div class="flex items-center gap-x-1">
       <div v-for="tags of renderFilterTag">
-        <Tag v-if="tags.value !== 'search'" :tagValue="tags.value" @delete-tag="handleDeleteTag">
+        <Tag
+          v-if="tags.value !== 'search'"
+          :tagValue="tags.value"
+          @delete-tag="handleDeleteTag"
+          styleByClass="px-3 bg-blue-200 rounded-full"
+        >
           <template #content>
-            <p class="text-gray-400">Giáo viên {{ tags.text.toLowerCase() }}</p>
+            <p class="text-[10px] mr-2 font-bold uppercase text-blue-700">
+              {{ tags.text.toLowerCase() }}
+            </p>
           </template>
         </Tag>
       </div>

@@ -141,6 +141,14 @@ const handleCreateOptionSetting = () => {
 
   isActiveSetting.listTitleTable.push({ text: newOptionSetting.title, value: keyIndex })
 }
+
+const beforeLeave = (el) => {
+  const { marginLeft, marginTop, width, height } = window.getComputedStyle(el)
+  el.style.left = `${el.offsetLeft - parseFloat(marginLeft, 10)}px`
+  el.style.top = `${el.offsetTop - parseFloat(marginTop, 10)}px`
+  el.style.width = width
+  el.style.height = height
+}
 </script>
 
 <template>
@@ -258,31 +266,42 @@ const handleCreateOptionSetting = () => {
               <i class="fa-solid fa-plus text-[#15ade3] ml-2"></i>
             </p>
           </Button>
-          <div v-for="(setting, key) in settingTable">
-            <Button
-              @click.self="handleChangeSetting(setting.key)"
-              :id="setting.key"
-              :byStyleClass="`p-2 w-full flex items-center gap-x-4  border border-b-gray-200 cursor-pointer ${setting.key == isActiveSetting.keyActive && 'bg-gray-200'} `"
-            >
-              <Input
-                @onClick="handleChangeSetting(setting.key)"
-                type="text"
-                :id="`input-setting-${setting.key}`"
-                v-model="setting.title"
-                :styleClass="` border-transparent w-min ${setting.key == isActiveSetting.keyActive && isChangeTab && ' !border-gray-200 !bg-white'} `"
-                :focus="setting.key === isActiveSetting.keyActive && isChangeTab"
-                :disabled="setting.key !== isActiveSetting.keyActive || !isChangeTab"
-              />
-              <i
-                class="fa-regular fa-pen-to-square text-[#15ade3] text-base"
-                @click.self="handleChangeNameTag($event, setting.key)"
-              ></i>
-              <i
-                class="fa-regular fa-trash-can text-red-500 text-base"
-                @click.self="handleDeleteNameTag(setting.key)"
-              ></i>
-            </Button>
-          </div>
+          <transition-group
+            enter-active-class="transition-group"
+            enter-class="opacity-0 -translate-x-full"
+            enter-to-class="opacity-100 translate-x-0"
+            leave-active-class="absolute transition-group"
+            leave-class="opacity-100 translate-x-0"
+            leave-to-class="opacity-0 -translate-x-full"
+            tag="div"
+            @before-leave="beforeLeave"
+          >
+            <div v-for="(setting, key) in settingTable" class="transition-all duration-300">
+              <Button
+                @click.self="handleChangeSetting(setting.key)"
+                :id="setting.key"
+                :byStyleClass="`p-2 w-full flex items-center gap-x-4  border border-b-gray-200 cursor-pointer ${setting.key == isActiveSetting.keyActive && 'bg-gray-200'} `"
+              >
+                <Input
+                  @onClick="handleChangeSetting(setting.key)"
+                  type="text"
+                  :id="`input-setting-${setting.key}`"
+                  v-model="setting.title"
+                  :styleClass="`border-transparent w-min ${setting.key == isActiveSetting.keyActive && isChangeTab && ' !border-gray-200 !bg-white'} `"
+                  :focus="setting.key === isActiveSetting.keyActive && isChangeTab"
+                  :disabled="setting.key !== isActiveSetting.keyActive || !isChangeTab"
+                />
+                <i
+                  class="fa-regular fa-pen-to-square text-[#15ade3] text-base"
+                  @click.self="handleChangeNameTag($event, setting.key)"
+                ></i>
+                <i
+                  class="fa-regular fa-trash-can text-red-500 text-base"
+                  @click.self="handleDeleteNameTag(setting.key)"
+                ></i>
+              </Button>
+            </div>
+          </transition-group>
         </div>
         <div>
           <!-- Tabs component  -->
