@@ -5,10 +5,10 @@ import { useRouter } from 'vue-router'
 import store from '@/store'
 import Field from '@/components/Field.vue'
 import { LABEL_LOGIN } from '@/utils/constants'
-import { arrayToObject, trimInput } from '@/utils/function'
-import { checkAccessToken } from '@/utils/axios/setupApi'
+import { arrayToObject } from '@/utils/function'
+import { getCookie } from '@/utils/axios/setupApi'
 
-const route = useRouter()
+const router = useRouter()
 
 const emit = defineEmits(['setLoading'])
 const errors = ref({
@@ -20,22 +20,34 @@ let formLogin = reactive({
   password: ''
 })
 
+onMounted(() => checkAccessToken())
+
+const checkAccessToken = () => {
+  console.log(123)
+  if (getCookie('accessToken')) {
+    const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
+    return sortPreviousRoute ? router.push(sortPreviousRoute) : router.push('/teacher')
+  } else {
+    store.commit('SET_MES_API_ERROR', [])
+  }
+}
+
 const handleSubmitForm = async () => {
   try {
     const username = formLogin.username.trim()
     const formNew = { ...formLogin, username }
     loginSchema.validateSync(formNew, { abortEarly: false })
-    errors.value = null
+    errors.value = {
+      username: '',
+      password: ''
+    }
 
     emit('setLoading', true)
     // CALL API
     await store.dispatch('loginUser', formNew)
 
-    if (store.state.mesErrorServer.length === 0 && !errors.value) {
-      const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
-      return sortPreviousRoute ? route.push(sortPreviousRoute) : route.push('/teacher')
-    } else {
-      store.commit('SET_MES_API_ERROR', [])
+    if (!errors.value.username && !errors.value.password) {
+      checkAccessToken()
     }
   } catch (error) {
     if (Array.isArray(error.inner)) {

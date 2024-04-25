@@ -253,8 +253,9 @@ const handleCreateOptionSetting = () => {
             byStyleClass="p-2 w-full text-center cursor-pointer hover:bg-blue-200 tr"
             @click="handleCreateOptionSetting"
           >
-            <p class="text-base py-2 font-normal">
-              Tạo mới <i class="fa-solid fa-plus text-[#15ade3] ml-2"></i>
+            <p class="text-base py-2 font-medium">
+              <span class="text-[#333]"> Tạo mới</span>
+              <i class="fa-solid fa-plus text-[#15ade3] ml-2"></i>
             </p>
           </Button>
           <div v-for="(setting, key) in settingTable">

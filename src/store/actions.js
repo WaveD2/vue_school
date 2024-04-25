@@ -34,6 +34,7 @@ export const logoutUser = async ({ commit }) => {
   // await callApi('v2/auth/logout', 'POST', { refreshToken: refreshToken })
   removeTokenStore('refreshToken')
   removeTokenStore('previousRoute')
+  setCookie('accessToken', '', new Date().toISOString())
 
   commit('SET_USER', {})
 }
