@@ -34,7 +34,13 @@ const setOption = (value) => {
         @blur="isOptionsExpanded = false"
         :disabled="props.disabled"
       >
-        <span>{{ options[modelValue]?.text || options[0]?.text }}</span>
+        <span v-if="modelValue && typeof modelValue === 'string'">{{
+          options.find((item) => item.value === modelValue).text
+        }}</span>
+        <span v-else-if="modelValue && typeof modelValue === 'number'">{{
+          options[modelValue].text
+        }}</span>
+        <span v-else>{{ options[0]?.text }}</span>
 
         <div class="flex items-center">
           <!-- <svg
@@ -86,7 +92,7 @@ const setOption = (value) => {
             :required="props.required"
             :key="index"
             class="px-3 py-2 transition-colors cursor-pointer duration-300 hover:bg-gray-200"
-            :class="index !== 0"
+            :class="item.value === '' && '!hidden'"
             @mousedown.prevent="setOption(item.value)"
           >
             {{ item.text }}
