@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onUnmounted } from 'vue'
+import { ref, watch, onUnmounted, onMounted } from 'vue'
 
 const props = defineProps({
   id: [String, Number],
@@ -33,18 +33,9 @@ const handleChangeInput = (event) => {
     emit('update:modelValue', event.target.value)
   }
 }
-
-onUnmounted(() => (isChangeValue.value = false))
-
-watch(
-  () => props.invalid,
-  (newValue) => {
-    isError.value = newValue !== ''
-  }
-)
 </script>
 <template>
-  <div class="w-auto">
+  <div class="w-auto" id="container_input">
     <input
       class="w-full text-base py-2 px-3 border rounded-lg border-[#D5D5D5] focus:border-blue-300"
       :disabled="props.disabled"

@@ -29,9 +29,6 @@ export const loginUser = async ({ commit }, formLogin) => {
 }
 
 export const logoutUser = async ({ commit }) => {
-  // const { refreshToken } = getStoreTokens()
-
-  // await callApi('v2/auth/logout', 'POST', { refreshToken: refreshToken })
   removeTokenStore('refreshToken')
   removeTokenStore('previousRoute')
   setCookie('accessToken', '', new Date().toISOString())
@@ -105,10 +102,13 @@ export const apiDetail = async (ctx, listParams) => {
   } else {
     const res = await callApi(`${fullUrl}`, method, { record: data })
 
-    if (!res) return
+    if (!res) return toastInfo({ type: 'error', mes: 'Có lỗi xảy ra !' })
 
     const listParams = { url, typeCommitStore: 'SET_LIST_USER_TABLE' }
-
     await getInfo(ctx, listParams)
+    return (
+      method === 'PATCH' &&
+      toastInfo({ type: 'success', mes: 'Cập nhật thành công', display: 'TOP_RIGHT' })
+    )
   }
 }

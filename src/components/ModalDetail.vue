@@ -49,7 +49,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['closeModal'])
 const isChangeTab = ref(false)
-
+const typeModal = ref(props.typeModal)
 const settingTable = reactive(getLocalStorage('listSettingTable') || [])
 
 watch(props.settingDataTable, (newValue, oldValue) => {
@@ -151,7 +151,21 @@ const beforeLeave = (el) => {
   el.style.height = height
 }
 
-watchEffect(() => {})
+const focusFirstInput = () => {
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.input-modal-detail')
+    for (const input of inputs) {
+      if (!input.disabled) {
+        input.focus()
+        break
+      }
+    }
+  }, 0)
+}
+
+watch(typeModal.value, (newValue, oldValue) => {
+  focusFirstInput()
+})
 </script>
 
 <template>

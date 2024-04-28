@@ -34,7 +34,7 @@ const setOption = (value) => {
       :class="[props.invalid ? 'border-error' : 'border-slate', props.disabled && 'bg-[#f5f6fa]']"
     >
       <button
-        class="flexBetween px-3 py-2 w-full h-full border border-gray-200 rounded-lg"
+        class="flexBetween gap-x-2 px-3 py-2 w-full h-full border border-gray-200 rounded-lg"
         :class="isOptionsExpanded && 'border-blue-300'"
         @click="isOptionsExpanded = !isOptionsExpanded"
         @blur="isOptionsExpanded = false"
