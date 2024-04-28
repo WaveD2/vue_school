@@ -337,12 +337,12 @@ watch(isActiveSetting, (newValue, oldValue) => {
         <InputSearch
           placeholder="Tìm kiếm..."
           v-model="filtersAndSort['search']"
-          by-style-class="h-10   bg-slate-100 !rounded-md border border-neutral-300"
+          by-style-class="h-10 bg-slate-100 !rounded-md border border-neutral-300"
         />
         <div v-for="key in settingTable.sort">
           <SelectComponent
             v-if="Array.isArray(LIST_OPTIONS[key])"
-            style-class="!w-auto"
+            style-class="!w-full h-10"
             v-model="filtersAndSort[key]"
             :options="LIST_OPTIONS[key]"
           />
@@ -371,7 +371,7 @@ watch(isActiveSetting, (newValue, oldValue) => {
 
     <!-- Tag filter -->
 
-    <div class="flex items-center gap-x-1">
+    <div class="flex items-center gap-x-1 h-4">
       <div v-for="tags of renderFilterTag">
         <Tag
           v-if="tags.value !== 'search'"

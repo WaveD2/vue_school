@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted, watch, onUnmounted } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 
 const props = defineProps({
   id: [String, Number],

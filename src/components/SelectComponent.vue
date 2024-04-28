@@ -8,57 +8,49 @@ const props = defineProps({
   styleClass: String,
   options: [Array],
   disabled: Boolean,
-  valueDefault: Object
+  valueDefault: Object,
+  isInnerLabel: {
+    type: Boolean,
+    default: true
+  }
 })
 
 const emit = defineEmits(['update:modelValue'])
 
 const isOptionsExpanded = ref(false)
+const isLabel = ref(props.isInnerLabel)
 
 const setOption = (value) => {
   isOptionsExpanded.value = false
+  isLabel.value = true
   emit('update:modelValue', value)
 }
 </script>
 
 <template>
-  <div id="select-container" class="flexCenter">
+  <div id="select-container" class="flexCenter" :class="styleClass">
     <div
-      class="relative w-32 text-base z-10"
+      class="relative text-base z-10 w-full h-full"
       :class="[props.invalid ? 'border-error' : 'border-slate', props.disabled && 'bg-[#f5f6fa]']"
     >
       <button
-        class="flexBetween px-3 py-2 w-full border border-gray-200 rounded-lg"
+        class="flexBetween px-3 py-2 w-full h-full border border-gray-200 rounded-lg"
         :class="isOptionsExpanded && 'border-blue-300'"
         @click="isOptionsExpanded = !isOptionsExpanded"
         @blur="isOptionsExpanded = false"
         :disabled="props.disabled"
       >
-        <span v-if="modelValue && typeof modelValue === 'string'">{{
+        <span v-if="isLabel && modelValue && typeof modelValue === 'string'" class="text-nowrap">{{
           options.find((item) => item.value === modelValue).text
         }}</span>
-        <span v-else-if="modelValue && typeof modelValue === 'number'">{{
-          options[modelValue].text
-        }}</span>
-        <span v-else>{{ options[0]?.text }}</span>
+        <span
+          v-else-if="isLabel && modelValue && typeof modelValue === 'number'"
+          class="text-nowrap"
+          >{{ options[modelValue].text }}</span
+        >
+        <span v-else-if="isLabel" class="text-nowrap">{{ options[0]?.text }}</span>
 
-        <div class="flex items-center">
-          <!-- <svg
-            fill="#333333"
-            viewBox="-3.5 0 19 19"
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 transform transition-transform duration-200 ease-in-out"
-            stroke="#333333"
-          >
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-            <g id="SVGRepo_iconCarrier">
-              <path
-                d="M11.383 13.644A1.03 1.03 0 0 1 9.928 15.1L6 11.172 2.072 15.1a1.03 1.03 0 1 1-1.455-1.456l3.928-3.928L.617 5.79a1.03 1.03 0 1 1 1.455-1.456L6 8.261l3.928-3.928a1.03 1.03 0 0 1 1.455 1.456L7.455 9.716z"
-              ></path>
-            </g>
-          </svg> -->
-
+        <div class="flex justify-end w-full">
           <svg
             fill="none"
             viewBox="0 0 24 24"
@@ -91,7 +83,7 @@ const setOption = (value) => {
             v-for="(item, index) in options"
             :required="props.required"
             :key="index"
-            class="px-3 py-2 transition-colors cursor-pointer duration-300 hover:bg-gray-200"
+            class="px-2 py-1 transition-colors cursor-pointer duration-300 hover:bg-gray-200"
             :class="item.value === '' && '!hidden'"
             @mousedown.prevent="setOption(item.value)"
           >

@@ -9,8 +9,9 @@ import FieldFile from './FieldFile.vue'
 import Button from './Button.vue'
 import Textarea from './Textarea.vue'
 import ModalComponent from './ModalComponent.vue'
-import { computed, reactive, ref, watch, watchEffect } from 'vue'
+import { computed, onMounted, reactive, ref, watch, watchEffect } from 'vue'
 import { getLocalStorage } from '@/utils/axios/setupApi'
+import SelectComponent from './SelectComponent.vue'
 
 const props = defineProps({
   settingDataTable: {
@@ -149,6 +150,8 @@ const beforeLeave = (el) => {
   el.style.width = width
   el.style.height = height
 }
+
+watchEffect(() => {})
 </script>
 
 <template>
@@ -203,34 +206,35 @@ const beforeLeave = (el) => {
                 :error="errors[key]"
                 :required="label.required"
               >
-                <Select
+                <SelectComponent
+                  v-if="LIST_OPTIONS.hasOwnProperty(key) && Array.isArray(LIST_OPTIONS[key])"
                   v-model="valueDetailModal[key]"
                   :options="LIST_OPTIONS[key]"
+                  :is-inner-label="typeModal.type === 'add' ? false : true"
                   :invalid="errors[key]"
-                  v-if="LIST_OPTIONS.hasOwnProperty(key) && Array.isArray(LIST_OPTIONS[key])"
                   :disabled="isDisabledModal || label.disabled"
-                  :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
+                  :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full h-10`"
                 />
                 <Input
+                  v-else-if="key === 'dateOfBirth'"
                   v-model="valueDetailModal[key]"
                   type="date"
                   :invalid="errors[key]"
-                  v-else-if="key === 'dateOfBirth'"
                   :disabled="isDisabledModal || label.disabled"
                   :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
                 />
                 <Textarea
-                  type="date"
-                  v-model="valueDetailModal[key]"
-                  :invalid="errors[key]"
                   v-else-if="key === 'note'"
+                  v-model="valueDetailModal[key]"
+                  type="text"
+                  :invalid="errors[key]"
                   :disabled="isDisabledModal || label.disabled"
                   :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
                 />
                 <FieldFile
                   v-else-if="key === 'contracts'"
-                  :disabled="isDisabledModal || label.disabled"
                   v-model="valueDetailModal.contracts"
+                  :disabled="isDisabledModal || label.disabled"
                   style-by-class="!max-h-[140px] !min-h-[138px] overflow-y-scroll"
                 />
 
@@ -243,7 +247,8 @@ const beforeLeave = (el) => {
                   v-model="valueDetailModal[key]"
                   :invalid="errors[key]"
                   :disabled="isDisabledModal || label.disabled"
-                  :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
+                  :style-class="`${label.disabled && '!bg-[#b9b8b8]'} 
+                  w-full  input-modal-detail`"
                 />
               </Field>
             </template>
