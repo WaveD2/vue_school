@@ -23,10 +23,16 @@ let formLogin = reactive({
 onMounted(() => checkAccessToken())
 
 const checkAccessToken = () => {
-  console.log(123)
   if (getCookie('accessToken')) {
     const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
-    return sortPreviousRoute ? router.push(sortPreviousRoute) : router.push('/teacher')
+    const routerCurrent = sortPreviousRoute.includes('url=')
+      ? decodeURIComponent(decodeURIComponent(sortPreviousRoute.split('url=')[1]))
+      : '/teacher'
+    localStorage.setItem('previousRoute', routerCurrent)
+
+    return router.push(routerCurrent)
+    // check url - path
+    // router.push({ path: route.path, query:  })
   } else {
     store.commit('SET_MES_API_ERROR', [])
   }

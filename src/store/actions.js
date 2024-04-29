@@ -14,8 +14,9 @@ export const loginUser = async ({ commit }, formLogin) => {
       const { access, refresh } = res.data.data.tokens
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${access.token}`
 
-      setLocalStorage('refreshToken', refresh)
+      // setLocalStorage('refreshToken', refresh)
       setCookie('accessToken', access.token, access.expires)
+      setCookie('refreshToken', refresh.token, refresh.expires)
 
       commit('SET_USER', res.data.data.user)
     }
@@ -32,6 +33,7 @@ export const logoutUser = async ({ commit }) => {
   removeTokenStore('refreshToken')
   removeTokenStore('previousRoute')
   setCookie('accessToken', '', new Date().toISOString())
+  setCookie('refreshToken', '', new Date().toISOString())
 
   commit('SET_USER', {})
 }

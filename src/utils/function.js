@@ -74,3 +74,14 @@ export function filterKeysWithValues(obj) {
   }
   return newObj
 }
+
+export const convertUrlParams = (urlParams) => {
+  console.log('urlParams', urlParams)
+  const currentUrlParam = new URLSearchParams(urlParams).get('url')
+
+  const decodedUrl = decodeURIComponent(currentUrlParam)
+
+  const fixedUrl = decodedUrl.replace('%26', '&')
+
+  return fixedUrl
+}

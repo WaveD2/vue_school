@@ -86,7 +86,6 @@ watchEffect(() => {
         filtersAndSort[keySort] = ''
       }
     }
-
     localStorage.setItem('previousRoute', route.path)
   }
   const resultFilter = filterKeys(route.query, LIST_OPTIONS, Object.keys(LIST_OPTIONS))
@@ -293,11 +292,12 @@ const handleCreateSetting = (listFiled) => {
       }
       filtersAndSort.search = ''
     })
+
     router.push({ path: route.path, query: '' })
 
     // save value in local store
     setLocalStorage('settingTable', settingActive)
-    setLocalStorage('previousRoute', `${route.path}`)
+    // setLocalStorage('previousRoute', `${route.path}`)
     setLocalStorage('nameSettingTable', isActiveSetting)
     setLocalStorage('listSettingTable', dataTable)
 
@@ -316,7 +316,6 @@ watch(isActiveSetting, (newValue, oldValue) => {
     (item) => item.key == newValue.keyActive
   )
   settingTable = newSetting
-
   router.push({ path: route.path })
   setLocalStorage('nameSettingTable', newValue)
   setLocalStorage('settingTable', newSetting)

@@ -5,34 +5,37 @@ import router from '@/router'
 
 export async function checkAccessToken() {
   const accessToken = getCookie('accessToken')
+  const refreshToken = getCookie('refreshToken')
 
   if (accessToken) return true
 
-  const refreshToken = getLocalStorage('refreshToken')
+  // const refreshToken = getLocalStorage('refreshToken')
 
   if (!accessToken && !refreshToken)
     //Không có token
     return false
   // accessToken và refreshToken còn hiệu lực
-  if (accessToken && isExpired(refreshToken?.expires)) {
+  if (accessToken && refreshToken) {
     setHeaderApi('Authorization', accessToken)
 
     return true
   }
   // accessToken hết hạn và refreshToken còn hiệu lực
-  else if (accessToken || isExpired(refreshToken?.expires)) {
+  else if (refreshToken) {
     const isToken = await fetchToken()
     return isToken
   }
+
   return false
 }
 
 export async function fetchToken() {
-  const refreshToken = getLocalStorage('refreshToken')
+  // const refreshToken = getLocalStorage('refreshToken')
+  const refreshToken = getCookie('refreshToken')
 
   try {
     const response = await axiosInstance.post('/v2/auth/refresh-token', {
-      refreshToken: refreshToken.token
+      refreshToken: refreshToken
     })
 
     if (!response.data) return false
@@ -40,8 +43,8 @@ export async function fetchToken() {
     const { access, refresh } = response.data.data.tokens
 
     setHeaderApi('Authorization', access.token)
-    setLocalStorage('refreshToken', refresh)
     setCookie('accessToken', access.token, access.expires)
+    setCookie('refreshToken', refresh.token, refresh.expires)
 
     store.commit('SET_USER', response.data.data.user)
 
@@ -50,17 +53,17 @@ export async function fetchToken() {
     return true
   } catch (error) {
     if (error.response.data.code === 'NotAuthen') {
-      // router.push({
-      //   path: '/login',
-      //   query: { url: window.location.pathname + window.location.search }
-      // })
+      router.push({
+        path: '/login',
+        query: { url: window.location.pathname + window.location.search }
+      })
       // sessionStorage.setItem('redirectUrl', window.location.pathname + window.location.search)
       toastInfo({ type: 'error', mes: error.response.data.message })
     } else {
       toastInfo({ type: 'error', mes: error.message })
     }
 
-    router.push('/login?')
+    // router.push('/login?')
 
     return false
   }

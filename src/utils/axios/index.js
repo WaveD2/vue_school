@@ -9,7 +9,12 @@ export default function useTransition() {
   const error = ref(null)
 
   async function callApi(endpoint, method = 'GET', data = null, params) {
-    if (!(await checkAccessToken())) return router.push('/login')
+    if (!(await checkAccessToken())) {
+      return router.push({
+        path: '/login',
+        query: { url: window.location.pathname + encodeURIComponent(window.location.search) }
+      })
+    }
 
     try {
       const config = {
