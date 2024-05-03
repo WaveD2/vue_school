@@ -2,7 +2,7 @@ import Default from '@/layout/Default.vue'
 import Authentication from '@/layout/Authentication.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import TableLayoutVue from '@/layout/TableLayout.vue'
-import { checkAccessToken } from '@/utils/axios/setupApi'
+import { checkAccessToken } from '@/axios/setupApi'
 import notFoundVue from '@/pages/notFound.vue'
 
 const router = createRouter({

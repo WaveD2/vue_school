@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import router from '@/router'
 import store from '@/store'
-import { toastInfo } from '../function'
+import { toastInfo } from '../utils/function'
 import { checkAccessToken, getCookie, setHeaderApi } from './setupApi'
 import axiosInstance from './api'
 

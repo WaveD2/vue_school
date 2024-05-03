@@ -5,7 +5,7 @@ import {
   LABEL_MODAL_DETAIL_TEACHER,
   LABEL_TABLE_TEACHER,
   VALUE_MODAL_DETAIL_TEACHER
-} from '@/utils/constants'
+} from '@/constants/options'
 
 const emit = defineEmits(['getDataTable'])
 

@@ -1,7 +1,7 @@
-import axiosInstance from '@/utils/axios/api'
-import useTransition from '../utils/axios'
+import axiosInstance from '@/axios/api'
+import useTransition from '../axios'
 
-import { removeTokenStore, setLocalStorage, setCookie } from '@/utils/axios/setupApi'
+import { removeTokenStore, setLocalStorage, setCookie } from '@/axios/setupApi'
 import { toastInfo } from '@/utils/function'
 
 const { callApi } = useTransition()
@@ -86,6 +86,7 @@ export const getInfo = async (ctx, listParams) => {
 }
 
 export const apiDetail = async (ctx, listParams) => {
+  console.log('listParams', listParams);
   const { method, data, url } = listParams
   const fullUrl = method === 'POST' ? `${url}` : `${url}/${data.id}`
 
@@ -104,7 +105,7 @@ export const apiDetail = async (ctx, listParams) => {
   } else {
     const res = await callApi(`${fullUrl}`, method, { record: data })
 
-    if (!res) return toastInfo({ type: 'error', mes: 'Có lỗi xảy ra !' })
+    if (!res) return
 
     const listParams = { url, typeCommitStore: 'SET_LIST_USER_TABLE' }
     await getInfo(ctx, listParams)

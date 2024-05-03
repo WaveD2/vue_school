@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 const fileRef = ref()
-import useTransitionState from '../utils/axios'
+import useTransitionState from '../axios'
 import { fetchDoUpLoadFile } from '@/utils/function'
 const { callApi } = useTransitionState()
 const loading = ref(false)

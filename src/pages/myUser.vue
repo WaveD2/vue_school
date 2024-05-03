@@ -1,7 +1,7 @@
 <script setup>
 import store from '@/store'
 import { onMounted } from 'vue'
-import { LABEL_MODAL_DETAIL_USER, VALUE_MODAL_DETAIL_USER } from '@/utils/constants'
+import { LABEL_MODAL_DETAIL_USER, VALUE_MODAL_DETAIL_USER } from '@/constants/options'
 
 const emit = defineEmits(['getDataTable'])
 

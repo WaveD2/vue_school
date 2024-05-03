@@ -1,5 +1,5 @@
-import './assets/styles/main.global.css'
-import './assets/styles/index.css'
+import './styles/main.global.css'
+import './styles/index.css'
 import store from './store'
 import { createApp } from 'vue'
 

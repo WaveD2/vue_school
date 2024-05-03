@@ -1,4 +1,4 @@
-import { LABEL_MODAL_DETAIL_TEACHER } from '@/utils/constants'
+import { LABEL_MODAL_DETAIL_TEACHER } from '@/constants/options'
 
 export const getLabelModalDetail = (state) => {
   const checkTypeUserDetail = state.detailParent

@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { MENU_SIDE_NAV } from '@/utils/constants'
+import { MENU_SIDE_NAV } from '@/constants/options'
 import store from '@/store'
 
 const route = useRoute()

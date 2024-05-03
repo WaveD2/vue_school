@@ -1,5 +1,5 @@
 <script setup>
-import { VALUE_REGISTER } from '@/utils/constants'
+import { VALUE_REGISTER } from '@/constants/options'
 import { reactive, ref } from 'vue'
 
 const emit = defineEmits(['setLoading'])

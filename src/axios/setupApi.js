@@ -1,5 +1,5 @@
 import store from '@/store'
-import { toastInfo } from '../function'
+import { toastInfo } from '../utils/function'
 import axiosInstance from './api'
 import router from '@/router'
 

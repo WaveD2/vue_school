@@ -6,7 +6,7 @@ import LoadingComponentVue from './LoadingComponent.vue'
 import TooltipVue from './Tooltip.vue'
 
 import { ref, computed, watchEffect } from 'vue'
-import {LIST_OPTIONS } from '@/utils/constants'
+import {LIST_OPTIONS } from '@/constants/options'
  
 
 const props = defineProps(['listDataTable', 'columnTable', 'keySearch' , 'isLoading' , 'typeTable' , 'detailTable'])

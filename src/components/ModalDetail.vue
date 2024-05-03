@@ -1,5 +1,5 @@
 <script setup>
-import { FIL_TAB_CONTENT_TEACHER, LIST_OPTIONS, TAB_CONTENT_TEACHER } from '@/utils/constants'
+import { FIL_TAB_CONTENT_TEACHER, LIST_OPTIONS, TAB_CONTENT_TEACHER } from '@/constants/options'
 import Tabs from './Tabs.vue'
 import Field from './Field.vue'
 import Input from './Input.vue'
@@ -10,7 +10,7 @@ import Button from './Button.vue'
 import Textarea from './Textarea.vue'
 import ModalComponent from './ModalComponent.vue'
 import { computed, onMounted, reactive, ref, watch, watchEffect } from 'vue'
-import { getLocalStorage } from '@/utils/axios/setupApi'
+import { getLocalStorage } from '@/axios/setupApi'
 import SelectComponent from './SelectComponent.vue'
 
 const props = defineProps({

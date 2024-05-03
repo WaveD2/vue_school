@@ -4,9 +4,9 @@ import { reactive, ref, defineEmits, onMounted, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import store from '@/store'
 import Field from '@/components/Field.vue'
-import { LABEL_LOGIN } from '@/utils/constants'
+import { LABEL_LOGIN } from '@/constants/options'
 import { arrayToObject } from '@/utils/function'
-import { getCookie } from '@/utils/axios/setupApi'
+import { getCookie } from '@/axios/setupApi'
 
 const router = useRouter()
 

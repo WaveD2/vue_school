@@ -8,7 +8,7 @@ import InputSearch from '@/components/InputSearch.vue'
 import debounce from 'lodash.debounce'
 import Pagination from '@/components/Pagination.vue'
 
-import { LIST_OPTIONS } from '@/utils/constants'
+import { LIST_OPTIONS } from '@/constants/options'
 import { validateTeacher } from '@/utils/validateYub'
 import {
   arrayToObject,
@@ -20,7 +20,7 @@ import {
 import store from '@/store'
 import Tag from '@/components/Tag.vue'
 import ModalDetail from '@/components/ModalDetail.vue'
-import { getLocalStorage, setLocalStorage } from '@/utils/axios/setupApi'
+import { getLocalStorage, setLocalStorage } from '@/axios/setupApi'
 import SelectComponent from '@/components/SelectComponent.vue'
 
 const route = useRoute()
@@ -137,6 +137,7 @@ watch(
 
 //  Modal
 const handlerSetModal = ({ type }) => {
+  console.log('type', type)
   const currentUserDetail = store.state.infoDetailModal
 
   if (type === 'detail' || type === 'update') {
@@ -219,7 +220,6 @@ const handleFilterAndSort = debounce(async () => {
 //  Handle action button submit
 const handleClickForm = debounce(async ({ type }) => {
   errors.value = {}
-
   try {
     if (type === 'delete') {
       await store.dispatch('apiDetail', {

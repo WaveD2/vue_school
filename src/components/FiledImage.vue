@@ -1,5 +1,5 @@
 <script setup>
-import useTransitionState from '../utils/axios'
+import useTransitionState from '../axios'
 import { computed, defineEmits, defineProps, onMounted, ref } from 'vue'
 import { fetchDoUpLoadFile, toastInfo } from '@/utils/function'
 
