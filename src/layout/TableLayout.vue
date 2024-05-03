@@ -49,9 +49,8 @@ const filtersAndSort = reactive({
 let settingTable = reactive(
   getLocalStorage('settingTable') || {
     title: 'Mặc định',
-    // filed typeof Object {key : value}
+    //  typeof Array ['gender', 'status', 'type'],
     filed: [],
-    // sort typeof Array ['gender', 'status', 'type'],
     sort: [],
     key: 0
   }
@@ -173,7 +172,7 @@ const handlerSetModal = ({ type }) => {
     typeModal.label = `Bạn chắc chắn muốn xóa <span style="color:#eb4747">${currentUserDetail.name} </span> `
     typeModal.value = null
     typeModal.type = type
-    typeButtonModal.label = 'Xóa người dùng'
+    typeButtonModal.label = 'Xóa'
     typeButtonModal.handleActive = handleClickForm
   }
   typeModal.isInner = true
@@ -372,18 +371,20 @@ watch(isActiveSetting, (newValue, oldValue) => {
 
     <div class="flex items-center gap-x-1 h-4">
       <div v-for="tags of renderFilterTag">
-        <Tag
-          v-if="tags.value !== 'search'"
-          :tagValue="tags.value"
-          @delete-tag="handleDeleteTag"
-          styleByClass="px-3 bg-blue-200 rounded-full"
-        >
-          <template #content>
-            <p class="text-[10px] mr-2 font-bold uppercase text-blue-700">
-              {{ tags.text.toLowerCase() }}
-            </p>
-          </template>
-        </Tag>
+        <div v-for="(value, key) in filtersAndSort">
+          <Tag
+            v-if="tags.value === value"
+            :tagValue="tags.value"
+            @delete-tag="handleDeleteTag"
+            styleByClass="px-3 bg-blue-200 rounded-md"
+          >
+            <template #content>
+              <p class="text-[10px] mr-2 font-bold uppercase text-blue-700">
+                {{ LIST_OPTIONS[key][0].text }} {{ tags.text }}
+              </p>
+            </template>
+          </Tag>
+        </div>
       </div>
     </div>
 

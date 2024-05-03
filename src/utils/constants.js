@@ -102,17 +102,19 @@ export const LABEL_TABLE_TEACHER = {
 export const FIL_TAB_CONTENT_TEACHER = [
   {
     label: 'Thông tin cơ bản',
-    key: 'default'
+    key: 'default',
+    note: "Tích chọn những trường thông tin hiển thị ở bảng dữ liệu"
   },
   {
     label: 'Thông tin nâng cao',
-    key: 'raise'
+    key: 'raise',
+    note: "Tích chọn những trường lọc thông tin"
   }
 ]
 
 export const TAB_CONTENT_TEACHER = [
-  { tab: 'Cài đặt trường dữ liệu', key: 'filed' },
-  { tab: 'Cài đặt bộ lọc', key: 'sort' }
+  { tab: 'Hiện thị các trường', key: 'filed', icon: "fa-solid fa-table" },
+  { tab: 'Cho phép lọc', key: 'sort', icon: "fa-solid fa-sliders" }
 ]
 
 export const LABEL_MODAL_DETAIL_TEACHER = {

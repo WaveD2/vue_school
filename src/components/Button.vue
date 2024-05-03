@@ -8,12 +8,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['handleClickBtn', 'handleClickIcon'])
-
-const handleClickByBtn = (event) => {
-  emit('handleClickBtn', event.target.id)
-}
-
-const handleClickByIcon = () => {}
 </script>
 
 <template>

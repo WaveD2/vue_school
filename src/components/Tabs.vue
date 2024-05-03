@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
+import Button from './Button.vue'
 
 const props = defineProps({
   modelValue: [String, Number, Array, Object],
@@ -20,17 +21,18 @@ const handleChange = (event) => {
 </script>
 
 <template>
-  <div class="flexStart overflow-x-auto overflow-y-hidden 00 whitespace-nowrap">
-    <button
+  <div class="flex overflow-x-auto overflow-y-hidden 00 whitespace-nowrap transition-all">
+    <Button
       v-for="menu of props.tabs"
       type="button"
       :id="menu.key"
-      class="h-10 pr-4 mr-1 text-center text-text bg-transparent dark:border-blue-400 dark:text-blue-300 whitespace-nowrap focus:outline-none transition-colors"
+      class="h-10 pr-4 mr-1 flexCenter gap-x-2 text-center text-text bg-transparent dark:border-blue-400 dark:text-blue-300 whitespace-nowrap focus:outline-none transition-colors"
       :class="menu.key === props.isActive && '!text-active !border-b-active !border-b-2'"
       @click="handleChange"
+      :left-icon="menu.icon"
     >
       <p class="text-left text-base font-semibold" :id="menu.key">{{ menu.tab }}</p>
-    </button>
+    </Button>
 
     <slot name="content"></slot>
   </div>

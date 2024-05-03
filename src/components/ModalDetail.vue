@@ -270,9 +270,9 @@ watch(typeModal.value, (newValue, oldValue) => {
         </div>
       </div>
 
-      <!-- Config setting table - filter -->
+      <!-- Config setting inner col table - sort -->
       <section
-        class="mt-2 px-6 flex gap-x-6 h-[95%]"
+        class="mt-2 px-6 flex gap-x-6 h-[96%]"
         v-if="Object.keys(valueDetailModal).length === 0 && typeModal.type !== 'delete'"
       >
         <div class="min-w-max max-w-52 overflow-hidden border-2 border-r-gray-300 mt-9 rounded-md">
@@ -281,7 +281,7 @@ watch(typeModal.value, (newValue, oldValue) => {
             @click="handleCreateOptionSetting"
           >
             <p class="text-base py-2 font-medium">
-              <span class="text-[#333]"> Tạo mới</span>
+              <span class="text-[#333]">Tạo cài đặt mới</span>
               <i class="fa-solid fa-plus text-[#15ade3] ml-2"></i>
             </p>
           </Button>
@@ -314,8 +314,12 @@ watch(typeModal.value, (newValue, oldValue) => {
                   class="fa-regular fa-pen-to-square text-[#15ade3] text-base"
                   @click.self="handleChangeNameTag($event, setting.key)"
                 ></i>
+                <!-- 
+                  v-if="settingTable.length !== 1"
+                 -->
                 <i
                   class="fa-regular fa-trash-can text-red-500 text-base"
+                  :class="settingTable.length === 1 && '!text-red-200'"
                   @click.self="handleDeleteNameTag(setting.key)"
                 ></i>
               </Button>
@@ -380,7 +384,7 @@ watch(typeModal.value, (newValue, oldValue) => {
 
     <!-- Footer Modal -->
     <template #footer>
-      <div class="w-full flexAround py-3 border-t border-gray-200">
+      <div class="w-full flexAround py-[10px] border-t border-gray-200">
         <Button
           :by-style-class="`${typeModal.type == 'delete' ? 'bg-[#417bfa] hover:bg-[#1159f8eb]' : 'bg-[#93b1f3eb] hover:bg-[#1159f8eb] '} w-1/4 py-2 rounded-md text-base   text-white`"
           @click="handleClose"

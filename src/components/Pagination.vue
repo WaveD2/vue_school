@@ -18,11 +18,13 @@ const arr = computed(() => {
   >
     <p class="text-sm text-gray-700">
       Page
-      <span class="font-medium">{{ 1 }}</span>
+      <span class="font-medium">{{ pag.page || 1 }}</span>
 
       <span class="font-medium"> đến {{ pag.totalPages }}</span>
       có
-      <span class="font-medium"> {{ pag.total }}</span>
+      <span class="font-medium">
+        {{ pag.page ? pag.total - (pag.page - 1) * pag.limit : pag.total }}</span
+      >
       kết quả
     </p>
 
@@ -41,7 +43,7 @@ const arr = computed(() => {
         @click="() => emit('onPageChanged', index + 1)"
         class="rounded-md z-10 inline-flex items-center border border-grey-2 bg-#fff px-3 py-2 text-sm font-semibold text-black focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
         :class="
-          index === (pag.page - 1 < 0 ? pag.page : pag.page - 1) &&
+          index === ((pag.page - 1 < 0 ? pag.page : pag.page - 1) || 0) &&
           'bg-indigo-600 border border-indigo-600  text-while'
         "
       >
