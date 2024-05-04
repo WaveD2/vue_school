@@ -21,7 +21,6 @@ const ariaDescribedBy = computed(() => {
   return !!props.help ? `help-${uuid()}` : null
 })
 </script>
-<!-- min-w-56 -->
 <template>
   <div class="min-w-max max-md:w-full" :class="styleClass">
     <Label v-if="props.label" :for="props.id" :required="props.required">{{ props.label }}</Label>

@@ -4,7 +4,6 @@ import store from '@/store'
 
 import Input from '../components/Input.vue'
 import Field from '../components/Field.vue'
-import Select from '@/components/Select.vue'
 import FiledImage from '@/components/FiledImage.vue'
 import FieldFile from '@/components/FieldFile.vue'
 import Tabs from '@/components/Tabs.vue'

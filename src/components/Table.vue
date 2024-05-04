@@ -158,7 +158,7 @@ const highlightKeyword = (value) => {
               
             </table>
             <div v-if="renderRowTable.length === 0" class="flexCenter w-full min-h-52 border-t border-gray-200">
-            <p class="  h5 ">Không tìm dữ liệu
+            <p class="h5 ">Không tìm dữ liệu
               <i class="fa-solid fa-database text-xl  text-[#979797]"></i>
             </p>
             </div>

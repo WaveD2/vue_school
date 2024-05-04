@@ -4,7 +4,6 @@ import Tabs from './Tabs.vue'
 import Field from './Field.vue'
 import Input from './Input.vue'
 import FiledImage from './FiledImage.vue'
-import Select from './Select.vue'
 import FieldFile from './FieldFile.vue'
 import Button from './Button.vue'
 import Textarea from './Textarea.vue'
@@ -295,7 +294,11 @@ watch(typeModal.value, (newValue, oldValue) => {
             tag="div"
             @before-leave="beforeLeave"
           >
-            <div v-for="(setting, key) in settingTable" class="transition-all duration-300">
+            <div
+              v-for="(setting, key) in settingTable"
+              class="transition-all duration-300"
+              :key="key"
+            >
               <Button
                 @click.self="handleChangeSetting(setting.key)"
                 :id="setting.key"
@@ -314,9 +317,7 @@ watch(typeModal.value, (newValue, oldValue) => {
                   class="fa-regular fa-pen-to-square text-[#15ade3] text-base"
                   @click.self="handleChangeNameTag($event, setting.key)"
                 ></i>
-                <!-- 
-                  v-if="settingTable.length !== 1"
-                 -->
+
                 <i
                   class="fa-regular fa-trash-can text-red-500 text-base"
                   :class="settingTable.length === 1 && '!text-red-200'"

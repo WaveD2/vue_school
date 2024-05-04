@@ -76,7 +76,6 @@ export function filterKeysWithValues(obj) {
 }
 
 export const convertUrlParams = (urlParams) => {
-  console.log('urlParams', urlParams)
   const currentUrlParam = new URLSearchParams(urlParams).get('url')
 
   const decodedUrl = decodeURIComponent(currentUrlParam)

@@ -1,18 +1,4 @@
-<script setup>
-import { computed } from 'vue'
-
-const props = defineProps(['isLoading'])
-
-const isLoading = computed(() => props.isLoading)
-</script>
-
-<template>
-  <div
-    class="absolute top-0 bottom-0 right-0 left-0 bg-transparent z-50 flexCenter transition-all"
-    :class="!isLoading && '!hidden'"
-  >
-    <div aria-label="Loading..." role="status" class="space-x-2">
-      <svg class="h-20 w-20 animate-spin stroke-gray-500" viewBox="0 0 256 256">
+<svg class="h-20 w-20 animate-spin stroke-gray-500" viewBox="0 0 256 256">
         <line
           x1="128"
           y1="32"
@@ -86,6 +72,3 @@ const isLoading = computed(() => props.isLoading)
           stroke-width="24"
         ></line>
       </svg>
-    </div>
-  </div>
-</template>

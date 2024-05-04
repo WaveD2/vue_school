@@ -1,9 +1,8 @@
 <script setup>
-import { computed, watchEffect, onMounted, reactive, ref, watch } from 'vue'
+import { computed, watchEffect, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import Table from '@/components/Table.vue'
-import Select from '@/components/Select.vue'
 import InputSearch from '@/components/InputSearch.vue'
 import debounce from 'lodash.debounce'
 import Pagination from '@/components/Pagination.vue'
@@ -137,7 +136,6 @@ watch(
 
 //  Modal
 const handlerSetModal = ({ type }) => {
-  console.log('type', type)
   const currentUserDetail = store.state.infoDetailModal
 
   if (type === 'detail' || type === 'update') {
@@ -171,7 +169,7 @@ const handlerSetModal = ({ type }) => {
     typeButtonModal.handleActive = handleClickForm
   } else if (type === 'delete') {
     typeModal.label = `Bạn chắc chắn muốn xóa <span style="color:#eb4747">${currentUserDetail.name} </span> `
-    typeModal.value = null
+    typeModal.value = currentUserDetail
     typeModal.type = type
     typeButtonModal.label = 'Xóa'
     typeButtonModal.handleActive = handleClickForm
@@ -225,7 +223,7 @@ const handleClickForm = debounce(async ({ type }) => {
       await store.dispatch('apiDetail', {
         url: detailTypeTable.value,
         method: 'DELETE',
-        data: valueForm.value
+        data: typeModal.value
       })
 
       return

@@ -2,6 +2,7 @@
 const props = defineProps({
   id: [String, Number],
   leftIcon: String,
+  rightIcon: String,
   textBtn: String,
   isLoading: Boolean,
   byStyleClass: [String, Array]
@@ -19,6 +20,12 @@ const emit = defineEmits(['handleClickBtn', 'handleClickIcon'])
       @click="handleClickByIcon"
     />
     <slot />
+    <i
+      v-if="props.rightIcon"
+      :is="props.rightIcon"
+      :class="props.rightIcon"
+      @click="handleClickByIcon"
+    />
   </button>
 </template>
 
