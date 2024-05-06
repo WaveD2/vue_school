@@ -1,11 +1,12 @@
 <script setup>
-import { ref, watch, onUnmounted, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps({
   id: [String, Number],
   keyInput: String,
+  // , Array, Object
   modelValue: {
-    type: [String, Number, Array, Object]
+    type: [String, Number]
   },
   required: Boolean,
   disabled: Boolean,
@@ -16,19 +17,16 @@ const props = defineProps({
   },
   ariaDescribedBy: String,
   type: String,
-  styleClass: String,
-  onClick: function () {}
+  styleClass: String
 })
-const isError = ref(props.invalid !== '')
 const isChangeValue = ref(false)
-
 const emit = defineEmits(['update:modelValue', 'clearError'])
 
 const handleChangeInput = (event) => {
   if (props.type === 'checkbox') {
     emit('onUpdateValueCheckBox', props.keyInput)
   } else {
-    isError.value = false
+    emit('clearError', props.id)
     isChangeValue.value = true
     emit('update:modelValue', event.target.value)
   }
@@ -38,23 +36,21 @@ const handleChangeInput = (event) => {
   <div class="w-auto" id="container_input">
     <input
       class="w-full text-base py-2 px-3 border rounded-lg border-[#D5D5D5] focus:border-blue-300"
-      :disabled="props.disabled"
-      :id="props.id"
-      :type="props.type"
-      :key="props.keyInput"
-      :checked="props.checked"
-      :required="props.required"
+      :disabled="disabled"
+      :id="id"
+      :type="type"
+      :key="keyInput"
+      :checked="checked"
+      :required="required"
       @change="handleChangeInput"
-      @click="props.onClick"
       :class="[
-        props.styleClass,
-        isError ? 'border-error ' : 'border-slate',
-        props.disabled && 'bg-[#f5f6fa]',
+        styleClass,
+        invalid ? 'border-error ' : 'border-slate',
+        disabled && 'bg-[#f5f6fa]',
         isChangeValue && 'bg-[#cde0e16b]'
       ]"
-      :value="
-        props.type === 'date' && props.modelValue ? props.modelValue.slice(0, 10) : props.modelValue
-      "
+      :value="type === 'date' && modelValue ? modelValue.slice(0, 10) : modelValue"
     />
   </div>
 </template>
+<!-- , -->

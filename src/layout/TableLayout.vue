@@ -1,11 +1,7 @@
 <script setup>
 import { computed, watchEffect, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-
-import Table from '@/components/Table.vue'
-import InputSearch from '@/components/InputSearch.vue'
 import debounce from 'lodash.debounce'
-import Pagination from '@/components/Pagination.vue'
 
 import { LIST_OPTIONS } from '@/constants/options'
 import { validateTeacher } from '@/utils/validateYub'
@@ -17,9 +13,14 @@ import {
   trimInput
 } from '@/utils/function'
 import store from '@/store'
-import Tag from '@/components/Tag.vue'
-import ModalDetail from '@/components/ModalDetail.vue'
+
 import { getLocalStorage, setLocalStorage } from '@/axios/setupApi'
+
+import Table from '@/components/Table.vue'
+import Tag from '@/components/Tag.vue'
+import InputSearch from '@/components/InputSearch.vue'
+import Pagination from '@/components/Pagination.vue'
+import ModalDetail from '@/components/ModalDetail.vue'
 import SelectComponent from '@/components/SelectComponent.vue'
 
 const route = useRoute()
@@ -28,12 +29,12 @@ const router = useRouter()
 const isLoading = ref(false)
 const isLoadingModal = ref(false)
 const isDisabledModal = ref(false)
+const valueModal = ref({})
+
 const errors = ref({})
 
 const valueForm = ref({})
 const renderFilterTag = ref([])
-
-const valueModal = ref({})
 
 const detailTypeTable = ref('')
 
@@ -389,11 +390,11 @@ watch(isActiveSetting, (newValue, oldValue) => {
     <Table
       :isLoading="isLoading"
       :key-search="filtersAndSort.search"
-      @set-modal="handlerSetModal"
       :list-data-table="renderRowTable"
       :column-table="settingTable.filed"
       :type-table="detailTypeTable"
       :detailTable="typeModal.optionSelect"
+      @set-modal="handlerSetModal"
     />
     <Pagination :pag="pag" @on-page-changed="handleSortTable" />
   </div>

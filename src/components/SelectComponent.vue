@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 
 const props = defineProps({
+  id: [String, Number],
   modelValue: [String, Number, Array, Object],
   required: Boolean,
   invalid: [Boolean, String],
@@ -15,7 +16,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'clearError'])
 
 const isOptionsExpanded = ref(false)
 const isLabel = ref(props.isInnerLabel)
@@ -24,6 +25,7 @@ const setOption = (value) => {
   isOptionsExpanded.value = false
   isLabel.value = true
   emit('update:modelValue', value)
+  emit('clearError', props.id)
 }
 </script>
 
@@ -31,14 +33,14 @@ const setOption = (value) => {
   <div id="select-container" class="flexCenter" :class="styleClass">
     <div
       class="relative text-base z-10 w-full h-full"
-      :class="[props.invalid ? 'border-error' : 'border-slate', props.disabled && 'bg-[#f5f6fa]']"
+      :class="[invalid ? 'border-error' : 'border-slate', disabled && 'bg-[#f5f6fa]']"
     >
       <button
         class="flexBetween gap-x-2 px-3 py-2 w-full h-full border border-gray-200 rounded-lg"
         :class="isOptionsExpanded && 'border-blue-300'"
         @click="isOptionsExpanded = !isOptionsExpanded"
         @blur="isOptionsExpanded = false"
-        :disabled="props.disabled"
+        :disabled="disabled"
       >
         <span v-if="isLabel && modelValue && typeof modelValue === 'string'" class="text-nowrap">{{
           options.find((item) => item.value === modelValue).text
@@ -77,14 +79,14 @@ const setOption = (value) => {
       >
         <ul
           v-show="isOptionsExpanded"
-          class="absolute left-0 right-0 mb-4 bg-white divide-y rounded-lg shadow-lg overflow-hidden"
+          class="absolute left-0 right-0 mb-4 bg-white divide-y rounded-md shadow-lg overflow-hidden"
         >
           <li
             v-for="(item, index) in options"
-            :required="props.required"
+            :required="required"
             :key="index"
-            class="px-2 py-1 transition-colors cursor-pointer duration-300 hover:bg-gray-200"
-            :class="item.value === '' && '!hidden'"
+            class="px-2 py-1 transition-colors cursor-pointer duration-300 hover:bg-gray-300"
+            :class="[item.value === '' && '!hidden', item.value == modelValue && 'bg-gray-100']"
             @mousedown.prevent="setOption(item.value)"
           >
             {{ item.text }}

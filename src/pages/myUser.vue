@@ -6,7 +6,7 @@ import { LABEL_MODAL_DETAIL_USER, VALUE_MODAL_DETAIL_USER } from '@/constants/op
 const emit = defineEmits(['getDataTable'])
 
 onMounted(async () => {
-  const colUser = ['id', 'name', 'phone', 'role', 'status']
+  const COL_USER = ['id', 'name', 'phone', 'role', 'status']
 
   const listParams = {
     url: 'users',
@@ -15,7 +15,7 @@ onMounted(async () => {
   await store.dispatch('getInfo', listParams)
   //labelModalDetail
   emit('getDataTable', {
-    colTable: colUser,
+    colTable: COL_USER,
     labelModalDetail: LABEL_MODAL_DETAIL_USER,
     valueModalDetail: VALUE_MODAL_DETAIL_USER,
     typeTable: 'users'

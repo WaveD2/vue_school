@@ -1,12 +1,15 @@
 <script setup>
-import { loginSchema } from '@/utils/validateYub'
-import { reactive, ref, defineEmits, onMounted, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
-import store from '@/store'
+import { reactive, ref, defineEmits, onMounted } from 'vue'
+
 import Field from '@/components/Field.vue'
-import { LABEL_LOGIN } from '@/constants/options'
-import { arrayToObject } from '@/utils/function'
+
 import { getCookie } from '@/axios/setupApi'
+
+import store from '@/store'
+import { loginSchema } from '@/utils/validateYub'
+import { arrayToObject } from '@/utils/function'
+import { LABEL_LOGIN } from '@/constants/options'
 
 const router = useRouter()
 
@@ -31,8 +34,6 @@ const checkAccessToken = () => {
     localStorage.setItem('previousRoute', routerCurrent)
 
     return router.push(routerCurrent)
-    // check url - path
-    // router.push({ path: route.path, query:  })
   } else {
     store.commit('SET_MES_API_ERROR', [])
   }

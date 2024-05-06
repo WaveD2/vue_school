@@ -1,8 +1,9 @@
 import axiosInstance from '@/axios/api'
 import useTransition from '../axios'
 
-import { removeTokenStore, setLocalStorage, setCookie } from '@/axios/setupApi'
+import { removeTokenStore, setCookie } from '@/axios/setupApi'
 import { toastInfo } from '@/utils/function'
+import { MESS_API } from '@/constants/mess'
 
 const { callApi } = useTransition()
 
@@ -86,7 +87,6 @@ export const getInfo = async (ctx, listParams) => {
 }
 
 export const apiDetail = async (ctx, listParams) => {
-  console.log('listParams', listParams);
   const { method, data, url } = listParams
   const fullUrl = method === 'POST' ? `${url}` : `${url}/${data.id}`
 
@@ -111,7 +111,7 @@ export const apiDetail = async (ctx, listParams) => {
     await getInfo(ctx, listParams)
     return (
       method === 'PATCH' &&
-      toastInfo({ type: 'success', mes: 'Cập nhật thành công', display: 'TOP_RIGHT' })
+      toastInfo({ type: 'success', mes: MESS_API.UPDATE, display: 'TOP_RIGHT' })
     )
   }
 }

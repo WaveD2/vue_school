@@ -162,6 +162,10 @@ const focusFirstInput = () => {
   }, 0)
 }
 
+const handleExistError = (key) => {
+  delete props.errors[key]
+}
+
 watch(typeModal.value, (newValue, oldValue) => {
   focusFirstInput()
 })
@@ -215,6 +219,7 @@ watch(typeModal.value, (newValue, oldValue) => {
                   (key !== 'avatar' && key !== 'search') ||
                   (label.disabled && typeModal.type === 'add')
                 "
+                :id="key"
                 :label="label.text"
                 :error="errors[key]"
                 :required="label.required"
@@ -222,6 +227,8 @@ watch(typeModal.value, (newValue, oldValue) => {
                 <SelectComponent
                   v-if="LIST_OPTIONS.hasOwnProperty(key) && Array.isArray(LIST_OPTIONS[key])"
                   v-model="valueDetailModal[key]"
+                  :id="key"
+                  @clear-error="handleExistError"
                   :options="LIST_OPTIONS[key]"
                   :is-inner-label="typeModal.type === 'add' ? false : true"
                   :invalid="errors[key]"
@@ -232,6 +239,7 @@ watch(typeModal.value, (newValue, oldValue) => {
                   v-else-if="key === 'dateOfBirth'"
                   v-model="valueDetailModal[key]"
                   type="date"
+                  :id="key"
                   :invalid="errors[key]"
                   :disabled="isDisabledModal || label.disabled"
                   :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
@@ -240,11 +248,13 @@ watch(typeModal.value, (newValue, oldValue) => {
                   v-else-if="key === 'note'"
                   v-model="valueDetailModal[key]"
                   type="text"
+                  :id="key"
                   :invalid="errors[key]"
                   :disabled="isDisabledModal || label.disabled"
                   :style-class="`${label.disabled && '!bg-[#b9b8b8]'} w-full`"
                 />
                 <FieldFile
+                  :id="key"
                   v-else-if="key === 'contracts'"
                   v-model="valueDetailModal.contracts"
                   :disabled="isDisabledModal || label.disabled"
@@ -257,7 +267,9 @@ watch(typeModal.value, (newValue, oldValue) => {
                     (label.disabled && typeModal.type === 'add')
                   "
                   type="text"
+                  @clear-error="handleExistError"
                   v-model="valueDetailModal[key]"
+                  :id="key"
                   :invalid="errors[key]"
                   :disabled="isDisabledModal || label.disabled"
                   :style-class="`${label.disabled && '!bg-[#b9b8b8]'} 
@@ -318,11 +330,16 @@ watch(typeModal.value, (newValue, oldValue) => {
                   @click.self="handleChangeNameTag($event, setting.key)"
                 ></i>
 
-                <i
-                  class="fa-regular fa-trash-can text-red-500 text-base"
+                <!-- 
                   :class="settingTable.length === 1 && '!text-red-200'"
-                  @click.self="handleDeleteNameTag(setting.key)"
-                ></i>
+                 -->
+                <div class="w-4">
+                  <i
+                    v-if="setting.key !== 0"
+                    class="fa-regular fa-trash-can text-red-500 text-base"
+                    @click.self="handleDeleteNameTag(setting.key)"
+                  ></i>
+                </div>
               </Button>
             </div>
           </transition-group>
