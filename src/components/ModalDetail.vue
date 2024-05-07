@@ -175,7 +175,7 @@ watch(typeModal.value, (newValue, oldValue) => {
   <ModalComponent
     :errors="errors['error']"
     :disabled="isDisabledModal"
-    :is-inner-modal="props.isInnerModal"
+    :is-inner-modal="isInnerModal"
     @close-modal="handleClose"
     :is-loading-modal="isLoadingModal"
     :style-modal-box="[

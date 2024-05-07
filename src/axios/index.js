@@ -33,6 +33,7 @@ export default function useTransition() {
 
       return response.data
     } catch (err) {
+      console.log('err', err);
       if (err.response && err.response.data) {
         if (err.response.data.code === 'NotAuthen') {
           toastInfo({ type: 'error', mes: err.response.data.message })
@@ -42,12 +43,13 @@ export default function useTransition() {
           error.value = err.response.data.error.issues.map((issue) => ({
             [issue.path[0]]: issue.message
           }))
-          return store.commit('SET_MES_API_ERROR', error.value)
+          store.commit('SET_MES_API_ERROR', error.value)
         } else {
-          return toastInfo({ type: 'error', mes: err.response.data.message })
+          toastInfo({ type: 'error', mes: err.response.data.message })
         }
+        return false
       }
-
+      toastInfo({ type: 'error', mes: err.message })
       return false
     }
   }

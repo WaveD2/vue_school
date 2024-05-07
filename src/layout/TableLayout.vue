@@ -331,7 +331,7 @@ watch(isActiveSetting, (newValue, oldValue) => {
         class="px-4 flex justify-between h-auto mt-2 mb-1 bg-transparent max-md:flex-wrap max-md:gap-y-2"
         v-if="route.path !== '/users'"
       >
-        <div class="flex flex-wrap gap-x-2 w-3/5">
+        <div class="flex flex-wrap gap-x-2 gap-y-1 w-3/5">
           <InputSearch
             placeholder="Tìm kiếm..."
             v-model="filtersAndSort['search']"
