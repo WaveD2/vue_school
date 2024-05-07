@@ -30,9 +30,9 @@ const arr = computed(() => {
 
     <nav class="isolate inline-flex gap-x-1 rounded-md shadow-sm" aria-label="Pagination">
       <button
-        v-if="pag.page > 1"
+        v-if="pag.hasPrevPage"
         :disabled="!pag.hasPrevPage"
-        @click="() => emit('onPageChanged', 1)"
+        @click="() => emit('onPageChanged', pag.page - 1)"
         class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
       >
         <i class="fa-solid fa-chevron-left"></i>
@@ -51,8 +51,8 @@ const arr = computed(() => {
       </button>
 
       <button
-        v-if="pag.page !== 2 && pag.totalPages !== 1"
-        @click="() => emit('onPageChanged', 2)"
+        v-if="(pag.page == null && pag.total - pag.limit >= 10) || pag.hasNextPage"
+        @click="() => emit('onPageChanged', pag.page === null ? 2 : pag.page + 1)"
         class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
       >
         <i class="fa-solid fa-chevron-right"></i>

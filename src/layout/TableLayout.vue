@@ -326,42 +326,44 @@ watch(isActiveSetting, (newValue, oldValue) => {
 
   <!-- Table -->
   <div class="max-md:p-0">
-    <div
-      class="px-4 flex justify-between h-auto mt-2 mb-1 bg-transparent max-md:flex-wrap max-md:gap-y-2"
-      v-if="route.path !== '/users'"
-    >
-      <div class="flex flex-wrap gap-x-2 w-3/5">
-        <InputSearch
-          placeholder="Tìm kiếm..."
-          v-model="filtersAndSort['search']"
-          by-style-class="h-10 bg-slate-100 !rounded-md border border-neutral-300"
-        />
-        <div v-for="key in settingTable.sort">
+    <div class="min-h-12">
+      <div
+        class="px-4 flex justify-between h-auto mt-2 mb-1 bg-transparent max-md:flex-wrap max-md:gap-y-2"
+        v-if="route.path !== '/users'"
+      >
+        <div class="flex flex-wrap gap-x-2 w-3/5">
+          <InputSearch
+            placeholder="Tìm kiếm..."
+            v-model="filtersAndSort['search']"
+            by-style-class="h-10 bg-slate-100 !rounded-md border border-neutral-300"
+          />
+          <div v-for="key in settingTable.sort">
+            <SelectComponent
+              v-if="Array.isArray(LIST_OPTIONS[key])"
+              style-class="!w-full h-10"
+              v-model="filtersAndSort[key]"
+              :options="LIST_OPTIONS[key]"
+            />
+          </div>
+        </div>
+
+        <div class="flex gap-x-2">
           <SelectComponent
-            v-if="Array.isArray(LIST_OPTIONS[key])"
-            style-class="!w-full h-10"
-            v-model="filtersAndSort[key]"
-            :options="LIST_OPTIONS[key]"
+            style-class="!w-auto h-10"
+            v-model="isActiveSetting.keyActive"
+            :options="isActiveSetting.listTitleTable"
           />
-        </div>
-      </div>
 
-      <div class="flex gap-x-2">
-        <SelectComponent
-          style-class="!w-auto h-10"
-          v-model="isActiveSetting.keyActive"
-          :options="isActiveSetting.listTitleTable"
-        />
-
-        <div @click="handleSettingTable">
-          <i
-            class="fa-solid fa-gear text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-md hover:bg-slate"
-          />
-        </div>
-        <div @click="handlerSetModal({ type: 'add' })">
-          <i
-            class="fa-solid fa-user-plus text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-md hover:bg-slate"
-          />
+          <div @click="handleSettingTable">
+            <i
+              class="fa-solid fa-gear text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-md hover:bg-slate"
+            />
+          </div>
+          <div @click="handlerSetModal({ type: 'add' })">
+            <i
+              class="fa-solid fa-user-plus text-base text-primary border cursor-pointer border-grey-2 p-2 rounded-md hover:bg-slate"
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -77,7 +77,7 @@ const highlightKeyword = (value) => {
             <!-- Col -->
               <thead class="text-sm text-gray-600  font-bold dark:bg-gray-700 dark:text-gray-400" >
                 <tr >
-                  <th scope="col" class="text-nowrap px-3 py-3"
+                  <th scope="col" class="text-nowrap px-3 py-3.5"
                     v-for="(col) in renderColTable"
                     :key="col"
                   >
@@ -99,7 +99,7 @@ const highlightKeyword = (value) => {
                   :key="i"
                 >
                 <td
-                class="text-nowrap px-3 py-3"
+                class="text-nowrap px-3 py-3.5"
                 v-for="(label , key) in renderColTable"
                 @click.self="handleOpenModal({ type: 'detail', rowTable })"
                 >
@@ -141,7 +141,7 @@ const highlightKeyword = (value) => {
 
 
                   <!-- Button Action -->
-                  <td class="px-4 py-3  flexEnd gap-x-8 "  v-if="props.typeTable !== 'users'">
+                  <td class="px-4 py-3.5  flexEnd gap-x-8 "  v-if="props.typeTable !== 'users'">
                       <Button
                       left-icon="fa-solid fa-pen-to-square text-xl "
                       @click="handleOpenModal({ type: 'update', rowTable })"
