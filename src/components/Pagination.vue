@@ -20,8 +20,8 @@ const arr = computed(() => {
       Page
       <span class="font-medium">{{ pag.page || 1 }}</span>
 
-      <span class="font-medium"> đến {{ pag.totalPages }}</span>
-      có
+      <span class="font-medium"> đến {{ pag.totalPages }} </span>
+      <span class="inline-block mx-1"> có </span>
       <span class="font-medium">
         {{ pag.page ? pag.total - (pag.page - 1) * pag.limit : pag.total }}</span
       >

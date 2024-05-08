@@ -66,6 +66,7 @@ const typeButton = computed(() => props.typeButtonModal)
 const handleClose = () => {
   for (let i = settingTable.length - 1; i >= 0; i--) {
     if (settingTable[i].filed.length < 3) {
+      isActiveSetting.listTitleTable.splice(i, 1)
       settingTable.splice(i, 1)
     }
   }

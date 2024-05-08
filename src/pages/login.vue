@@ -1,7 +1,7 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { reactive, ref, defineEmits, onMounted } from 'vue'
-
+import debounce from 'lodash.debounce'
 import Field from '@/components/Field.vue'
 
 import { getCookie } from '@/axios/setupApi'
@@ -12,7 +12,8 @@ import { arrayToObject } from '@/utils/function'
 import { LABEL_LOGIN } from '@/constants/options'
 
 const router = useRouter()
-
+const route = useRoute()
+console.log('route', route)
 const emit = defineEmits(['setLoading'])
 const errors = ref({
   username: '',
@@ -27,11 +28,17 @@ onMounted(() => checkAccessToken())
 
 const checkAccessToken = () => {
   if (getCookie('accessToken')) {
-    const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
-    const routerCurrent = sortPreviousRoute.includes('url=')
-      ? decodeURIComponent(decodeURIComponent(sortPreviousRoute.split('url=')[1]))
-      : '/teacher'
-    localStorage.setItem('previousRoute', routerCurrent)
+    let routerCurrent = ''
+    if (route.fullPath.includes('url=')) {
+      routerCurrent = decodeURIComponent(decodeURIComponent(route.fullPath.split('url=')[1]))
+      localStorage.setItem('previousRoute', routerCurrent)
+    } else {
+      const sortPreviousRoute = localStorage.getItem('previousRoute') || ''
+      routerCurrent = sortPreviousRoute.includes('url=')
+        ? decodeURIComponent(decodeURIComponent(sortPreviousRoute.split('url=')[1]))
+        : '/teacher'
+      localStorage.setItem('previousRoute', routerCurrent)
+    }
 
     return router.push(routerCurrent)
   } else {
@@ -39,7 +46,7 @@ const checkAccessToken = () => {
   }
 }
 
-const handleSubmitForm = async () => {
+const handleSubmitForm = debounce(async () => {
   try {
     const username = formLogin.username.trim()
     const formNew = { ...formLogin, username }
@@ -66,7 +73,7 @@ const handleSubmitForm = async () => {
   } finally {
     emit('setLoading', false)
   }
-}
+}, 1000)
 </script>
 
 <template>
